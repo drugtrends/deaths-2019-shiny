@@ -1,0 +1,13 @@
+name: asdlknoedgr
+title: asdlknoedgr
+username:
+account: drugtrends
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1367270
+bundleId: 2531127
+url: https://drugtrends.shinyapps.io/asdlknoedgr/
+when: 1571880547.23719
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Deaths_Pop_CI_2019-07-09.csv
