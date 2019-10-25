@@ -255,7 +255,7 @@ bootstrapPage('',
             "Plot",
             mainPanel(
               withLoader(plotlyOutput("opioidPlotA", width = "100%", height = "600px"), type = "html", loader = "loader4"),
-              fluidRow(includeMarkdown("notesOpioidsPlot.md"))
+              fluidRow(includeMarkdown("notesOpioidAPlot.md"))
             ),
 
             sidebarPanel(
@@ -276,15 +276,14 @@ bootstrapPage('',
               ),
 
 #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
-              radioButtons("MainOA", "Variable for dropdown list:",
+              radioButtons("DropOA", "Variable for dropdown list:",
                 choices = c(
                   "Opioid",
-                  "Age group",
-                  "Intent"
+                  "Age"
                 ),inline = T,
                 selected = c("Opioid")
               ),
-              uiOutput("OpioidControl")
+              uiOutput("OAControl")
 
 #OLD CODE BELOW
 #               selectInput("drugOA", "Opioid:",
@@ -329,15 +328,14 @@ bootstrapPage('',
       tabPanel(
         value = "PlotOB",
         # Opioids by intent, opioid and sex -----------------------------------------
-        "By intent, opioid and sex",
+        "By opioid, intent and sex",
         h1("Opioid induced deaths"),
-        h3("By intent, opioid and sex"),
+        h3("By opioid, intent and sex"),
 
         tabsetPanel(
           type = "tabs",
           tabPanel(
             "Plot",
-
 
             mainPanel(
               withLoader(plotlyOutput("opioidPlotB", width = "100%", height = "600px"), type = "html", loader = "loader4"),
@@ -363,106 +361,121 @@ bootstrapPage('',
               ),
 
               selectInput(
-                "ageOB", "Age range:",
+                "ageOB", "Age group:",
                 c("All ages", "15 to 64" = "15-64")
               ),
-
-              selectInput(
-                "codOB", "Intent:",
-                c("All", "Accidental", "Intentional", "Undetermined")
+              #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
+              radioButtons("DropOB", "Variable for dropdown list:",
+                           choices = c(
+                             "Opioid",
+                             "Intent",
+                             "Sex"
+                           ),inline = T,
+                           selected = c("Opioid")
               ),
+              uiOutput("OBControl")
 
-              checkboxGroupInput("drugOB", "Opioid:",
-                choices = c(
-                  "All opioids",
-                  "Heroin",
-                  "Methadone",
-                  "Opium",
-                  "Natural and semi-synthetic opioids",
-                  "Synthetic opioids",
-                  "Other and unspecified opioids"
-                ),
-                selected = c("All opioids")
-              ),
-
-              checkboxGroupInput("sexOB", "Sex:",
-                choices = c("Male", "Female", "All"),
-                selected = c("Male", "Female", "All")
-              )
+              # selectInput(
+              #   "ageOB", "Age range:",
+              #   c("All ages", "15 to 64" = "15-64")
+              # ),
+              # 
+              # selectInput(
+              #   "codOB", "Intent:",
+              #   c("All", "Accidental", "Intentional", "Undetermined")
+              # ),
+              # 
+              # checkboxGroupInput("drugOB", "Opioid:",
+              #   choices = c(
+              #     "All opioids",
+              #     "Heroin",
+              #     "Methadone",
+              #     "Opium",
+              #     "Natural and semi-synthetic opioids",
+              #     "Synthetic opioids",
+              #     "Other and unspecified opioids"
+              #   ),
+              #   selected = c("All opioids")
+              # ),
+              # 
+              # checkboxGroupInput("sexOB", "Sex:",
+              #   choices = c("Male", "Female", "All"),
+              #   selected = c("Male", "Female", "All")
+              # )
             )
           ),
           tabPanel("Notes", includeMarkdown("notesOpioids.md"))
         )
       ),
 
-      tabPanel(
-        value = "PlotOC",
-        # Opioids by sex, intent and opioid -----------------------------------------
-        "By sex, intent and opioid",
-        h1("Opioid induced deaths"),
-        h3("By sex, intent and opioid"),
-
-        tabsetPanel(
-          type = "tabs",
-          tabPanel(
-            "Plot",
-
-            mainPanel(
-              withLoader(plotlyOutput("opioidPlotC", width = "100%", height = "600px"), type = "html", loader = "loader4"),
-              fluidRow(includeMarkdown("notesOpioidsPlot.md"))
-            ),
-
-            sidebarPanel(
-              sliderInput("yearsOC", "Period",
-                min = 1997,
-                max = 2018, value = c(2007, 2018), sep = ""
-              ),
-              selectInput(
-                "plotOC", "Plot:",
-                c(
-                  "Number of deaths" = "deaths",
-                  "Deaths per 100,000 people" = "deathrateht",
-                  "Deaths per 100,000 people (95% CI)" = "deathratehtci",
-                  "Deaths per 1,000,000 people" = "deathratem",
-                  "Deaths per 1,000,000 people (95% CI)" = "deathratemci"
-                ),
-                selected = "deathrateht"
-              ),
-
-              selectInput(
-                "ageOC", "Age range:",
-                c("All ages", "15 to 64" = "15-64")
-              ),
-
-              selectInput("sexOC", "Sex:",
-                choices = c("Male", "Female", "All"),
-                selected = c("All")
-              ),
-
-
-              checkboxGroupInput("drugOC", "Opioid:",
-                choices = c(
-                  "All opioids",
-                  "Heroin",
-                  "Methadone",
-                  "Opium",
-                  "Natural and semi-synthetic opioids",
-                  "Synthetic opioids",
-                  "Other and unspecified opioids"
-                ),
-                selected = c("All opioids")
-              ),
-
-              checkboxGroupInput(
-                "codOC", "Intent:",
-                c("All", "Accidental", "Intentional", "Undetermined"),
-                selected = c("All")
-              )
-            )
-          ),
-          tabPanel("Notes", includeMarkdown("notesOpioids.md"))
-        )
-      ),
+      # tabPanel(
+      #   value = "PlotOC",
+      #   # Opioids by sex, intent and opioid -----------------------------------------
+      #   "By sex, intent and opioid",
+      #   h1("Opioid induced deaths"),
+      #   h3("By sex, intent and opioid"),
+      # 
+      #   tabsetPanel(
+      #     type = "tabs",
+      #     tabPanel(
+      #       "Plot",
+      # 
+      #       mainPanel(
+      #         withLoader(plotlyOutput("opioidPlotC", width = "100%", height = "600px"), type = "html", loader = "loader4"),
+      #         fluidRow(includeMarkdown("notesOpioidsPlot.md"))
+      #       ),
+      # 
+      #       sidebarPanel(
+      #         sliderInput("yearsOC", "Period",
+      #           min = 1997,
+      #           max = 2018, value = c(2007, 2018), sep = ""
+      #         ),
+      #         selectInput(
+      #           "plotOC", "Plot:",
+      #           c(
+      #             "Number of deaths" = "deaths",
+      #             "Deaths per 100,000 people" = "deathrateht",
+      #             "Deaths per 100,000 people (95% CI)" = "deathratehtci",
+      #             "Deaths per 1,000,000 people" = "deathratem",
+      #             "Deaths per 1,000,000 people (95% CI)" = "deathratemci"
+      #           ),
+      #           selected = "deathrateht"
+      #         ),
+      # 
+      #         selectInput(
+      #           "ageOC", "Age range:",
+      #           c("All ages", "15 to 64" = "15-64")
+      #         ),
+      # 
+      #         selectInput("sexOC", "Sex:",
+      #           choices = c("Male", "Female", "All"),
+      #           selected = c("All")
+      #         ),
+      # 
+      # 
+      #         checkboxGroupInput("drugOC", "Opioid:",
+      #           choices = c(
+      #             "All opioids",
+      #             "Heroin",
+      #             "Methadone",
+      #             "Opium",
+      #             "Natural and semi-synthetic opioids",
+      #             "Synthetic opioids",
+      #             "Other and unspecified opioids"
+      #           ),
+      #           selected = c("All opioids")
+      #         ),
+      # 
+      #         checkboxGroupInput(
+      #           "codOC", "Intent:",
+      #           c("All", "Accidental", "Intentional", "Undetermined"),
+      #           selected = c("All")
+      #         )
+      #       )
+      #     ),
+      #     tabPanel("Notes", includeMarkdown("notesOpioids.md"))
+      #   )
+      # ),
 
 
       tabPanel(
@@ -622,7 +635,6 @@ bootstrapPage('',
         h1("Opioid induced deaths"),
         h3("Opioids with other drugs"),
 
-        # Opioids and other drugs by sex ------------------------------------------
         tabPanel(
           "Opioids and other drugs by sex",
           tabsetPanel(
