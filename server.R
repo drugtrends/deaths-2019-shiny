@@ -1575,10 +1575,15 @@ server <- function(input, output, session) {
           xref = "paper", yref = "paper", 
           xanchor = "left", yanchor = "bottom"
         ))  %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 100, l = 100)) %>% 
+      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 100, l = 100),
+             font= (family=list("PT Sans Narrow", "arial", "verdana", "Open Sans", "sans-serif")) #
+) %>% 
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                         "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
-                                                        "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))  })
+                                                        "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"),
+             #doesn't work (https://plot.ly/r/reference/#layout-margin)
+             toImageButtonOptions = (margin = list(r = 200, autoexpand=T))             )
+    })
   ##WIP: html download - only static if html only
   #output$AllDrugHtml <- downloadHandler(
   #   # For PDF output, change this to "report.pdf"
