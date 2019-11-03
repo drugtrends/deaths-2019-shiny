@@ -11,7 +11,7 @@ Causes of death data for 2017 and 2018 are preliminary and subject to a further 
 
 Data is not available for all intent types for some opioids in the 10-year age group categories (i.e. 15-24, 25-34, etc).
 
-Data for intents only available for the following opioids due to small numbers:
-*All intent* and *Accidental intent* for *Other and unspecified opioids*.
-*All intent* for *Opium*.
+Data for intents not available for the following opioids due to small numbers:
+*Intentional intent* and *Undetermined intent* for *Other and unspecified opioids*.
+*Accidental intent*, *Intentional intent* and *Undetermined intent* for *Opium*.
 </small>

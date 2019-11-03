@@ -5,9 +5,9 @@ account: drugtrends
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1367270
-bundleId: 2534832
+bundleId: 2546595
 url: https://drugtrends.shinyapps.io/asdlknoedgr/
-when: 1571988781.62373
+when: 1572331245.00215
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: Deaths_Pop_CI_2019-07-09.csv|server_2.R|ui_2.R
+ignoredFiles: Deaths_Pop_CI_2019-07-09.csv

@@ -5,5 +5,5 @@ Causes of death data for 2017 and 2018 are preliminary and subject to a further 
 
 Deaths directly related to tobacco (ICD-10 – F17) or alcohol (ICD-10 – F10) have been excluded from the analysis.
 
-Data for intents *Intentional* and *Undetermined* are only available for ages *15 to 64* and *All ages* due to small numbers.
+Data for intents *Intentional* and *Undetermined* are only available for ages *15 to 64* and *All ages* within each state/territory due to small numbers.
 </small>

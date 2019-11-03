@@ -19,86 +19,86 @@ bootstrapPage('',
   #   , column(width = 4, img(src="DrugTrends-Logo-stacked.png", style="height: 25px")),
 
     theme = shinytheme("yeti"),
-#    title=div(img(src="DrugTrends-Logo-stacked.png", style="height: 25px"), "Deaths induced by:"),
+#   title=div(img(src="DrugTrends-Logo-stacked.png", style="height: 25px"), "Deaths induced by:"),
   title= "Deaths induced by:",
   id = "Plot",
     # All drugs tab ---------------------------------------------------------------
     navbarMenu(
       "All drugs",
       
-      # All drugs by age and sex ------------------------------------------------
-      tabPanel("Drug Induced Deaths by age and sex",
-               value = "PlotAll",
-               h1("Drug Induced Deaths by age and sex"),
-
-               tabsetPanel(
-                 type = "tabs",
-                 tabPanel(
-                   "Plot",
-                   mainPanel(
-                     withLoader(plotlyOutput("allPlot", width = "100%", height = "600px"), type = "html", loader = "loader4"),
-                     fluidRow(includeMarkdown("notesAllDrugsPlotPage.md"))
-                   ),
-                   
-                   sidebarPanel(
-                     sliderInput("yearsAll", "Period",
-                                 min = 1997,
-                                 max = 2018, value = c(2007, 2018), sep = ""
-                     ),
-                     selectInput(
-                       "plotAll", "Plot:",
-                       c(
-                         "Number of deaths" = "deaths",
-                         "Deaths per 100,000 people" = "deathrateht",
-                         "Deaths per 100,000 people (95% CI)" = "deathratehtci",
-                         "Deaths per 1,000,000 people" = "deathratem",
-                         "Deaths per 1,000,000 people (95% CI)" = "deathratemci"
-                       ),
-                       selected = "deathrateht"
-                     ),
-                     
-                     checkboxGroupInput(
-                       "sexAll", "Sex:",
-                       c("All", "Female", "Male"),
-                       selected = c("Male", "Female", "All")
-                     ),
-                     
-                     checkboxGroupInput("ageAll", "Age group:",
-                                        choices = c(
-                                          "15 to 24" = "15-24",
-                                          "25 to 34" = "25-34",
-                                          "35 to 44" = "35-44",
-                                          "45 to 54" = "45-54",
-                                          "55 to 64" = "55-64",
-                                          "65 to 74" = "65-74",
-                                          "75 to 84" = "75-84",
-#                                          "15 to 54" = "15-54",
-                                          "15 to 64" = "15-64",
-                                          "All ages" = "All ages"
-                                        ),
-                                        selected = c("15-64")
-                     )
-                  # downloadButton("AllDrugHtml", "Generate report") #WIP: html download - only static if html only
-                   )),
-                 
-                 tabPanel("Notes", includeMarkdown("notesAllDrugs.md")))
-      ),
-      
+    # All drugs by age and sex (Not needed - basic plot of the next)------------------------------------------------
+#       tabPanel("Drug Induced Deaths by age and sex",
+#                value = "PlotAll",
+#                h1("Drug Induced Deaths by age and sex"),
+# 
+#                tabsetPanel(
+#                  type = "tabs",
+#                  tabPanel(
+#                    "Plot",
+#                    mainPanel(
+#                      withLoader(plotlyOutput("allPlot", width = "100%", height = "600px"), type = "html", loader = "loader4"),
+#                      fluidRow(includeMarkdown("notesAllDrugsPlotPage.md"))
+#                    ),
+#                    
+#                    sidebarPanel(
+#                      sliderInput("yearsAll", "Period",
+#                                  min = 1997,
+#                                  max = 2018, value = c(2007, 2018), sep = ""
+#                      ),
+#                      selectInput(
+#                        "plotAll", "Plot:",
+#                        c(
+#                          "Number of deaths" = "deaths",
+#                          "Deaths per 100,000 people" = "deathrateht",
+#                          "Deaths per 100,000 people (95% CI)" = "deathratehtci",
+#                          "Deaths per 1,000,000 people" = "deathratem",
+#                          "Deaths per 1,000,000 people (95% CI)" = "deathratemci"
+#                        ),
+#                        selected = "deathrateht"
+#                      ),
+#                      
+#                      checkboxGroupInput(
+#                        "sexAll", "Sex:",
+#                        c("All", "Female", "Male"),
+#                        selected = c("Male", "Female", "All")
+#                      ),
+#                      
+#                      checkboxGroupInput("ageAll", "Age group:",
+#                                         choices = c(
+#                                           "15 to 24" = "15-24",
+#                                           "25 to 34" = "25-34",
+#                                           "35 to 44" = "35-44",
+#                                           "45 to 54" = "45-54",
+#                                           "55 to 64" = "55-64",
+#                                           "65 to 74" = "65-74",
+#                                           "75 to 84" = "75-84",
+# #                                          "15 to 54" = "15-54",
+#                                           "15 to 64" = "15-64",
+#                                           "All ages" = "All ages"
+#                                         ),
+#                                         selected = c("15-64")
+#                      )
+#                   # downloadButton("AllDrugHtml", "Generate report") #WIP: html download - only static if html only
+#                    )),
+#                  
+#                  tabPanel("Notes", includeMarkdown("notesAllDrugs.md")))
+#       ),
+#       
       # All drugs by jurisdiction, intent, age and sex ------------------------------------------------
       tabPanel("Drug Induced Deaths by jurisdiction, intent, age and sex",
-               value = "PlotAllB",
-               h1("Drug Induced Deaths by jurisdiction, intent, age and sex"),
-               
-               tabsetPanel(
-                 type = "tabs",
-                 tabPanel(
-                   "Plot",
-                   mainPanel(
-                     withLoader(plotlyOutput("allPlotB", width = "100%", height = "600px"), type = "html", loader = "loader4"),
-                     fluidRow(includeMarkdown("notesAllDrugsIntentPlot.md"))
-                   ),
-                   
-                   sidebarPanel(
+           value = "PlotAllB",
+           h1("Drug Induced Deaths by jurisdiction, intent, age and sex"),
+           
+           tabsetPanel(
+               type = "tabs",
+               tabPanel(
+                 "Plot",
+                 mainPanel(
+                   withLoader(plotlyOutput("allPlotB", width = "100%", height = "600px"), type = "html", loader = "loader4"),
+                   fluidRow(includeMarkdown("notesAllDrugsIntentPlot.md"))
+                 ),
+                 
+                 sidebarPanel(
                      sliderInput("yearsAllB", "Period",
                                  min = 1997,
                                  max = 2018, value = c(2007, 2018), sep = ""
@@ -118,7 +118,7 @@ bootstrapPage('',
                      selectInput(
                        "stateAllB", "Jurisdiction:",
                        c(
-                         "Australia",
+                         "Australia"="AUS",
                          "New South Wales",
                          "Victoria",
                          "Queensland",
@@ -130,13 +130,52 @@ bootstrapPage('',
                        )
                      ),
                      
-                     selectInput(
-                       "codAllB", "Intent:",
-                       c("All", "Accidental", "Intentional", "Undetermined")
+                     #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
+                     radioButtons("DropAllB", "Variable for dropdown list:",
+                                  choices = c(
+                                    "Intent",
+                                    "Sex"
+                                  ),inline = T,
+                                  selected = c("Intent")
                      ),
+
+#                     uiOutput("AllBControl"),
+    #From: https://shiny.rstudio.com/reference/shiny/1.0.4/conditionalPanel.html can't get dropdown to update dataset
+             conditionalPanel(
+                condition = "input.DropAllB == 'Intent'",
+                  selectInput("codAllI", label = NULL,
+                          choices = c("All", "Accidental", "Intentional", "Undetermined","Other")
+                  ),
+                  checkboxGroupInput("sexAllBI", label = "Sex:",
+                          choices = c("All", "Female", "Male"),
+                          selected = c("All")
+                  )
+             ),
+
+             conditionalPanel(
+               condition = "input.DropAllB == 'Sex'",
+               selectInput("sexAllBS", label = NULL,
+                                choices = c("All", "Female", "Male"),
+                                selected = c("All") ) ,
+               checkboxGroupInput(
+                 "codAllS", label = "Intent:",
+                 c("All", "Accidental", "Intentional", "Undetermined","Other"),
+                 selected = c("All") )
+              ),
+
+
+         # selectInput(
+         #   "codAllB", "Intent:",
+         #   c("All", "Accidental", "Intentional", "Undetermined")
+         # ),
+         # 
+         # checkboxGroupInput("sexAllB", "Sex:",
+         #                    choices = c("Male", "Female", "All"),
+         #                    selected = c("Male", "Female", "All")
+         # ),
                      
                      checkboxGroupInput(
-                       "ageAllB", "Age range:",
+                       "ageAllB", "Age:",
                        c(
                          "15 to 24" = "15-24",
                          "25 to 34" = "25-34",
@@ -145,14 +184,9 @@ bootstrapPage('',
                          "55 to 64" = "55-64",
                          "65 to 74" = "65-74",
                          "75 to 84" = "75-84",
-                         "15 to 64" = "15-64",
-                         "All ages"),
+                         "All ages",
+                         "15 to 64" = "15-64"),
                        selected = "15-64"
-                     ),
-                     
-                     checkboxGroupInput("sexAllB", "Sex:",
-                                        choices = c("Male", "Female", "All"),
-                                        selected = c("Male", "Female", "All")
                      )
                    )
                  ),
@@ -160,10 +194,10 @@ bootstrapPage('',
                )),
       
       # All drugs by drug type  ------------------------------------------------
-      tabPanel("Drug Induced Deaths by drug type",
+      tabPanel("Drug Induced Deaths by drug type, age and intent",
                value = "PlotDT",
                "",
-               h1("Drug induced deaths by drug type"),
+               h1("Drug induced deaths by drug type, age and intent"),
                
                tabsetPanel(
                  type = "tabs",
@@ -191,46 +225,159 @@ bootstrapPage('',
                        selected = "deathrateht"
                      ),
                      
-                     selectInput("ageDT", "Age group:",
-                                 choices = c(
-                                   "15 to 24" = "15-24",
-                                   "25 to 34" = "25-34",
-                                   "35 to 44" = "35-44",
-                                   "45 to 54" = "45-54",
-                                   "55 to 64" = "55-64",
-                                   "65 to 74" = "65-74",
-                                   "75 to 84" = "75-84",
-                                   "All ages" = "All ages",
-                                   "15 to 64" = "15-64"
-                                 )
+                     #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
+                     radioButtons("DropDT", "Variable for dropdown list:",
+                                  choices = c(
+                                    "Age and Intent"="Age_Intent",
+                                    "Drug type"="Drug"
+                                  ),inline = T,
+                                  selected = c("Age_Intent")
                      ),
+                     uiOutput("DTControl")
+                     # conditionalPanel(
+                     #    condition = "input.DropDT == 'Age_Intent'",
+                     #    uiOutput("DTAge_Intent")
+                     # ),
+                     # conditionalPanel(
+                     #   condition = "input.DropDT == 'Drug'",
+                     #   uiOutput("DTDrug")
+                     # )
                      
-                     checkboxGroupInput("drugDT", "Drug:",
-                                        choices = c(
-                                          "OPIOIDS",
-                                          "heroin",
-                                          "natural and semi-synthetic opioids",
-                                          "methadone",
-                                          "synthetic opioids",
-                                          "AMPHETAMINES",
-                                          "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
-                                          "barbiturates",
-                                          "benzodiazepines",
-                                          "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)",
-                                          "ANTIDEPRESSANTS",
-                                          "tricyclic and tetracyclic antidepressants",
-                                          "other and unspecified antidepressants",
-                                          "ANTIPSYCHOTICS & NEUROLEPTICS",
-                                          "other and unspecified antipsychotics (e.g. quetiapine)",
-                                          "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS",
-                                          "4-aminophenol derivatives (e.g. paracetamol)",
-                                          "other nonsteroidal anti-inflammatory drugs",
-                                          "Alcohol",
-                                          "CANNABIS DERIVATIVES",
-                                          "Cocaine"
-                                        ),
-                                        selected = c("AMPHETAMINES", "Cocaine", "OPIOIDS", "Alcohol")
-                     )
+#                     From: https://shiny.rstudio.com/reference/shiny/1.0.4/conditionalPanel.html can't get dropdown to update dataset
+                     # conditionalPanel(
+                     #    condition = "input.DropDT == 'Age_Intent'",
+                     #      selectInput("codDT", "Intent:",
+                     #              choices = c("All", "Accidental")
+                     #      ),
+                     #      selectInput("AgeDT", label = "Age:",
+                     #              choices = c(
+                     #                "15 to 24" = "15-24",
+                     #                "25 to 34" = "25-34",
+                     #                "35 to 44" = "35-44",
+                     #                "45 to 54" = "45-54",
+                     #                "55 to 64" = "55-64",
+                     #                "65 to 74" = "65-74",
+                     #                "75 to 84" = "75-84",
+                     #                "All ages",
+                     #                "15 to 64" = "15-64"),
+                     #              selected = "15-64"
+                     #      ),
+                     #      checkboxGroupInput("drugDT", "Drug:",
+                     #             choices = c(
+                     #                 "OPIOIDS",
+                     #                 "heroin",
+                     #                 "natural and semi-synthetic opioids",
+                     #                 "methadone",
+                     #                 "synthetic opioids",
+                     #                 "AMPHETAMINES",
+                     #                 "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
+                     #                 "barbiturates",
+                     #                 "benzodiazepines",
+                     #                 "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)",
+                     #                 "ANTIDEPRESSANTS",
+                     #                 "tricyclic and tetracyclic antidepressants",
+                     #                 "other and unspecified antidepressants",
+                     #                 "ANTIPSYCHOTICS & NEUROLEPTICS",
+                     #                 "other and unspecified antipsychotics (e.g. quetiapine)",
+                     #                 "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS",
+                     #                 "4-aminophenol derivatives (e.g. paracetamol)",
+                     #                 "other nonsteroidal anti-inflammatory drugs",
+                     #                 "Alcohol",
+                     #                 "Cocaine",
+                     #                 "CANNABIS DERIVATIVES"
+                     #             ),
+                     #             selected = c("AMPHETAMINES", "Cocaine", "OPIOIDS", "Alcohol")
+                     #    )
+                     # ),
+                     # 
+                     # conditionalPanel(
+                     #   condition = "input.DropDT == 'Drug'",
+                     #   selectInput("drugDT", label = NULL,
+                     #      choices = c(
+                     #        "OPIOIDS",
+                     #        "heroin",
+                     #        "natural and semi-synthetic opioids",
+                     #        "methadone",
+                     #        "synthetic opioids",
+                     #        "AMPHETAMINES",
+                     #        "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
+                     #        "barbiturates",
+                     #        "benzodiazepines",
+                     #        "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)",
+                     #        "ANTIDEPRESSANTS",
+                     #        "tricyclic and tetracyclic antidepressants",
+                     #        "other and unspecified antidepressants",
+                     #        "ANTIPSYCHOTICS & NEUROLEPTICS",
+                     #        "other and unspecified antipsychotics (e.g. quetiapine)",
+                     #        "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS",
+                     #        "4-aminophenol derivatives (e.g. paracetamol)",
+                     #        "other nonsteroidal anti-inflammatory drugs",
+                     #        "Alcohol",
+                     #        "Cocaine",
+                     #        "CANNABIS DERIVATIVES"
+                     #        ),
+                     #       selected = c("Alcohol") ),
+                     # 
+                     #   checkboxGroupInput(
+                     #     "codDT", label = "Intent:",
+                     #     c("All", "Accidental"),
+                     #     selected = c("All") ),
+                     #   checkboxGroupInput("ageDT", "Age group:",
+                     #        choices = c(
+                     #          "15 to 24" = "15-24",
+                     #          "25 to 34" = "25-34",
+                     #          "35 to 44" = "35-44",
+                     #          "45 to 54" = "45-54",
+                     #          "55 to 64" = "55-64",
+                     #          "65 to 74" = "65-74",
+                     #          "75 to 84" = "75-84",
+                     #          "All ages",
+                     #          "15 to 64" = "15-64"
+                     #        ),
+                     #        selected = "15-64"   )
+                     # )
+
+                     # selectInput("ageDT", "Age group:",
+                     #             choices = c(
+                     #               "15 to 24" = "15-24",
+                     #               "25 to 34" = "25-34",
+                     #               "35 to 44" = "35-44",
+                     #               "45 to 54" = "45-54",
+                     #               "55 to 64" = "55-64",
+                     #               "65 to 74" = "65-74",
+                     #               "75 to 84" = "75-84",
+                     #               "All ages",
+                     #               "15 to 64" = "15-64"
+                     #             ),
+                     #             selected = "15-64"
+                     # ),
+                     # 
+                     # checkboxGroupInput("drugDT", "Drug:",
+                     #                    choices = c(
+                     #                      "OPIOIDS",
+                     #                      "heroin",
+                     #                      "natural and semi-synthetic opioids",
+                     #                      "methadone",
+                     #                      "synthetic opioids",
+                     #                      "AMPHETAMINES",
+                     #                      "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
+                     #                      "barbiturates",
+                     #                      "benzodiazepines",
+                     #                      "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)",
+                     #                      "ANTIDEPRESSANTS",
+                     #                      "tricyclic and tetracyclic antidepressants",
+                     #                      "other and unspecified antidepressants",
+                     #                      "ANTIPSYCHOTICS & NEUROLEPTICS",
+                     #                      "other and unspecified antipsychotics (e.g. quetiapine)",
+                     #                      "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS",
+                     #                      "4-aminophenol derivatives (e.g. paracetamol)",
+                     #                      "other nonsteroidal anti-inflammatory drugs",
+                     #                      "Alcohol",
+                     #                      "CANNABIS DERIVATIVES",
+                     #                      "Cocaine"
+                     #                    ),
+                     #                    selected = c("AMPHETAMINES", "Cocaine", "OPIOIDS", "Alcohol")
+                     # )
                    )
                  ),
                  tabPanel("Notes", includeMarkdown("notesAllDrugsByDrugType.md")))
@@ -339,7 +486,7 @@ bootstrapPage('',
 
             mainPanel(
               withLoader(plotlyOutput("opioidPlotB", width = "100%", height = "600px"), type = "html", loader = "loader4"),
-              fluidRow(includeMarkdown("notesOpioidsPlot.md"))
+              fluidRow(includeMarkdown("notesOpioidBPlot.md"))
             ),
 
 
@@ -493,7 +640,7 @@ bootstrapPage('',
             "Plot",
             mainPanel(
               withLoader(plotlyOutput("opioidPlotD", width = "100%", height = "600px"), type = "html", loader = "loader4"),
-              fluidRow(includeMarkdown("notesOpioidsPlotReduced.md"))
+              fluidRow(includeMarkdown("notesOpioidDPlot.md"))
             ),
 
             sidebarPanel(
@@ -514,7 +661,7 @@ bootstrapPage('',
               ),
 
               selectInput(
-                "ageOD", "Age range:",
+                "ageOD", "Age group:",
                 c("All ages", "15 to 64" = "15-64")
               ),
 
@@ -550,8 +697,8 @@ bootstrapPage('',
       ),
       tabPanel(
         value = "PlotOE",
-        # Opioids with other drugs by age -----------------------------------------
-        "Opioids with other drugs, by age",
+        # Opioids with other drugs by age and sex-----------------------------------------
+        "Opioids with other drugs, by age group and sex",
         h1("Opioid induced deaths"),
         h3("Opioids with other drugs"),
 
@@ -599,26 +746,21 @@ bootstrapPage('',
 
               checkboxGroupInput("ageOE", "Age group:",
                 choices = c(
-                  "15 to 24" = "15-24",
-                  "25 to 34" = "25-34",
-                  "35 to 44" = "35-44",
-                  "45 to 54" = "45-54",
-                  "55 to 64" = "55-64",
-                  "65 to 74" = "65-74",
-                  "75 to 84" = "75-84",
-                  "15 to 64" = "15-64",
-                  "All ages" = "All ages"
+                  "All ages" = "All ages",
+                  "15 to 64" = "15-64"
                 ),
-                selected = c("All ages")
+                selected = c("15-64")
               ),
 
               checkboxGroupInput("drugOE", "All opioids with:",
                 choices = c(
                   "Alcohol" = "All opioids with alcohol",
+                  "Amphetamines" = "All opioids with amphetamines",
                   "Antidepressants" = "All opioids with antidepressants",
                   "Antipsychotics" = "All opioids with antipsychotics",
                   "Benzodiazepines" = "All opioids with benzodiazepines",
-                  "Paracetamol" = "All opioids with paracetamol"
+                  "Paracetamol" = "All opioids with paracetamol",
+                  "Pregabalin" = "All opioids with pregabalin"
                 ),
                 selected = c("All opioids with alcohol")
               )
@@ -669,11 +811,11 @@ bootstrapPage('',
                 ),
 
                 selectInput(
-                  "ageOF", "Age:",
+                  "ageOF", "Age group:",
                   c("15-64",
                     "All ages" = "All ages"
                   ),
-                  selected = "All ages"
+                  selected = "15-64"
                 ),
 
                 checkboxGroupInput("sexOF", "Sex:",
@@ -687,11 +829,12 @@ bootstrapPage('',
                 checkboxGroupInput("drugOF", "All opioids with:",
                   choices = c(
                     "Alcohol" = "All opioids with alcohol",
+                    "Amphetamines" = "All opioids with amphetamines",
                     "Antidepressants" = "All opioids with antidepressants",
                     "Antipsychotics" = "All opioids with antipsychotics",
                     "Benzodiazepines" = "All opioids with benzodiazepines",
-                    "Paracetamol" = "All opioids with paracetamol"
-                  ),
+                    "Paracetamol" = "All opioids with paracetamol",
+                    "Pregabalin" = "All opioids with pregabalin"),
                   selected = c("All opioids with alcohol")
                 )
               )
@@ -741,11 +884,11 @@ bootstrapPage('',
               ),
 
               selectInput(
-                "ageOG", "Age:",
-                c("15-64",
-                  "All ages" = "All ages"
+                "ageOG", "Age group:",
+                c("15 to 64"="15-64",
+                  "All ages"
                 ),
-                selected = "All ages"
+                selected = "15-64"
               ),
 
               checkboxGroupInput("sexOG", "Sex:",
@@ -803,11 +946,11 @@ bootstrapPage('',
               ),
 
               radioButtons(
-                "ageOH", "Age:",
-                c("15-64",
-                  "All ages" = "All ages"
+                "ageOH", "Age group:",
+                c("15 to 64"="15-64",
+                  "All ages"
                 ),
-                selected = "All ages"
+                selected = "15-64"
               ),
 
               radioButtons("sexOH", "Sex:",
@@ -864,7 +1007,7 @@ bootstrapPage('',
               selected = "All"
             ),
 
-            checkboxGroupInput("ageA", "Age group:",
+            checkboxGroupInput("ageA", "Age:",
               choices = c(
                 "15 to 24" = "15-24",
                 "25 to 34" = "25-34",
@@ -874,10 +1017,10 @@ bootstrapPage('',
                 "65 to 74" = "65-74",
                 "75 to 84" = "75-84",
 #                "15 to 54" = "15-54",
-                "15 to 64" = "15-64",
-                "All ages" = "All ages"
+                "All ages" = "All ages",
+                "15 to 64" = "15-64"
               ),
-              selected = c("All ages")
+              selected = c("15-64")
             )
           )
         ),
@@ -926,12 +1069,13 @@ bootstrapPage('',
               selected = "All"
             ),
 
-            selectInput("ageC", "Age group:",
+            radioButtons("ageC", "Age group:",
               choices = c(
                 "All ages" = "All ages",
 #                "15 to 54" = "15-54",
                 "15 to 64" = "15-64"
-              )
+              ),
+                selected = c("15-64")
             )
           )
         ),

@@ -9,7 +9,7 @@ Causes of death data for 2017 and 2018 are preliminary and subject to a further 
 
 *Other and unspecified opioids* comprise opioid-induced deaths that are not attributed to specific opioids (ICD-10 Code T40.6).   
 
-Data for intents only available for the following opioids due to small numbers:
-*All intent* and *Accidental intent* for *Other and unspecified opioids*.
-*All intent* for *Opium*.
+Data for intents not available for the following opioids due to small numbers:
+*Intentional intent* and *Undetermined intent* for *Other and unspecified opioids*.
+*Accidental intent*, *Intentional intent* and *Undetermined intent* for *Opium*.
 </small>
