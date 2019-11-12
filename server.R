@@ -4,9 +4,7 @@
 #For renderUI !!!!Warning: Length of logical index must be 1 or ..., not 0!!!!
 #Still runs with the error
 #- drug type: table 23, 24 & 25 - still needs updating
-#- shorten series label for "All opioids with..."?
-#- title graph with the selected group(s) (e.g. from dropdown list)
-#so data in title don't need to be labelled)
+#- title graph with the selected group(s)??? (e.g. from dropdown list)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 library(shiny)
 library(shinythemes)
@@ -18,14 +16,7 @@ library(shinycustomloader)
 
 #reading RDS file format is apparently more efficient
 #https://appsilon.com/fast-data-loading-from-files-to-r/
-#drug type data now loaded only when needed
-#load other data only when needed as later app development
 df <- readRDS("ABS_COD2018_All.rds")
-
-#needs to be sorted [order(...)]
-#weird proportions plot from 2015 onwards because of duplicates by AUS
-#- need to filter out by table!="10" & table!="18"
-df_EOp <- readRDS("ABS_COD2018_EOp.rds")
 df_Stim <- readRDS("ABS_COD2018_Stim.rds")
 
 agecols <- c(
@@ -42,7 +33,6 @@ agecols <- c(
 )
 
 agetype <- c(
-#  "15-54" = 2,
   "15-64" = 1,
   "All ages" = 2
 )
@@ -55,8 +45,8 @@ agesexcols <- c(
 "55-64,All" = "#6b8bcd",
 "65-74,All" = "#8d62ca",
 "75-84,All" = "#c75fa1",
-"15-64,All" = "#fc8d59",
 "All ages,All" = "#e34a33",
+"15-64,All" = "#fc8d59",
 
 "15-24,Male" = "#c09840",
 "25-34,Male" = "#657d39",
@@ -65,8 +55,8 @@ agesexcols <- c(
 "55-64,Male" = "#6b8bcd",
 "65-74,Male" = "#8d62ca",
 "75-84,Male" = "#c75fa1",
-"15-64,Male" = "#fc8d59",
 "All ages,Male" = "#e34a33",
+"15-64,Male" = "#fc8d59",
 
 "15-24,Female" = "#c09840",
 "25-34,Female" = "#657d39",
@@ -75,8 +65,8 @@ agesexcols <- c(
 "55-64,Female" = "#6b8bcd",
 "65-74,Female" = "#8d62ca",
 "75-84,Female" = "#c75fa1",
-"15-64,Female" = "#fc8d59",
-"All ages,Female" = "#e34a33"
+"All ages,Female" = "#e34a33",
+"15-64,Female" = "#fc8d59"
 )
 
 agesextype <- c(
@@ -87,8 +77,8 @@ agesextype <- c(
   "55-64,All" = 1,
   "65-74,All" = 1,
   "75-84,All" = 1,
-  "15-64,All" = 1,
   "All ages,All" = 1,
+  "15-64,All" = 1,
 
   "15-24,Male" = 2,
   "25-34,Male" = 2,
@@ -97,8 +87,8 @@ agesextype <- c(
   "55-64,Male" = 2,
   "65-74,Male" = 2,
   "75-84,Male" = 2,
-  "15-64,Male" = 2,
   "All ages,Male" = 2,
+  "15-64,Male" = 2,
   
   "15-24,Female" = 3,
   "25-34,Female" = 3,
@@ -107,8 +97,8 @@ agesextype <- c(
   "55-64,Female" = 3,
   "65-74,Female" = 3,
   "75-84,Female" = 3,
-  "15-64,Female" = 3,
-  "All ages,Female" = 3
+  "All ages,Female" = 3,
+  "15-64,Female" = 3
 )
 
 agecodtype <- c(
@@ -119,8 +109,8 @@ agecodtype <- c(
   "55-64,All" = 1,
   "65-74,All" = 1,
   "75-84,All" = 1,
-  "15-64,All" = 1,
   "All ages,All" = 1,
+  "15-64,All" = 1,
 
   "15-24,Accidental" = 2,
   "25-34,Accidental" = 2,
@@ -129,8 +119,8 @@ agecodtype <- c(
   "55-64,Accidental" = 2,
   "65-74,Accidental" = 2,
   "75-84,Accidental" = 2,
-  "15-64,Accidental" = 2,
   "All ages,Accidental" = 2,
+  "15-64,Accidental" = 2,
 
   "15-24,Intentional" = 3,
   "25-34,Intentional" = 3,
@@ -139,8 +129,8 @@ agecodtype <- c(
   "55-64,Intentional" = 3,
   "65-74,Intentional" = 3,
   "75-84,Intentional" = 3,
-  "15-64,Intentional" = 3,
   "All ages,Intentional" = 3,
+  "15-64,Intentional" = 3,
 
   "15-24,Undetermined" = 4,
   "25-34,Undetermined" = 4,
@@ -149,8 +139,8 @@ agecodtype <- c(
   "55-64,Undetermined" = 4,
   "65-74,Undetermined" = 4,
   "75-84,Undetermined" = 4,
-  "15-64,Undetermined" = 4,
   "All ages,Undetermined" = 4,
+  "15-64,Undetermined" = 4,
   
   "15-24,Other" = 5,
   "25-34,Other" = 5,
@@ -159,8 +149,8 @@ agecodtype <- c(
   "55-64,Other" = 5,
   "65-74,Other" = 5,
   "75-84,Other" = 5,
-  "15-64,Other" = 5,
-  "All ages,Other" = 5
+  "All ages,Other" = 5,
+  "15-64,Other" = 5
 )
 
 agecodcols <- c(
@@ -171,8 +161,8 @@ agecodcols <- c(
   "55-64,All" = "#6b8bcd",
   "65-74,All" = "#8d62ca",
   "75-84,All" = "#c75fa1",
-  "15-64,All" = "#fc8d59",
   "All ages,All" = "#e34a33",
+  "15-64,All" = "#fc8d59",
   
   "15-24,Accidental" = "#c09840",
   "25-34,Accidental" = "#657d39",
@@ -181,8 +171,8 @@ agecodcols <- c(
   "55-64,Accidental" = "#6b8bcd",
   "65-74,Accidental" = "#8d62ca",
   "75-84,Accidental" = "#c75fa1",
-  "15-64,Accidental" = "#fc8d59",
   "All ages,Accidental" = "#e34a33",
+  "15-64,Accidental" = "#fc8d59",
   
   "15-24,Intentional" = "#c09840",
   "25-34,Intentional" = "#657d39",
@@ -191,8 +181,8 @@ agecodcols <- c(
   "55-64,Intentional" = "#6b8bcd",
   "65-74,Intentional" = "#8d62ca",
   "75-84,Intentional" = "#c75fa1",
-  "15-64,Intentional" = "#fc8d59",
   "All ages,Intentional" = "#e34a33",
+  "15-64,Intentional" = "#fc8d59",
   
   "15-24,Undetermined" = "#c09840",
   "25-34,Undetermined" = "#657d39",
@@ -201,8 +191,8 @@ agecodcols <- c(
   "55-64,Undetermined" = "#6b8bcd",
   "65-74,Undetermined" = "#8d62ca",
   "75-84,Undetermined" = "#c75fa1",
-  "15-64,Undetermined" = "#fc8d59",
   "All ages,Undetermined" = "#e34a33",
+  "15-64,Undetermined" = "#fc8d59",
   
   "15-24,Other" = "#c09840",
   "25-34,Other" = "#657d39",
@@ -211,8 +201,8 @@ agecodcols <- c(
   "55-64,Other" = "#6b8bcd",
   "65-74,Other" = "#8d62ca",
   "75-84,Other" = "#c75fa1",
-  "15-64,Other" = "#fc8d59",
-  "All ages,Other" = "#e34a33"
+  "All ages,Other" = "#e34a33",
+  "15-64,Other" = "#fc8d59"
 )
 
 codtype <- c(
@@ -231,8 +221,7 @@ drugcols <- c("All opioids" = "#000000",
               "Natural and semi-synthetic opioids" = "#332288",
               "Other and unspecified opioids" = "#CC6677",
               "Cocaine" = "#DDCC77",
-              "Amphetamines" = "#AA4499",
-              
+
               "Alcohol"="#88CCEE",
               "Amphetamines"="#AA4499",
               "Antidepressants"="#117733",
@@ -241,13 +230,17 @@ drugcols <- c("All opioids" = "#000000",
               "Paracetamol"="#CC6677",
               "Pregabalin"="#DDCC77",
 
-              "All opioids with alcohol"="#88CCEE",
-              "All opioids with amphetamines"="#AA4499",
-              "All opioids with antidepressants"="#117733",
-              "All opioids with antipsychotics"="#999933",
-              "All opioids with benzodiazepines"="#332288",
-              "All opioids with paracetamol"="#CC6677",
-              "All opioids with pregabalin"="#DDCC77" )
+              "Exclusive illicit opioids"="#88CCEE",
+              "Exclusive pharmaceutical opioids"="#117733",
+              "Illicit and pharmaceutical opioids"="#332288",
+              "Other and unspecified opioids"="#DDCC77")
+              # "All opioids with alcohol"="#88CCEE",
+              # "All opioids with amphetamines"="#AA4499",
+              # "All opioids with antidepressants"="#117733",
+              # "All opioids with antipsychotics"="#999933",
+              # "All opioids with benzodiazepines"="#332288",
+              # "All opioids with paracetamol"="#CC6677",
+              # "All opioids with pregabalin"="#DDCC77" )
 
 drugltype <- c(
   "Exclusive illicit opioids"=1,
@@ -334,7 +327,7 @@ alldrugcols <- c(
 )
 
 Alldrugcols <- c(
-  "Alcohol"="#469990",
+  "ALCOHOL"="#469990",
   "OPIOIDS"="#000000",
   "heroin"="#000000",
   "natural and semi-synthetic opioids"="#000000",
@@ -347,18 +340,18 @@ Alldrugcols <- c(
   "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS"="#117733",
   "barbiturates"="#117733",
   "benzodiazepines"="#117733",
-  "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)"="#117733",
+  "antiepileptic and sedative-hypnotic drugs, unspecified"="#117733",
   "ANTIPSYCHOTICS & NEUROLEPTICS"="#88CCEE",
-  "other and unspecified antipsychotics (e.g. quetiapine)"="#88CCEE",
-  "Cocaine"="#DDCC77",
+  "other and unspecified antipsychotics"="#88CCEE",
+  "COCAINE"="#DDCC77",
   "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS"="#332288",
-  "4-aminophenol derivatives (e.g. paracetamol)"="#332288",
+  "4-aminophenol derivatives"="#332288",
   "other nonsteroidal anti-inflammatory drugs"="#332288",
   "AMPHETAMINES"="#AA4499"
 )
 
 Alldrugtype <- c(
-  "Alcohol"=1,
+  "ALCOHOL"=1,
   "OPIOIDS"=1,
   "heroin"=2,
   "natural and semi-synthetic opioids"=3,
@@ -371,12 +364,12 @@ Alldrugtype <- c(
   "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS"=1,
   "barbiturates"=2,
   "benzodiazepines"=3,
-  "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)"=4,
+  "antiepileptic and sedative-hypnotic drugs, unspecified"=4,
   "ANTIPSYCHOTICS & NEUROLEPTICS"=1,
-  "other and unspecified antipsychotics (e.g. quetiapine)"=2,
-  "Cocaine"=1,
+  "other and unspecified antipsychotics"=2,
+  "COCAINE"=1,
   "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS"=1,
-  "4-aminophenol derivatives (e.g. paracetamol)"=2,
+  "4-aminophenol derivatives"=2,
   "other nonsteroidal anti-inflammatory drugs"=3,
   "AMPHETAMINES"=1
 )
@@ -392,14 +385,14 @@ server <- function(input, output, session) {
     query <- parseQueryString(session$clientData$url_search)
     query1 <- paste(names(query), query, sep = "=", collapse=", ")
     print(query1)
+    if(query1 == "tab=PlotAll"){
+      updateTabsetPanel(session, inputId = "Plot", selected = "PlotAll")
+    }
     if(query1 == "tab=PlotOA"){
       updateTabsetPanel(session, inputId = "Plot", selected = "PlotOA")
     }
     if(query1 == "tab=PlotOB"){
       updateTabsetPanel(session, inputId = "Plot", selected = "PlotOB")
-    }
-    if(query1 == "tab=PlotOC"){
-      updateTabsetPanel(session, inputId = "Plot", selected = "PlotOC")
     }
     if(query1 == "tab=PlotOD"){
       updateTabsetPanel(session, inputId = "Plot", selected = "PlotOD")
@@ -493,20 +486,21 @@ server <- function(input, output, session) {
                       "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
                       "barbiturates",
                       "benzodiazepines",
-                      "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)",
+                      "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
+                          ="antiepileptic and sedative-hypnotic drugs, unspecified",
                       "ANTIDEPRESSANTS",
                       "tricyclic and tetracyclic antidepressants",
                       "other and unspecified antidepressants",
                       "ANTIPSYCHOTICS & NEUROLEPTICS",
-                      "other and unspecified antipsychotics (e.g. quetiapine)",
+                      "other and unspecified antipsychotics (e.g. quetiapine)"="other and unspecified antipsychotics",
                       "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS",
-                      "4-aminophenol derivatives (e.g. paracetamol)",
+                      "4-aminophenol derivatives (e.g. paracetamol)"="4-aminophenol derivatives",
                       "other nonsteroidal anti-inflammatory drugs",
-                      "Alcohol",
-                      "Cocaine",
+                      "ALCOHOL",
+                      "COCAINE",
                       "CANNABIS DERIVATIVES"
                   ),
-                  selected = c("AMPHETAMINES", "Cocaine", "OPIOIDS", "Alcohol")
+                  selected = c("AMPHETAMINES", "COCAINE", "OPIOIDS", "ALCOHOL")
               )
           )
       })
@@ -606,132 +600,8 @@ server <- function(input, output, session) {
   # })
   })
 
-  observe({
-    if (input$DropOA == "Opioid")
-      x <- selectInput("drugOAO", label = NULL,
-                choices = c(
-                  "All opioids",
-                  "Heroin",
-                  "Methadone",
-                  "Opium",
-                  "Natural and semi-synthetic opioids",
-                  "Synthetic opioids",
-                  "Other and unspecified opioids"
-                ),
-                selected = c("All opioids"))
 
-    if (input$DropOA == "Age")
-      x <- selectInput("ageOAA", label = NULL,
-                  choices = c(
-                    "15 to 24" = "15-24",
-                    "25 to 34" = "25-34",
-                    "35 to 44" = "35-44",
-                    "45 to 54" = "45-54",
-                    "55 to 64" = "55-64",
-                    "65 to 74" = "65-74",
-                    "75 to 84" = "75-84",
-                    "15 to 64" = "15-64",
-                    "All ages" = "All ages"
-                  ),
-                  selected = c("15-64")
-      )
-    if (input$DropOA != "Opioid") {
-      y <- checkboxGroupInput("drugOAA", "Opioid:",
-                         choices = c(
-                           "All opioids",
-                           "Heroin",
-                           "Methadone",
-                           "Opium",
-                           "Natural and semi-synthetic opioids",
-                           "Synthetic opioids",
-                           "Other and unspecified opioids"
-                         ),
-                         selected = c("All opioids")
-      ) }
-    else {
-      if (input$DropOA != "Age" & input$DropOA != "Intent")
-      y <- checkboxGroupInput("ageOAO", "Age:",
-                         choices = c(
-                           "15 to 24" = "15-24",
-                           "25 to 34" = "25-34",
-                           "35 to 44" = "35-44",
-                           "45 to 54" = "45-54",
-                           "55 to 64" = "55-64",
-                           "65 to 74" = "65-74",
-                           "75 to 84" = "75-84",
-                           "All ages",
-                           "15 to 64" = "15-64"
-                         ),
-                         selected = c("15-64")
-      )
-    }
-    output$OAControl <- renderUI({
-      tagList(x,y)
-    })
-#    reactiveValuesToList(input) #this resets to default even as the user selects a different value!
-  })
-
-  # observe({
-  #   if (input$DropOB == "Opioid")
-  #     x <- selectInput("drugOB", label = NULL,
-  #                      choices = c(
-  #                        "All opioids",
-  #                        "Heroin",
-  #                        "Methadone",
-  #                        "Opium",
-  #                        "Natural and semi-synthetic opioids",
-  #                        "Synthetic opioids",
-  #                        "Other and unspecified opioids"
-  #                      ),
-  #                      selected = c("All opioids"))
-  #   if (input$DropOB == "Sex")
-  #     x <- selectInput("sexOB", "Sex:",
-  #         choices = c("All", "Female", "Male"),
-  #         selected = c("All"))
-  #   if (input$DropOB == "Intent")
-  #     x <- selectInput("codOB", label = NULL,
-  #       c("All", "Accidental", "Intentional", "Undetermined"),
-  #       selected = c("All") )
-  # 
-  #   if (input$DropOB != "Opioid") {
-  #     y <- checkboxGroupInput("drugOB", "Opioid:",
-  #                             choices = c(
-  #                               "All opioids",
-  #                               "Heroin",
-  #                               "Methadone",
-  #                               "Opium",
-  #                               "Natural and semi-synthetic opioids",
-  #                               "Synthetic opioids",
-  #                               "Other and unspecified opioids"
-  #                             ),
-  #                             selected = c("All opioids")
-  #     ) }
-  #   else {
-  #       y <- checkboxGroupInput(
-  #         "codOB", "Intent:",
-  #         c("All", "Accidental", "Intentional", "Undetermined"),
-  #         selected = c("All")
-  #       )
-  #   }
-  #   
-  #   if (input$DropOB == "Sex") {
-  #     z <- checkboxGroupInput(
-  #       "codOB", "Intent:",
-  #       c("All", "Accidental", "Intentional", "Undetermined"),
-  #       selected = c("All", "Accidental", "Intentional", "Undetermined")
-  #     )
-  #   }
-  #   else if (input$DropOB != "Sex") {
-  #     z <- checkboxGroupInput("sexOB", "Sex:",
-  #         choices = c("All", "Female", "Male"),
-  #         selected = c("All", "Female", "Male")
-  #     ) }
-  #   output$OBControl <- renderUI({
-  #     tagList(x,y,z)
-  #   })
-  # })
-
-  # Plot OA -----------------------------------------------------------------
+  # Plot OA (Table 4) -----------------------------------------------------------------
   output$opioidPlotA <- renderPlotly({
     df_Op <- readRDS("ABS_COD2018_Op.rds")
 #Based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html  
@@ -739,7 +609,7 @@ server <- function(input, output, session) {
       sub <- subset(df_Op, subset = (sex == "All" & location == "Aus" & nature == "Underlying" & drug == input$drugOAO &
         intent %in% input$codOA & age_group %in% input$ageOAO &
         (year >= input$yearsOA[[1]] & year <= input$yearsOA[[2]])))
-      sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
+#      sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
 
       p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
         geom_line() + labs(x = "Year", title=input$drugOAO) +
@@ -838,7 +708,7 @@ server <- function(input, output, session) {
                                                         "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                         "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
   })
-  # Plot OB -----------------------------------------------------------------
+  # Plot OB (Table 5)-----------------------------------------------------------------
   output$opioidPlotB <- renderPlotly({
     df_Op <- readRDS("ABS_COD2018_Op.rds")
     # sub <- subset(df_Op, subset = (age_group == input$ageOB & location == "Aus" & nature == "Underlying" &
@@ -849,7 +719,7 @@ server <- function(input, output, session) {
       sub <- subset(df_Op, subset = (age_group == input$ageOB & location == "Aus" & nature == "Underlying" &
                                    drug == input$drugOBO & intent %in% input$codOBO & sex %in% input$sexOBO  &
                                    (year >= input$yearsOB[[1]] & year <= input$yearsOB[[2]])))
-      sub$sex_intent <- paste(sub$sex,sub$intent,sep=",")
+#      sub$sex_intent <- paste(sub$sex,sub$intent,sep=",")
 
       p <- ggplot(sub) + aes(x = year, colour = sex_intent, linetype = sex_intent, group = 1) +
         geom_line() +
@@ -969,13 +839,13 @@ server <- function(input, output, session) {
 
 # Plot OC (NOT NEEDED - in Plot OB)
 
-  # Plot OD -----------------------------------------------------------------
+  # Plot OD (Table 6) -----------------------------------------------------------------
   output$opioidPlotD <- renderPlotly({
     df_Op <- readRDS("ABS_COD2018_Op.rds")
     sub <- subset(df_Op, subset = (age_group == input$ageOD & drug == "All opioids" & jurisdiction == input$stateOD &
                                   intent %in% input$codOD & sex %in% input$sexOD &
                                   (year >= input$yearsOD[[1]] & year <= input$yearsOD[[2]])))
-    sub$sex_intent <- paste(sub$sex,sub$intent,sep=",")
+#    sub$sex_intent <- paste(sub$sex,sub$intent,sep=",")
   
       p <- ggplot(sub) + aes(x = year, 
         colour = sex_intent, linetype = sex_intent, group = 1) + #colour = location, linetype = sex,
@@ -1065,7 +935,7 @@ server <- function(input, output, session) {
   })
 
 
-  # Amphetamine plot --------------------------------------------------------
+  # Amphetamine plot (Table 2) --------------------------------------------------------
   output$amphetaminePlot <- renderPlotly({
     sub <- subset(df_Stim, subset = (drug == "Amphetamines" & intent == input$codA & nature == "Underlying" &
       age_group %in% input$ageA & sex == "All" & jurisdiction == "Australia" &
@@ -1167,7 +1037,7 @@ server <- function(input, output, session) {
                                                          "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                          "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))  })
 
-# Cocaine plot ------------------------------------------------------------
+# Cocaine plot (Table 3) ------------------------------------------------------------
   output$cocainePlot <- renderPlotly({
     sub <- subset(df_Stim, subset = (drug == "Cocaine" & intent == input$codC & nature == "Underlying" &
       age_group == input$ageC & sex == "All" & jurisdiction == "Australia" &
@@ -1292,28 +1162,28 @@ server <- function(input, output, session) {
       sub <- filter(df, age_group %in% input$ageAll & drug == "Drug induced deaths" & jurisdiction == input$stateAll &
                                   intent == input$codAllI & sex %in% input$sexAllI &
                                   (year >= input$yearsAll[[1]] & year <= input$yearsAll[[2]]) )
-      sub$age_sex <- paste(sub$age_group,sub$sex,sep=",")
+#      sub$age_sex <- paste(sub$age_group,sub$sex,sep=",")
 
-      p <- ggplot(sub) + aes(x = year, colour = age_sex, linetype = age_sex, group = 1) +
+      p <- ggplot(sub) + aes(x = year, colour = age_sex, linetype = age_sex, group = 1) + 
         geom_line() + theme_light() + 
         scale_colour_manual(values = agesexcols) +
         scale_linetype_manual(values = agesextype) + theme(legend.title = element_blank()) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x)))) +
-        labs(title=input$stateAllB)
+        labs(title=input$stateAll)
       Legend <- "Age & sex"
     }
     else if (input$DropAll == "Sex") {
       sub <- subset(df, subset = (age_group %in% input$ageAll & drug == "Drug induced deaths" & jurisdiction == input$stateAll &
                                     intent %in% input$codAllS & sex == input$sexAllS &
                                     (year >= input$yearsAll[[1]] & year <= input$yearsAll[[2]]) ) )
-      sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
+#      sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
       
       p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
         geom_line() +
         scale_colour_manual(values = agecodcols) +
         scale_linetype_manual(values = agecodtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x)))) +
-        labs(title=input$stateAllB)
+        labs(title=input$stateAll)
       Legend <- "Age & intent"
     }
     
@@ -1394,35 +1264,35 @@ server <- function(input, output, session) {
           xref = "paper", yref = "paper", 
           xanchor = "left", yanchor = "bottom"
         ))  %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 100, l = 100)) %>% 
+      layout(legend = list(y = 0.95, yanchor = "top", traceorder = "normal"), margin = list(b = 100, l = 100)) %>% 
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
   })
   
-  # All drugs by type plot ----------------------------------------------------------
+  # All drugs by type plot (Table 12 & 12c) ----------------------------------------------------------
   output$drugtypePlot <- renderPlotly({
     df_DT <- readRDS("ABS_COD2018_DT.rds")
-
-#Based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html  
-    if (input$DropDT == "Age_Intent") {
-      sub <- subset(df_DT, subset = (intent==input$codDT & nature=="Underlying" & age_group == input$ageDT
-                    & sex == "All" & jurisdiction == "Australia" & drug %in% input$drugDT
-                    & (year >= input$yearsDT[[1]] & year <= input$yearsDT[[2]] ) ) )
-    p <- ggplot(sub) + aes(x = year, colour = drug, linetype = drug, group = 1) +
-      geom_line() + labs(x = "Year") +
-      scale_colour_manual(values = Alldrugcols) +
-      scale_linetype_manual(values = Alldrugtype) +
-      scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
-    LO <- "h"
-    Legend <- ""
-    LY <- -0.15
+    
+    #Based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html  
+    if (input$DropDT == "Intent") {
+      sub <- subset(df_DT, subset = (intent==input$codDTI & drug %in% input$drugDTI
+                                     & age_group == input$ageDT & sex == "All" & jurisdiction == input$stateDT
+                                     & (year >= input$yearsDT[[1]] & year <= input$yearsDT[[2]] ) ) )
+      p <- ggplot(sub) + aes(x = year, colour = drug, linetype = drug, group = 1) +
+        geom_line() + labs(x = "Year") +
+        scale_colour_manual(values = Alldrugcols) +
+        scale_linetype_manual(values = Alldrugtype) +
+        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      LO <- "h"
+      Legend <- ""
+      LY <- -0.15
     }
     if (input$DropDT == "Drug") {
-      sub <- subset(df_DT, subset = (intent %in% input$codDTD & nature=="Underlying" & drug == input$drugDTD & 
-                       age_group %in% input$ageDTD & sex == "All" & jurisdiction == "Australia" &
-                       (year >= input$yearsDT[[1]] & year <= input$yearsDT[[2]]) ) )
-      sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
+      sub <- subset(df_DT, subset = (intent %in% input$codDTD & drug == input$drugDTD & 
+                          age_group == input$ageDT & sex == "All" & jurisdiction == input$stateDT &
+                          (year >= input$yearsDT[[1]] & year <= input$yearsDT[[2]]) ) )
+      #      sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
       p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
         geom_line() + labs(x = "Year") +
         scale_colour_manual(values = agecodcols) +
@@ -1484,8 +1354,8 @@ server <- function(input, output, session) {
     
     # Remove vertical gridlines
     p <- p + theme_light() + theme(legend.title = element_blank()) +
-            theme(panel.grid.minor.x = element_blank(),
-                  panel.grid.major.x = element_blank())
+      theme(panel.grid.minor.x = element_blank(),
+            panel.grid.major.x = element_blank())
     
     ggplotly(p, tooltip = "text") %>%
       add_annotations(
@@ -1509,32 +1379,137 @@ server <- function(input, output, session) {
         y = .95, yanchor = "bottom",
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-#      layout(legend = list(orientation = "h", y = -0.15, yanchor = "top"), margin = list(b = 100, l = 100)) %>% 
+      #      layout(legend = list(orientation = "h", y = -0.15, yanchor = "top"), margin = list(b = 100, l = 100)) %>% 
       layout(legend = list(orientation = LO, y = LY, yanchor = "top"), margin = list(b = 100, l = 100)) %>% 
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
-                                                  "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
-                                                  "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
+                                                          "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
+                                                          "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
   })
 
-  # Opioids with other drugs  -----------------------------------------------------------------
-  output$PlotOE <- renderPlotly({
-    df_OpW <- readRDS("ABS_COD2018_OpW.rds") %>%
-      mutate( drug = case_when(
-        drug == "All opioids with alcohol" ~ "Alcohol",
-        drug == "All opioids with amphetamines" ~ "Amphetamines",
-        drug == "All opioids with antidepressants" ~ "Antidepressants",
-        drug == "All opioids with antipsychotics" ~ "Antipsychotics",
-        drug == "All opioids with benzodiazepines" ~ "Benzodiazepines",
-        drug == "All opioids with paracetamol" ~ "Paracetamol",
-        drug == "All opioids with pregabalin" ~ "Pregabalin",
-        TRUE ~ drug )
-      )
+#   # All drugs by type plot (Table 12) ----------------------------------------------------------
+#   output$drugtypePlot <- renderPlotly({
+#     df_DT <- readRDS("ABS_COD2018_DT.rds")
+# 
+# #Based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html  
+#     if (input$DropDT == "Age_Intent") {
+#       sub <- subset(df_DT, subset = (intent==input$codDT & nature=="Underlying" & age_group == input$ageDT
+#                     & sex == "All" & jurisdiction == "Australia" & drug %in% input$drugDT
+#                     & (year >= input$yearsDT[[1]] & year <= input$yearsDT[[2]] ) ) )
+#     p <- ggplot(sub) + aes(x = year, colour = drug, linetype = drug, group = 1) +
+#       geom_line() + labs(x = "Year") +
+#       scale_colour_manual(values = Alldrugcols) +
+#       scale_linetype_manual(values = Alldrugtype) +
+#       scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+#     LO <- "h"
+#     Legend <- ""
+#     LY <- -0.15
+#     }
+#     if (input$DropDT == "Drug") {
+#       sub <- subset(df_DT, subset = (intent %in% input$codDTD & nature=="Underlying" & drug == input$drugDTD & 
+#                        age_group %in% input$ageDTD & sex == "All" & jurisdiction == "Australia" &
+#                        (year >= input$yearsDT[[1]] & year <= input$yearsDT[[2]]) ) )
+# #      sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
+#       p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
+#         geom_line() + labs(x = "Year") +
+#         scale_colour_manual(values = agecodcols) +
+#         scale_linetype_manual(values = agecodtype) +
+#         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+#       LO <- "v"
+#       Legend <- "Age & intent"
+#       LY <- 0.95
+#     }
+#     
+#     if (input$plotDT == "deaths") {
+#       p <- p + aes(y = n, text = paste0(
+#         "Year: ", year,
+#         "<br>Deaths: ", n,
+#         "<br>Drug: ", str_to_title(drug),
+#         "<br>Nature: ", str_to_title(nature),
+#         "<br>Intent: ", str_to_title(intent),
+#         "<br>Age: ", age_group
+#       )
+#       ) + scale_y_continuous(limits = c(0, max(sub$n, 500))) +
+#         labs(y = "Number of deaths")
+#     }
+#     
+#     else if (input$plotDT == "deathrateht" | input$plotDT == "deathratehtci") {
+#       p <- p + aes(y = rate_ht, text = paste0(
+#         "Year: ", year,
+#         "<br>Deaths: ", n,
+#         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
+#         "<br>Drug: ", str_to_title(drug),
+#         "<br>Nature: ", str_to_title(nature),
+#         "<br>Intent: ", str_to_title(intent),
+#         "<br>Age: ", age_group
+#       )
+#       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
+#         labs(y = "Deaths per 100,000")
+#       if (input$plotDT == "deathratehtci") {
+#         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
+#       }
+#     }
+#     
+#     else if (input$plotDT == "deathratem" | input$plotDT == "deathratemci") {
+#       p <- p + aes(y = rate_m, text = paste0(
+#         "Year: ", year,
+#         "<br>Deaths: ", n,
+#         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
+#         "<br>Drug: ", drug,
+#         "<br>Nature: ", str_to_title(nature),
+#         "<br>Intent: ", str_to_title(intent),
+#         "<br>Age: ", age_group
+#       )
+#       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
+#         labs(y = "Deaths per 1,000,000")
+#       if (input$plotDT == "deathratemci") {
+#         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
+#       }
+#     }
+#     
+#     validate(need(nrow(sub) > 0, "No data selected"))
+#     
+#     # Remove vertical gridlines
+#     p <- p + theme_light() + theme(legend.title = element_blank()) +
+#             theme(panel.grid.minor.x = element_blank(),
+#                   panel.grid.major.x = element_blank())
+#     
+#     ggplotly(p, tooltip = "text") %>%
+#       add_annotations(
+#         text = 'Source: <a href="https://ndarc.med.unsw.edu.au/resource/trends-drug-induced-deaths-australia-1997-2018">DrugTrends</a>, NDARC',
+#         xref = "paper", yref = "paper",
+#         x = 0, xanchor = "left",
+#         y = 1.04, yanchor = "top",
+#         showarrow = F, font = list(size = 10, color = "grey")
+#       ) %>%
+#       layout(
+#         images = list(
+#           source = "DrugTrends-Logo.png",
+#           x = 0.01, xanchor = "left", y = .99, yanchor = "top",
+#           sizex = 0.07, sizey = 0.2,
+#           xref = "paper", yref = "paper", 
+#           xanchor = "left", yanchor = "bottom"
+#         ))  %>%
+#       add_annotations(
+#         text = Legend, xref = "paper", yref = "paper",
+#         x = 1.02, xanchor = "left",
+#         y = .95, yanchor = "bottom",
+#         legendtitle = TRUE, showarrow = FALSE
+#       ) %>%
+# #      layout(legend = list(orientation = "h", y = -0.15, yanchor = "top"), margin = list(b = 100, l = 100)) %>% 
+#       layout(legend = list(orientation = LO, y = LY, yanchor = "top"), margin = list(b = 100, l = 100)) %>% 
+#       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
+#                             "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
+#                             "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
+#   })
 
+  # Opioids with other drugs (Table 7) -----------------------------------------------------------------
+  output$PlotOE <- renderPlotly({
+    df_OpW <- readRDS("ABS_COD2018_OpW.rds")
     if (input$DropOE == "Drug") {
     sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
                     drug == input$drugOED & intent %in% input$codOE & age_group %in% input$ageOED & 
                     (year >= input$yearsOE[[1]] & year <= input$yearsOE[[2]]) & sex=="All")
-    sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
+#    sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
     
     p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
         labs(x = "Year", title=paste0("All opioids with ",input$drugOED) ) + geom_line() +
@@ -1551,7 +1526,7 @@ server <- function(input, output, session) {
         labs(x = "Year") + geom_line() +
         scale_colour_manual(values = drugcols) + scale_linetype_manual(values = codtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
-      Legend <- "Drug with opioid by intent"
+      Legend <- "Drug with opioid <br>by intent"
     }
     
     if (input$plotOE == "deaths") {
@@ -1633,20 +1608,9 @@ server <- function(input, output, session) {
                                                       "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
   })
   
-  # Opioids and other drugs by sex ------------------------------------------
+  # Opioids and other drugs by sex (Table 8) ------------------------------------------
   output$PlotOF <- renderPlotly({
-    df_OpW <- readRDS("ABS_COD2018_OpW.rds") %>%
-      mutate( drug = case_when(
-        drug == "All opioids with alcohol" ~ "Alcohol",
-        drug == "All opioids with amphetamines" ~ "Amphetamines",
-        drug == "All opioids with antidepressants" ~ "Antidepressants",
-        drug == "All opioids with antipsychotics" ~ "Antipsychotics",
-        drug == "All opioids with benzodiazepines" ~ "Benzodiazepines",
-        drug == "All opioids with paracetamol" ~ "Paracetamol",
-        drug == "All opioids with pregabalin" ~ "Pregabalin",
-        TRUE ~ drug )
-      )
-
+    df_OpW <- readRDS("ABS_COD2018_OpW.rds")
     if (input$DropO8 == "Sex") {
       sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
                     drug %in% input$drugOF & intent %in% input$codO8S & 
@@ -1661,8 +1625,7 @@ server <- function(input, output, session) {
       Legend = "Drug by intent"
     }
     if (input$DropO8 == "Intent") {
-        sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                      drug %in% input$drugOF & intent == input$codO8I & 
+        sub <- filter(df_OpW, drug %in% input$drugOF & intent == input$codO8I &
                       sex %in% input$sexO8I & age_group == input$ageO8 & 
                       (year >= input$yearsOF[[1]] & year <= input$yearsOF[[2]] ) )
         print(input$DropO8)
@@ -1755,76 +1718,87 @@ server <- function(input, output, session) {
                                     "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
     
   })
-  
-  # Exclusive opioids ------------------------------------------
-  output$PlotOG <- renderPlotly({
-    sub <- filter(df_EOp, jurisdiction == "Australia" &
-                    drug %in% input$drugOG & intent == input$intentOG & age_group == input$ageOG & 
-                    (year >= input$yearsOG[[1]] & year <= input$yearsOG[[2]]) & sex %in% input$sexOG)
-    
-    
-    if (input$plotOG == "deaths") {
-      p <- ggplot(sub) + aes(x = year, y = n, colour = sex, linetype = drug, group = 1,
-                             text = paste0(
-                               "Year: ", year,
-                               "<br>Deaths: ", n,
-                               "<br>Drug: ", str_to_title(drug),
-                               "<br>Intent: ", str_to_title(intent),
-                               "<br>Sex: ", sex
-                             )) + geom_line() +
-        scale_y_continuous(limits = c(0, NA)) +
-        labs(x = "Year", y = "Number of deaths", color = "Sex") +
-        theme_light() + scale_colour_manual(values = sexcols) +scale_linetype_manual(values = drugltype) +
-        theme(legend.title = element_blank()) +
+
+  # Exclusive Opioids by age and intent (Table 10) -----------------------------------------------------------------
+  output$opioidPlot10 <- renderPlotly({
+    df_EOp <- readRDS("ABS_COD2018_EOp.rds")
+      if (input$Drop10 == "Opioid") {
+      sub <- filter(df_EOp, sex == "All" & location == "Aus" & # nature == "Underlying" &
+                  drug == input$drug10O & intent %in% input$cod10 & age_group %in% input$age10O &
+                  (year >= input$years10[[1]] & year <= input$years10[[2]])) %>%
+        distinct(year, intent, sex, location, age_group, .keep_all = TRUE)
+#        sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
+      
+      p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
+        geom_line() + labs(x = "Year", title=input$drug10O) +
+        scale_colour_manual(values = agecodcols) +
+        scale_linetype_manual(values = agecodtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      Legend <- "Age by intent"
     }
     
-    if (input$plotOG == "deathrateht" | input$plotOG == "deathratehtci") {
-      p <- ggplot(sub) + aes(x = year, y = rate_ht, colour = sex, linetype = drug, group = 1,
-                             text = paste0(
-                               "Year: ", year,
-                               "<br>Deaths: ", n,
-                               "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-                               "<br>Drug: ", str_to_title(drug),
-                               "<br>Intent: ", str_to_title(intent),
-                               "<br>Sex: ", sex
-                             )) + geom_line() +
-        scale_y_continuous(limits = c(0, NA)) +
-        labs(x = "Year", y = "Deaths per 100,000", color = "Sex") +
-        theme_light() + scale_colour_manual(values = sexcols) +scale_linetype_manual(values = drugltype) +
-        theme(legend.title = element_blank()) +
+    else if (input$Drop10 == "Age") {
+      sub <- subset(df_EOp, subset = (sex == "All" & location == "Aus" & # nature == "Underlying" &
+                  drug %in% input$drug10A & intent %in% input$cod10 & age_group == input$age10A &
+                                       (year >= input$years10[[1]] & year <= input$years10[[2]])))
+      
+      p <- ggplot(sub) + aes(x = year, colour = drug, linetype = intent, group = 1) +
+        geom_line() + labs(x = "Year", title=paste0("Age: ",input$age10A)) +
+        scale_colour_manual(values = drugcols) +
+        scale_linetype_manual(values = codtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
-        if (input$plotOG == "deathratehtci") {
-          p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
-        }
+      Legend <- "Drug by intent"
     }
     
-    if (input$plotOG == "deathratem" | input$plotOG == "deathratemci") {
-      p <- ggplot(sub) + aes(x = year, y = rate_m, colour = sex, linetype = drug, group = 1,
-                             text = paste0(
-                               "Year: ", year,
-                               "<br>Deaths: ", n,
-                               "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-                               "<br>Drug: ", str_to_title(drug),
-                               "<br>Intent: ", str_to_title(intent),
-                               "<br>Sex: ", sex
-                             )) + geom_line() +
-        scale_y_continuous(limits = c(0, NA)) +
-        labs(x = "Year", y = "Deaths per 1,000,000", color = "Sex") +
-        theme_light() + scale_colour_manual(values = sexcols) + scale_linetype_manual(values = drugltype) +
-        theme(legend.title = element_blank()) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
-        if (input$plotOG == "deathratemci") {
-          p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
-        }
+    if (input$plot10 == "deaths") {
+      p <- p + aes(y = n,
+                   text = paste0(
+                     "Year: ", year,
+                     "<br>Deaths: ", n,
+                     "<br>Opioid: ", str_to_title(drug),
+                     "<br>Intent: ", str_to_title(intent),
+                     "<br>Age group: ", age_group)
+      ) +  scale_y_continuous(limits = c(0, max(sub$n, 500))) +
+        labs(y = "Number of deaths")
+    }
+    
+    else if (input$plot10 == "deathrateht" | input$plot10 == "deathratehtci") {
+      p <- p + aes(y = rate_ht, text = paste0(
+        "Year: ", year,
+        "<br>Deaths: ", n,
+        "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
+        "<br>Opioid: ", str_to_title(drug),
+        "<br>Intent: ", str_to_title(intent),
+        "<br>Age group: ", age_group)
+      ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
+        labs(y = "Deaths per 100,000")
+      if (input$plot10 == "deathratehtci") {
+        p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
+      }
+    }
+    
+    else if (input$plot10 == "deathratem" | input$plot10 == "deathratemci") {
+      p <- p + aes(y = rate_m, text = paste0(
+        "Year: ", year,
+        "<br>Deaths: ", n,
+        "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
+        "<br>Opioid: ", str_to_title(drug),
+        "<br>Intent: ", str_to_title(intent),
+        "<br>Age group: ", age_group)
+      ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
+        labs(y = "Deaths per 1,000,000")
+      if (input$plot10 == "deathratemci") {
+        p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
+      }
     }
     
     validate(need(nrow(sub) > 0, "No data selected"))
     
-    # Remove vertical gridlines
-    p <- p + theme(panel.grid.minor.x = element_blank(),
-                   panel.grid.major.x = element_blank())
-
+    # Set theme, remove default legend title and vertical gridlines
+    p <- p + theme_light() + theme(legend.title = element_blank()) +
+      theme(panel.grid.minor.x = element_blank(),
+            panel.grid.major.x = element_blank())
+    
     ggplotly(p, tooltip = "text") %>%
       add_annotations(
         text = 'Source: <a href="https://ndarc.med.unsw.edu.au/resource/trends-drug-induced-deaths-australia-1997-2018">DrugTrends</a>, NDARC',
@@ -1842,7 +1816,112 @@ server <- function(input, output, session) {
           xanchor = "left", yanchor = "bottom"
         ))  %>%
       add_annotations(
-        text = "Sex and drug", xref = "paper", yref = "paper",
+        text = Legend, xref = "paper", yref = "paper",
+        x = 1.02, xanchor = "left",
+        y = 0.95, yanchor = "bottom", # Same y as legend below
+        legendtitle = TRUE, showarrow = FALSE
+      ) %>%
+      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 100, l = 100)) %>%
+      config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
+                                                          "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
+                                                          "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
+  })
+
+  # Exclusive opioids by jurisdiction, intent and sex (Table 9 & 11) ------------------------------------------
+  output$PlotOG <- renderPlotly({
+    df_EOp <- readRDS("ABS_COD2018_EOp.rds")
+    if (input$Drop9 == "Intent") {
+      sub <- filter(df_EOp, jurisdiction == input$stateOG & age_group == input$ageOG &
+                    sex %in% input$sex9I & intent == input$cod9I & drug %in% input$drugOG & 
+                    (year >= input$yearsOG[[1]] & year <= input$yearsOG[[2]]) )
+
+      p <- ggplot(sub) + aes(x = year, colour = drug, linetype = sex, group = 1) +
+        geom_line() + labs(x = "Year", title=paste0(input$stateOG,", Age: ",input$ageOG," Intent: ",input$cod9I) ) +
+        scale_colour_manual(values = drugcols) +
+        scale_linetype_manual(values = sextype) +
+        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      Legend <- "Drug by sex"
+    }
+    if (input$Drop9 == "Sex") {
+      sub <- filter(df_EOp, jurisdiction == input$stateOG & age_group == input$ageOG &
+                      sex == input$sex9S & intent %in% input$cod9S & drug %in% input$drugOG & 
+                      (year >= input$yearsOG[[1]] & year <= input$yearsOG[[2]]) )
+
+      p <- ggplot(sub) + aes(x = year, colour = drug, linetype = intent, group = 1) +
+        geom_line() + labs(x = "Year", title=paste0(input$stateOG,", Age: ",input$ageOG," Sex: ",input$sex9S) ) +
+        scale_colour_manual(values = drugcols) +
+        scale_linetype_manual(values = codtype) +
+        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      Legend <- "Drug by intent"
+    }
+
+
+    if (input$plotOG == "deaths") {
+      p <- p + aes(y = n, text = paste0(
+                       "Year: ", year,
+                       "<br>Deaths: ", n,
+                       "<br>Drug: ", str_to_title(drug),
+                       "<br>Intent: ", str_to_title(intent),
+                       "<br>Sex: ", sex
+          )) + scale_y_continuous(limits = c(0, NA)) +
+          labs( y = "Number of deaths")
+    }
+    
+    if (input$plotOG == "deathrateht" | input$plotOG == "deathratehtci") {
+      p <- p + aes(y = rate_ht, text = paste0(
+                       "Year: ", year,
+                       "<br>Deaths: ", n,
+                       "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
+                       "<br>Drug: ", str_to_title(drug),
+                       "<br>Intent: ", str_to_title(intent),
+                       "<br>Sex: ", sex
+            )) + scale_y_continuous(limits = c(0, NA)) +
+            labs(y = "Deaths per 100,000")
+        if (input$plotOG == "deathratehtci") {
+          p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
+        }
+    }
+
+    if (input$plotOG == "deathratem" | input$plotOG == "deathratemci") {
+      p <- p + aes(y = rate_m, text = paste0(
+                       "Year: ", year,
+                       "<br>Deaths: ", n,
+                       "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
+                       "<br>Drug: ", str_to_title(drug),
+                       "<br>Intent: ", str_to_title(intent),
+                       "<br>Sex: ", sex
+            )) + scale_y_continuous(limits = c(0, NA)) +
+            labs(y = "Deaths per 1,000,000")
+        if (input$plotOG == "deathratemci") {
+          p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
+        }
+    }
+    
+    validate(need(nrow(sub) > 0, "No data selected"))
+    
+  # Set theme, remove default legend title and vertical gridlines (NB: need to have grid codes last)
+    p <- p + theme_light() + theme(legend.title = element_blank()) +
+      theme(panel.grid.minor.x = element_blank(),
+            panel.grid.major.x = element_blank())
+    
+    ggplotly(p, tooltip = "text") %>%
+      add_annotations(
+        text = 'Source: <a href="https://ndarc.med.unsw.edu.au/resource/trends-drug-induced-deaths-australia-1997-2018">DrugTrends</a>, NDARC',
+        xref = "paper", yref = "paper",
+        x = 0, xanchor = "left",
+        y = 1.04, yanchor = "top",
+        showarrow = F, font = list(size = 10, color = "grey")
+      ) %>%
+      layout(
+        images = list(
+          source = "DrugTrends-Logo.png",
+          x = 0.01, xanchor = "left", y = .99, yanchor = "top",
+          sizex = 0.07, sizey = 0.2,
+          xref = "paper", yref = "paper", 
+          xanchor = "left", yanchor = "bottom"
+        ))  %>%
+      add_annotations(
+        text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
         y = 0.95, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
@@ -1855,6 +1934,10 @@ server <- function(input, output, session) {
   
   # Exclusive opioids as percents ------------------------------------------
   output$PlotOH <- renderPlotly({
+    #needs to be sorted [order(...)]
+    #weird proportions plot from 2015 onwards because of duplicates by AUS
+    #- need to make distinct
+    df_EOp <- readRDS("ABS_COD2018_EOp.rds")
     sub <- filter(df_EOp, drug %in% c( "Exclusive illicit opioids",
                                    "Exclusive pharmaceutical opioids",
                                    "Illicit and pharmaceutical opioids",
@@ -1863,8 +1946,8 @@ server <- function(input, output, session) {
                     age_group == input$ageOH & 
                     (year >= input$yearsOH[[1]] & year <= input$yearsOH[[2]]) & 
                     sex == input$sexOH &
-                    jurisdiction == "Australia" & table!="10" & table!="18") %>% 
-      group_by(year, intent, nature, sex, jurisdiction, age_group) %>% 
+                    jurisdiction == input$stateOH) %>% # & table!="10" & table!="18"
+      group_by(year, intent, sex, jurisdiction, age_group) %>% 
       distinct() %>%
       mutate(alldeaths = sum(n),
              percent = round(n/sum(n)*100, 2),
@@ -1887,7 +1970,8 @@ server <- function(input, output, session) {
       theme_light() + 
       theme(legend.title = element_blank()) + 
       scale_x_continuous(breaks = function(x) unique(floor(pretty(x)))) +
-      scale_fill_brewer(palette = "PuBu")
+      scale_fill_manual(values = c("#d3d798", "#b3bd50", "#95a327", "#6a7d14"))
+#      scale_fill_manual(values = c("#c1c870", "#748a34", "#465d02", "#1f3300"))
     
     validate(need(nrow(sub) > 0, "No data selected"))
     

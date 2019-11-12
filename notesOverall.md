@@ -1,4 +1,4 @@
-These data are provided by the [Australian Bureau of Statistics](http://www.abs.gov.au/) (ABS) using data from the National Coronial Information System. Changes in data coding and collection have occurred over the time period reported. 
+These data are provided by the [Australian Bureau of Statistics](http://www.abs.gov.au/) (ABS) using data from the National Coronial Information System (NCIS). Changes in data coding and collection have occurred over the time period reported. 
 
 The ABS undertake a revision process for coroner-certified deaths over a 3-year period; accordingly, data for 2016, 2017 and 2018 are not final. These figures should be viewed in conjunction with the ABS [Explanatory Notes 50-58](http://www.abs.gov.au/AUSSTATS/abs@.nsf/Lookup/3303.0Explanatory%20Notes12016?OpenDocument).
 
@@ -22,8 +22,6 @@ Please read our accompanying [methodology document](https://ndarc.med.unsw.edu.a
 
 Deaths are considered **‘drug-induced deaths’** if they are directly attributable to drug use (e.g. drug toxicity/overdose is the underlying cause of death). They are considered **‘drug-related deaths’** where drugs played a contributory role (i.e., listed as an associated cause of death) and the death was attributable to another cause (e.g. motor vehicle accident). 
 
-A [Tabulation list](http://www.abs.gov.au/AUSSTATS/abs@.nsf/Previousproducts/3303.0Appendix22016?opendocument&tabname=Notes&prodno=3303.0&issue=2016&num=&view=) of ICD-codes to identify causes of death attributable to drug-induced mortality was developed by the ABS based on a drug-induced death tabulation created by United States Centre for Disease Control and Prevention (CDC). We have adopted these codes for our definition of all drug-induced deaths (see below). 
-
 ### Intent
 
 As part of the coronial investigation of drug-related deaths, the coroner assigns the manner of intent to these deaths where there is sufficient information. The ICD-10 coding incorporates codes for the following categories of intent: 
@@ -33,5 +31,7 @@ As part of the coronial investigation of drug-related deaths, the coroner assign
 **2. Intentional,** where the coroner determines that the manner/intent of the injury or poisoning which led to death was purposeful; and 
 
 **3. Undetermined,** where there was insufficient information for the coroner to make a determination on the intent. 
+
+**4. Other,** where intent could not be classified to any of the above categories. Numbers in this category is very few.
 
 We have disaggregated by intent type where numbers are sufficient to protect confidentiality of individuals.

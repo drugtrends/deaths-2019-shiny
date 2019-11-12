@@ -9,9 +9,9 @@ Causes of death data for 2017 and 2018 are preliminary and subject to a further 
 
 *Other and unspecified opioids* comprise opioid-induced deaths that are not attributed to specific opioids (ICD-10 Code T40.6).   
 
-Data is not available for all intent types for some opioids in the 10-year age group categories (i.e. 15-24, 25-34, etc).
-
 Data for intents not available for the following opioids due to small numbers:
 *Intentional intent* and *Undetermined intent* for *Other and unspecified opioids*.
 *Accidental intent*, *Intentional intent* and *Undetermined intent* for *Opium*.
+
+Data are not available for all intent types for some opioids in the 10-year age group categories (i.e. 15-24, 25-34, etc). Refer to Notes tab for details.
 </small>
