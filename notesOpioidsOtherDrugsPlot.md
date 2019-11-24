@@ -3,5 +3,5 @@ Small numbers of death have been randomly assigned to protect the confidentialit
 
 Causes of death data for 2017 and 2018 are preliminary and subject to a further revisions process; data for 2016 are subject to a revisions process; data for 2015 and earlier years are final.
 
-This figure shows opioid-induced deaths with other drugs (e.g. benzodiazepines, alcohol) contributing to the death.
+This figure shows opioid-induced deaths with other drugs (e.g. benzodiazepines, alcohol) contributing to the death. Data for opioid with amphetamines and with pregabalin are only available from 2007 onwards.
 </small>

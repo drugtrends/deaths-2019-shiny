@@ -9,5 +9,5 @@ Presented here are drug-induced deaths where a substance from a broader drug cla
 
 Refer to Notes tab for examples of drugs commonly assigned to each category.
 
-Data by state/territory only available for *All ages*.
+NOTE: Data by state/territory and by sex are only available for *All ages* and only for *All* and *Accidental* as intent.
 </small>

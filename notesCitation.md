@@ -2,7 +2,7 @@
 
 This work was supported by funding from the Australian Government under the Drug and Alcohol Program.
 
-Thanks to Lauren Moran and Shell McConville from the Australian Bureau of Statistics for their assistance in providing data for this project.
+We gratefully acknowledge Lauren Moran and Nathan Bonamy from the Australian Bureau of Statistics for their assistance in providing data for this project.
 
 Please visit [Drug Trends](https://ndarc.med.unsw.edu.au/program/drug-trends) for more information, including [methods](https://ndarc.med.unsw.edu.au/resource/trends-drug-induced-deaths-australia-1997-2018).
 
