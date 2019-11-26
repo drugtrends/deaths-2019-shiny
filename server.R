@@ -405,23 +405,26 @@ server <- function(input, output, session) {
     if(query1 == "tab=PlotO4"){
       updateTabsetPanel(session, inputId = "Plot", selected = "PlotO4")
     }
-    if(query1 == "tab=PlotOB"){
-      updateTabsetPanel(session, inputId = "Plot", selected = "PlotOB")
+    if(query1 == "tab=PlotO5"){
+      updateTabsetPanel(session, inputId = "Plot", selected = "PlotO5")
     }
-    if(query1 == "tab=PlotOD"){
-      updateTabsetPanel(session, inputId = "Plot", selected = "PlotOD")
+    if(query1 == "tab=PlotO6"){
+      updateTabsetPanel(session, inputId = "Plot", selected = "PlotO6")
     }
-    if(query1 == "tab=PlotOE"){
-      updateTabsetPanel(session, inputId = "Plot", selected = "PlotOE")
+    if(query1 == "tab=Plot10"){
+      updateTabsetPanel(session, inputId = "Plot", selected = "Plot10")
     }
-    if(query1 == "tab=PlotOF"){
-      updateTabsetPanel(session, inputId = "Plot", selected = "PlotOF")
+    if(query1 == "tab=PlotE9"){
+      updateTabsetPanel(session, inputId = "Plot", selected = "PlotE9")
     }
-    if(query1 == "tab=PlotOG"){
-      updateTabsetPanel(session, inputId = "Plot", selected = "PlotOG")
+    if(query1 == "tab=PlotEP"){
+      updateTabsetPanel(session, inputId = "Plot", selected = "PlotEP")
     }
-    if(query1 == "tab=PlotOH"){
-      updateTabsetPanel(session, inputId = "Plot", selected = "PlotOH")
+    if(query1 == "tab=PlotW7"){
+      updateTabsetPanel(session, inputId = "Plot", selected = "PlotW7")
+    }
+    if(query1 == "tab=PlotW8"){
+      updateTabsetPanel(session, inputId = "Plot", selected = "PlotW8")
     }
     if(query1 == "tab=PlotA"){ #Amphetamines
       updateTabsetPanel(session, inputId = "Plot", selected = "PlotA")
@@ -446,20 +449,17 @@ server <- function(input, output, session) {
 #observe function still doesn't work but might have got rid of potential error with using *if statement* in tagList
 #Might need this???: https://stackoverflow.com/questions/42169380/shiny-renderui-with-multiple-inputs
 # observe({
-  #   if (input$Drop9 == "Intent")
-  #     x <- selectInput("cod9I", label = NULL,
+  #   if (input$DropE9 == "Intent")
+  #     x <- selectInput("codE9I", label = NULL,
   #                      c("All", "Accidental", "Intentional", "Undetermined", "Other") )
-  #   if (input$DropAllB == "Sex")
-  #     x <- selectInput("sex9I", label = NULL,
-  #                      choices = c("All", "Female", "Male") )
   # 
-  #   if (input$Drop9 == "Sex")
+  #   if (input$DropE9 == "Sex")
   #     y <- checkboxGroupInput(
-  #       "cod9S", "Intent:",
+  #       "codE9S", "Intent:",
   #       c("All", "Accidental", "Intentional", "Undetermined", "Other"),
   #       selected = c("All", "Accidental", "Intentional", "Undetermined", "Other")  )
-  #   if (input$Drop9 == "Intent")
-  #     y <- checkboxGroupInput("sex9S", "Sex:",
+  #   if (input$DropE9 == "Intent")
+  #     y <- checkboxGroupInput("sexE9S", "Sex:",
   #                             choices = c("Male", "Female", "All"),
   #                             selected = c("Male", "Female", "All"))
   # 
@@ -772,7 +772,7 @@ server <- function(input, output, session) {
   output$allPlot <- renderPlotly({
     #Based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html  
     if (input$DropAll == "Intent") {
-      sub <- filter(df, age_group %in% input$ageAll & jurisdiction == input$stateAll &
+      sub <- filter(df, age_group %in% input$ageAll & jurisdiction == input$jurAll &
                                   intent == input$codAllI & sex %in% input$sexAllI &
                                   (year >= input$yrAll[[1]] & year <= input$yrAll[[2]]) )
 
@@ -780,21 +780,21 @@ server <- function(input, output, session) {
         geom_line() + scale_colour_manual(values = agesexcols) +
         scale_linetype_manual(values = agesextype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x)))) +
-        labs(title=paste0(input$stateAll,", Intent: ",input$codAllI) )
+        labs(title=paste0(input$jurAll,", Intent: ",input$codAllI) )
       Legend <- "Age & sex"
     }
     else if (input$DropAll == "Sex") {
       if (input$sexAllS != "MF") {
-      sub <- subset(df, subset = (age_group %in% input$ageAll & jurisdiction == input$stateAll &
+      sub <- subset(df, subset = (age_group %in% input$ageAll & jurisdiction == input$jurAll &
                                     intent %in% input$codAllS & sex == input$sexAllS &
                                     (year >= input$yrAll[[1]] & year <= input$yrAll[[2]]) ) )
-      p <- ggplot(sub) + labs(title=paste0(input$stateAll,", Sex: ",input$sexAllS) )
+      p <- ggplot(sub) + labs(title=paste0(input$jurAll,", Sex: ",input$sexAllS) )
       }
       else {
-        sub <- subset(df, subset = (age_group %in% input$ageAll & jurisdiction == input$stateAll &
+        sub <- subset(df, subset = (age_group %in% input$ageAll & jurisdiction == input$jurAll &
                                       intent %in% input$codAllS & sex != "All" &
                                       (year >= input$yrAll[[1]] & year <= input$yrAll[[2]]) ) )
-        p <- ggplot(sub) + labs(title=input$stateAll) +
+        p <- ggplot(sub) + labs(title=input$jurAll) +
           facet_grid(cols = vars(sex)) +
           theme(strip.background = element_rect(fill="#6a7d14")) #doesn't work https://github.com/tidyverse/ggplot2/issues/2096
       }
@@ -893,18 +893,18 @@ server <- function(input, output, session) {
   # Remoteness by jurisdiction, intent and sex (Table R) ------------------------------------------
   output$remotePlot <- renderPlotly({
     df_R <- readRDS("ABS_COD2018_remoteness.rds")
-    if (input$stateR=="Australia") {
-      regR <- input$regionRA
+    if (input$jurR=="Australia") {
+      regR <- input$raRA
     }
     else {
-      regR <- input$regionR
+      regR <- input$raR
     }
-    sub <- filter(df_R, jurisdiction == input$stateR & age_group == "All ages" &
+    sub <- filter(df_R, jurisdiction == input$jurR & age_group == "All ages" &
                     sex == "All" & intent %in% input$codR & region %in% regR &
                     (year >= input$yrR[[1]] & year <= input$yrR[[2]]) )
 
     p <- ggplot(sub) + aes(x = year, colour = region, linetype = intent , group = 1) +
-        geom_line() + labs(x = "Year", title=paste0(input$stateR,", All ages") ) +
+        geom_line() + labs(x = "Year", title=paste0(input$jurR,", All ages") ) +
         scale_colour_manual(values = regcols) +
         scale_linetype_manual(values = codtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
@@ -991,22 +991,22 @@ server <- function(input, output, session) {
     #needs to be sorted [order(...)] & made distinct
     df_R <- readRDS("ABS_COD2018_remoteness.rds")
 #    sub <- filter(df_R,DID>=50)
-    if (input$stateRP == "Australia") {
+    if (input$jurRP == "Australia") {
       sub <- filter(df_R, intent == input$codRP & 
             age_group == input$ageRP &
             (year >= input$yrRP[[1]] & year <= input$yrRP[[2]]) & 
-            sex == input$sexRP & jurisdiction == input$stateRP)
+            sex == input$sexRP & jurisdiction == input$jurRP)
     }
     else {
       sub <- filter(df_R, intent == input$codRP & 
             age_group == input$ageRP & 
             (year >= input$yrRP[[1]] & year <= input$yrRP[[2]]) & 
             sex == "All" &
-            jurisdiction == input$stateRP)
+            jurisdiction == input$jurRP)
     }
 
 #    if (input$yaxRP != "num") {
-      if (input$stateRP == "Australia" & input$sexRP == "All" & input$ageRP == "All ages" ) {
+      if (input$jurRP == "Australia" & input$sexRP == "All" & input$ageRP == "All ages" ) {
         sub <- filter(sub, region!="Regional and Remote") %>%
           group_by(year, intent, sex, jurisdiction, age_group) %>% 
           distinct() %>%
@@ -1044,7 +1044,7 @@ server <- function(input, output, session) {
     # }
     # else {
     #   p <- ggplot(sub) + aes(x = year, colour = age_group, linetype = region , group = 1) +
-    #     geom_line() + labs(x = "Year", title=paste0(input$stateRP,", intent: ") ) +
+    #     geom_line() + labs(x = "Year", title=paste0(input$jurRP,", intent: ") ) +
     #     scale_colour_manual(values = agecols) +
     #     scale_linetype_manual(values = regtype) +
     #     scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
@@ -1106,7 +1106,7 @@ server <- function(input, output, session) {
     df_DT <- readRDS("ABS_COD2018_DT.rds")
   
     if (input$DropDT == "IntSx") {
-      if (input$stateDT == "Australia") {
+      if (input$jurDT == "Australia") {
           if (input$sexDTI=="All") {
             codDTI=input$codDTI
           }
@@ -1115,25 +1115,25 @@ server <- function(input, output, session) {
           }
           if (input$sexDTI!="MF") {
             sub <- subset(df_DT, subset = (intent==codDTI & drug %in% input$drugDTI
-                          & age_group == input$ageDT & sex == input$sexDTI & jurisdiction == input$stateDT
+                          & age_group == input$ageDT & sex == input$sexDTI & jurisdiction == input$jurDT
                           & (year >= input$yrDT[[1]] & year <= input$yrDT[[2]] ) ) )
             p <- ggplot(sub) + labs(title=paste0(
-            input$stateDT,", Age: ",input$ageDT,", Sex: ",input$sexDTI,", Intent: ",codDTI) )
+            input$jurDT,", Age: ",input$ageDT,", Sex: ",input$sexDTI,", Intent: ",codDTI) )
           }
           else {
             sub <- subset(df_DT, subset = (intent==codDTI & drug %in% input$drugDTI
-                          & age_group == input$ageDT & sex != "All" & jurisdiction == input$stateDT
+                          & age_group == input$ageDT & sex != "All" & jurisdiction == input$jurDT
                           & (year >= input$yrDT[[1]] & year <= input$yrDT[[2]] ) ) )
             p <- ggplot(sub) + facet_grid(cols = vars(sex) ) + labs(title=paste0(
-              input$stateDT,", Age: ",input$ageDT,", Intent: ",codDTI) )
+              input$jurDT,", Age: ",input$ageDT,", Intent: ",codDTI) )
           }
       }
-      if (input$stateDT != "Australia") {
+      if (input$jurDT != "Australia") {
           sub <- subset(df_DT, subset = (intent==input$codDTIJ & drug %in% input$drugDTI
-                             & age_group == "All ages" & sex == "All" & jurisdiction == input$stateDT
+                             & age_group == "All ages" & sex == "All" & jurisdiction == input$jurDT
                              & (year >= input$yrDT[[1]] & year <= input$yrDT[[2]] ) ) )
           p <- ggplot(sub) + labs(title=paste0(
-            input$stateDT,", Age: All ages, Sex: All persons, Intent: ",input$codDTIJ) )
+            input$jurDT,", Age: All ages, Sex: All persons, Intent: ",input$codDTIJ) )
       }
         p <- p + aes(x = year, colour = drug, linetype = drug, group = 1) +
         geom_line() + labs(x = "Year") +
@@ -1146,23 +1146,23 @@ server <- function(input, output, session) {
     }
     
     if (input$DropDT == "Drug") {
-      if (input$stateDT == "Australia") {
+      if (input$jurDT == "Australia") {
         sub <- subset(df_DT, subset = (intent %in% input$codDTD & drug == input$drugDTD & 
-                    age_group == input$ageDT & sex %in% input$sexDTD & jurisdiction == input$stateDT &
+                    age_group == input$ageDT & sex %in% input$sexDTD & jurisdiction == input$jurDT &
                     (year >= input$yrDT[[1]] & year <= input$yrDT[[2]]) ) )
         p <- ggplot(sub) + labs(title=paste0(
-          input$stateDT,", Age: ",input$ageDT,", Drug: ",input$drugDTD) ) +
+          input$jurDT,", Age: ",input$ageDT,", Drug: ",input$drugDTD) ) +
           aes(x = year, colour = sex_intent, linetype = sex_intent, group = 1) +
           scale_colour_manual(values = sexcols) +
           scale_linetype_manual(values = sexcodtype)
         Legend <- "Sex & intent"
       }
-      if (input$stateDT != "Australia") {
+      if (input$jurDT != "Australia") {
         sub <- subset(df_DT, subset = (intent %in% input$codDTD & drug == input$drugDTD & 
-                     age_group == "All ages" & sex == "All" & jurisdiction == input$stateDT &
+                     age_group == "All ages" & sex == "All" & jurisdiction == input$jurDT &
                      (year >= input$yrDT[[1]] & year <= input$yrDT[[2]]) ) )
         p <- ggplot(sub) + labs(title=paste0(
-          input$stateDT,", Age: All ages, Sex: All persons, Drug: ",input$drugDTD) ) +
+          input$jurDT,", Age: All ages, Sex: All persons, Drug: ",input$drugDTD) ) +
           aes(x = year, linetype = intent, group = 1) +
           scale_linetype_manual(values = codtype)
         Legend <- "Intent"
@@ -1373,37 +1373,37 @@ server <- function(input, output, session) {
   })
 
   # Plot O4 (Table 4) -----------------------------------------------------------------
-  output$opioidPlot4 <- renderPlotly({
+  output$opPlot4 <- renderPlotly({
     df_Op <- readRDS("ABS_COD2018_Op.rds")
     #Based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html  
-    if (input$DropOA == "Opioid") {
-      sub <- subset(df_Op, subset = (sex == "All" & location == "Aus" & drug == input$drugOAO &
-                                       intent %in% input$codOA & age_group %in% input$ageOAO &
-                                       (year >= input$yrOA[[1]] & year <= input$yrOA[[2]])))
+    if (input$DropO4 == "Opioid") {
+      sub <- subset(df_Op, subset = (sex == "All" & location == "Aus" & drug == input$drugO4O &
+                                       intent %in% input$codO4 & age_group %in% input$ageO4O &
+                                       (year >= input$yrO4[[1]] & year <= input$yrO4[[2]])))
       #      sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
       
       p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
-        geom_line() + labs(x = "Year", title=input$drugOAO) +
+        geom_line() + labs(x = "Year", title=input$drugO4O) +
         scale_colour_manual(values = agecodcols) +
         scale_linetype_manual(values = agecodtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
       Legend <- "Age by intent"
     }
     
-    else if (input$DropOA == "Age") {
-      sub <- subset(df_Op, subset = (sex == "All" & location == "Aus" & drug %in% input$drugOAA &
-                                       intent %in% input$codOA & age_group == input$ageOAA &
-                                       (year >= input$yrOA[[1]] & year <= input$yrOA[[2]])))
+    else if (input$DropO4 == "Age") {
+      sub <- subset(df_Op, subset = (sex == "All" & location == "Aus" & drug %in% input$drugO4A &
+                                       intent %in% input$codO4 & age_group == input$ageO4A &
+                                       (year >= input$yrO4[[1]] & year <= input$yrO4[[2]])))
       
       p <- ggplot(sub) + aes(x = year, colour = drug, linetype = intent, group = 1) +
-        geom_line() + labs(x = "Year", title=paste0("Age: ",input$ageOAA)) +
+        geom_line() + labs(x = "Year", title=paste0("Age: ",input$ageO4A)) +
         scale_colour_manual(values = drugcols) +
         scale_linetype_manual(values = codtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
       Legend <- "Drug by intent"
     }
     
-    if (input$yaxOA == "num") {
+    if (input$yaxO4 == "num") {
       p <- p + aes(y = n,
                    text = paste0(
                      "Year: ", year,
@@ -1415,7 +1415,7 @@ server <- function(input, output, session) {
         labs(y = "Number of deaths")
     }
     
-    else if (input$yaxOA == "rateht" | input$yaxOA == "ratehtci") {
+    else if (input$yaxO4 == "rateht" | input$yaxO4 == "ratehtci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1425,12 +1425,12 @@ server <- function(input, output, session) {
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
-      if (input$yaxOA == "ratehtci") {
+      if (input$yaxO4 == "ratehtci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxOA == "ratem" | input$yaxOA == "ratemci") {
+    else if (input$yaxO4 == "ratem" | input$yaxO4 == "ratemci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1440,7 +1440,7 @@ server <- function(input, output, session) {
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
-      if (input$yaxOA == "ratemci") {
+      if (input$yaxO4 == "ratemci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -1479,17 +1479,17 @@ server <- function(input, output, session) {
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
   })
-  # Plot OB (Table 5)-----------------------------------------------------------------
-  output$opioidPlotB <- renderPlotly({
+  # Plot O5 (Table 5)-----------------------------------------------------------------
+  output$opPlot5 <- renderPlotly({
     df_Op <- readRDS("ABS_COD2018_Op.rds")
-    # sub <- subset(df_Op, subset = (age_group == input$ageOB & location == "Aus" &
-    #    drug %in% input$drugOB & intent == input$codOB & sex %in% input$sexOB  &
-    #     (year >= input$yrOB[[1]] & year <= input$yrOB[[2]])))
+    # sub <- subset(df_Op, subset = (age_group == input$ageO5 & location == "Aus" &
+    #    drug %in% input$drugO5 & intent == input$codO5 & sex %in% input$sexO5  &
+    #     (year >= input$yrO5[[1]] & year <= input$yrO5[[2]])))
     
-    if (input$DropOB == "Opioid") {
-      sub <- subset(df_Op, subset = (age_group == input$ageOB & location == "Aus" &
-                                       drug == input$drugOBO & intent %in% input$codOBO & sex %in% input$sexOBO  &
-                                       (year >= input$yrOB[[1]] & year <= input$yrOB[[2]])))
+    if (input$DropO5 == "Opioid") {
+      sub <- subset(df_Op, subset = (age_group == input$ageO5 & location == "Aus" &
+                                       drug == input$drugO5O & intent %in% input$codO5O & sex %in% input$sexO5O  &
+                                       (year >= input$yrO5[[1]] & year <= input$yrO5[[2]])))
       #      sub$sex_intent <- paste(sub$sex,sub$intent,sep=",")
       
       p <- ggplot(sub) + aes(x = year, colour = sex_intent, linetype = sex_intent, group = 1) +
@@ -1499,10 +1499,10 @@ server <- function(input, output, session) {
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
       Legend <- "Sex by intent"
     }
-    else if (input$DropOB == "Intent") {
-      sub <- subset(df_Op, subset = (age_group == input$ageOB & location == "Aus" &
-                                       drug %in% input$drugOBI & sex %in% input$sexOBI & intent ==input$codOBI & 
-                                       (year >= input$yrOB[[1]] & year <= input$yrOB[[2]])))
+    else if (input$DropO5 == "Intent") {
+      sub <- subset(df_Op, subset = (age_group == input$ageO5 & location == "Aus" &
+                                       drug %in% input$drugO5I & sex %in% input$sexO5I & intent ==input$codO5I & 
+                                       (year >= input$yrO5[[1]] & year <= input$yrO5[[2]])))
       
       p <- ggplot(sub) + aes(x = year, colour = drug, linetype = sex, group = 1) +
         geom_line() +
@@ -1511,18 +1511,18 @@ server <- function(input, output, session) {
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
       Legend <- "Drug by sex"
     }
-    else if (input$DropOB == "Sex") {
-      if (input$sexOBS != "MF") {
-        sub <- subset(df_Op, subset = (age_group == input$ageOB & location == "Aus" &
-                                         drug %in% input$drugOBS & intent %in% input$codOBS & sex == input$sexOBS &
-                                         (year >= input$yrOB[[1]] & year <= input$yrOB[[2]])))
+    else if (input$DropO5 == "Sex") {
+      if (input$sexO5S != "MF") {
+        sub <- subset(df_Op, subset = (age_group == input$ageO5 & location == "Aus" &
+                                         drug %in% input$drugO5S & intent %in% input$codO5S & sex == input$sexO5S &
+                                         (year >= input$yrO5[[1]] & year <= input$yrO5[[2]])))
         
         p <- ggplot(sub)
       }
       else {
-        sub <- subset(df_Op, subset = (age_group == input$ageOB & location == "Aus" &
-                                         drug %in% input$drugOBS & intent %in% input$codOBS & sex != "All" &
-                                         (year >= input$yrOB[[1]] & year <= input$yrOB[[2]])))
+        sub <- subset(df_Op, subset = (age_group == input$ageO5 & location == "Aus" &
+                                         drug %in% input$drugO5S & intent %in% input$codO5S & sex != "All" &
+                                         (year >= input$yrO5[[1]] & year <= input$yrO5[[2]])))
         
         p <- ggplot(sub) + facet_grid(cols = vars(sex) )
       }
@@ -1534,7 +1534,7 @@ server <- function(input, output, session) {
       Legend <- "Drug by intent"
     }
     
-    if (input$yaxOB == "num") {
+    if (input$yaxO5 == "num") {
       p <- p + aes(y = n, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1547,7 +1547,7 @@ server <- function(input, output, session) {
         labs(x = "Year", y = "Number of deaths")
     }
     
-    else if (input$yaxOB == "rateht" | input$yaxOB == "ratehtci") {
+    else if (input$yaxO5 == "rateht" | input$yaxO5 == "ratehtci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1560,12 +1560,12 @@ server <- function(input, output, session) {
       ) +
         scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(x = "Year", y = "Deaths per 100,000")
-      if (input$yaxOB == "ratehtci") {
+      if (input$yaxO5 == "ratehtci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxOB == "ratem" | input$yaxOB == "ratemci") {
+    else if (input$yaxO5 == "ratem" | input$yaxO5 == "ratemci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1578,7 +1578,7 @@ server <- function(input, output, session) {
       ) +
         scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(x = "Year", y = "Deaths per 1,000,000")
-      if (input$yaxOB == "ratemci") {
+      if (input$yaxO5 == "ratemci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -1618,19 +1618,17 @@ server <- function(input, output, session) {
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
   })
   
-  # Plot OC (NOT NEEDED - in Plot OB)
-  
-  # Plot OD (Table 6) -----------------------------------------------------------------
-  output$opioidPlotD <- renderPlotly({
+  # Plot O6 (Table 6) -----------------------------------------------------------------
+  output$opPlot6 <- renderPlotly({
     df_Op <- readRDS("ABS_COD2018_Op.rds")
-    sub <- subset(df_Op, subset = (age_group == input$ageOD & drug == "All opioids" & jurisdiction == input$stateOD &
+    sub <- subset(df_Op, subset = (age_group == input$ageOD & drug == "All opioids" & jurisdiction == input$jurOD &
                                      intent %in% input$codOD & sex %in% input$sexOD &
                                      (year >= input$yrOD[[1]] & year <= input$yrOD[[2]])))
     #    sub$sex_intent <- paste(sub$sex,sub$intent,sep=",")
     
     p <- ggplot(sub) + aes(x = year, 
                            colour = sex_intent, linetype = sex_intent, group = 1) + #colour = location, linetype = sex,
-      geom_line() + labs(x = "Year", title=paste0(input$stateOD,", ",input$ageOD) ) +
+      geom_line() + labs(x = "Year", title=paste0(input$jurOD,", ",input$ageOD) ) +
       scale_colour_manual(values = sexcols) + #statecols
       scale_linetype_manual(values = sexcodtype) + #sextype
       scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
@@ -1714,25 +1712,25 @@ server <- function(input, output, session) {
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
   })
   
-  # Opioids with other drugs (Table 7) -----------------------------------------------------------------
-  output$PlotOE <- renderPlotly({
+# Opioids with other drugs (Table 7) -----------------------------------------------------------------
+  output$WopPlot7 <- renderPlotly({
     df_OpW <- readRDS("ABS_COD2018_OpW.rds")
-    if (input$DropOE == "Drug") {
+    if (input$DropW7 == "Drug") {
     sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                    drug == input$drugOED & intent %in% input$codOE & age_group %in% input$ageOED & 
-                    (year >= input$yrOE[[1]] & year <= input$yrOE[[2]]) & sex=="All")
+                    drug == input$drugW7D & intent %in% input$codW7 & age_group %in% input$ageW7D & 
+                    (year >= input$yrW7[[1]] & year <= input$yrW7[[2]]) & sex=="All")
 #    sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
     
     p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
-        labs(x = "Year", title=paste0("All opioids with ",input$drugOED) ) + geom_line() +
+        labs(x = "Year", title=paste0("All opioids with ",input$drugW7D) ) + geom_line() +
         scale_colour_manual(values = agecodcols) + scale_linetype_manual(values = agecodtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
     Legend <- "Age by intent"
     }
-    if (input$DropOE == "Age") {
+    if (input$DropW7 == "Age") {
       sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                    drug %in% input$drugOEA & intent %in% input$codOE & age_group == input$ageOEA & 
-                      (year >= input$yrOE[[1]] & year <= input$yrOE[[2]]) & sex=="All")
+                    drug %in% input$drugW7A & intent %in% input$codW7 & age_group == input$ageW7A & 
+                      (year >= input$yrW7[[1]] & year <= input$yrW7[[2]]) & sex=="All")
       
       p <- ggplot(sub) + aes(x = year, colour = drug, linetype = intent, group = 1) +
         labs(x = "Year") + geom_line() +
@@ -1741,7 +1739,7 @@ server <- function(input, output, session) {
       Legend <- "Drug with opioid <br>by intent"
     }
     
-    if (input$yaxOE == "num") {
+    if (input$yaxW7 == "num") {
         p <- p + aes(y = n, text = paste0(
                      "Year: ", year,
                      "<br>Deaths: ", n,
@@ -1753,7 +1751,7 @@ server <- function(input, output, session) {
                 labs(y = "Number of deaths")
     }
 
-    if (input$yaxOE == "rateht" | input$yaxOE == "ratehtci") {
+    if (input$yaxW7 == "rateht" | input$yaxW7 == "ratehtci") {
         p <- p + aes(y = rate_ht, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
@@ -1765,12 +1763,12 @@ server <- function(input, output, session) {
             )) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
             labs(y = "Deaths per 100,000")
 
-        if (input$yaxOE == "ratehtci") {
+        if (input$yaxW7 == "ratehtci") {
           p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
         }
     }
     
-    if (input$yaxOE == "ratem" | input$yaxOE == "ratemci") {
+    if (input$yaxW7 == "ratem" | input$yaxW7 == "ratemci") {
         p <- p + aes(y = rate_m, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
@@ -1780,7 +1778,7 @@ server <- function(input, output, session) {
                "<br>Sex: ", sex,
                "<br>Age group: ", age_group) ) + 
                scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) + labs(y = "Deaths per 1,000,000")
-        if (input$yaxOE == "ratemci") {
+        if (input$yaxW7 == "ratemci") {
             p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
         }
     }
@@ -1821,46 +1819,46 @@ server <- function(input, output, session) {
   })
   
   # Opioids and other drugs by sex (Table 8) ------------------------------------------
-  output$PlotOF <- renderPlotly({
+  output$WopPlot8 <- renderPlotly({
     df_OpW <- readRDS("ABS_COD2018_OpW.rds")
-    if (input$DropO8 == "Sex") {
-      if (input$sexO8S != "MF") {
+    if (input$DropW8 == "Sex") {
+      if (input$sexW8S != "MF") {
         sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                        drug %in% input$drugOF & intent %in% input$codO8S & 
-                        sex == input$sexO8S & age_group == input$ageO8 & 
-                        (year >= input$yrOF[[1]] & year <= input$yrOF[[2]] ) )
+                        drug %in% input$drugW8 & intent %in% input$codW8S & 
+                        sex == input$sexW8S & age_group == input$ageW8 & 
+                        (year >= input$yrW8[[1]] & year <= input$yrW8[[2]] ) )
         p <- ggplot(sub)
       }
       else {
         sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                    drug %in% input$drugOF & intent %in% input$codO8S & 
-                    sex != "All" & age_group == input$ageO8 & 
-                    (year >= input$yrOF[[1]] & year <= input$yrOF[[2]] ) )
+                    drug %in% input$drugW8 & intent %in% input$codW8S & 
+                    sex != "All" & age_group == input$ageW8 & 
+                    (year >= input$yrW8[[1]] & year <= input$yrW8[[2]] ) )
         p <- ggplot(sub) + facet_grid(cols = vars(sex))
       }
       p <- p + aes(x = year, colour = drug, linetype = intent, group = 1) + 
             geom_line() + 
-            labs(x = "Year", title = paste0("Age group:",input$ageO8,"  Sex: ",input$sexO8S) ) +
+            labs(x = "Year", title = paste0("Age group:",input$ageW8,"  Sex: ",input$sexW8S) ) +
             scale_colour_manual(values = drugcols) +
             scale_linetype_manual(values = codtype) +
             scale_x_continuous(breaks = function(x) unique(floor(pretty(x))) )
       Legend = "Drug with opioid<br>by intent"
     }
-    if (input$DropO8 == "Intent") {
-        sub <- filter(df_OpW, drug %in% input$drugOF & intent == input$codO8I &
-                      sex %in% input$sexO8I & age_group == input$ageO8 & 
-                      (year >= input$yrOF[[1]] & year <= input$yrOF[[2]] ) )
-        print(input$DropO8)
+    if (input$DropW8 == "Intent") {
+        sub <- filter(df_OpW, drug %in% input$drugW8 & intent == input$codW8I &
+                      sex %in% input$sexW8I & age_group == input$ageW8 & 
+                      (year >= input$yrW8[[1]] & year <= input$yrW8[[2]] ) )
+        print(input$DropW8)
         p <- ggplot(sub) + aes(x = year, colour = drug, linetype = sex, group = 1) + 
               geom_line() + 
-              labs(x = "Year", title = paste0("Age group:",input$ageO8,"  Intent: ",input$codO8I) ) +
+              labs(x = "Year", title = paste0("Age group:",input$ageW8,"  Intent: ",input$codW8I) ) +
               scale_colour_manual(values = drugcols) +
               scale_linetype_manual(values = sextype) +
               scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
         Legend = "Drug with opioid<br>by sex"
     }
     
-    if (input$yaxOF == "num") {
+    if (input$yaxW8 == "num") {
       p <- p + aes(y = n, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
@@ -1872,7 +1870,7 @@ server <- function(input, output, session) {
             scale_y_continuous(limits = c(0, max(sub$n, 250))) + labs(y = "Number of deaths")
     }
     
-    if (input$yaxOF == "rateht" | input$yaxOF == "ratehtci") {
+    if (input$yaxW8 == "rateht" | input$yaxW8 == "ratehtci") {
       p <- p + aes(y = rate_ht, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
@@ -1884,12 +1882,12 @@ server <- function(input, output, session) {
            )) + geom_line() +
           scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
           labs(y = "Deaths per 100,000")
-        if (input$yaxOF == "ratehtci") {
+        if (input$yaxW8 == "ratehtci") {
           p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
         }
     }
     
-    if (input$yaxOF == "ratem" | input$yaxOF == "ratemci") {
+    if (input$yaxW8 == "ratem" | input$yaxW8 == "ratemci") {
       p <- p + aes(y = rate_m, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
@@ -1900,7 +1898,7 @@ server <- function(input, output, session) {
             )) + geom_line() +
             scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
             labs(y = "Deaths per 1,000,000")
-        if (input$yaxOF == "ratemci") {
+        if (input$yaxW8 == "ratemci") {
           p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
         }
     }
@@ -1942,7 +1940,7 @@ server <- function(input, output, session) {
   })
 
   # Exclusive Opioids by age and intent (Table 10) -----------------------------------------------------------------
-  output$opioidPlot10 <- renderPlotly({
+  output$EopPlot10 <- renderPlotly({
     df_EOp <- readRDS("ABS_COD2018_EOp.rds")
       if (input$Drop10 == "Opioid") {
       sub <- filter(df_EOp, sex == "All" & location == "Aus" & # nature == "Underlying" &
@@ -2051,36 +2049,36 @@ server <- function(input, output, session) {
   })
 
   # Exclusive opioids by jurisdiction, intent and sex (Table 9 & 11) ------------------------------------------
-  output$PlotOG <- renderPlotly({
+  output$EopPlot9 <- renderPlotly({
     df_EOp <- readRDS("ABS_COD2018_EOp.rds")
-    if (input$Drop9 == "Intent") {
-      sub <- filter(df_EOp, jurisdiction == input$stateOG & age_group == input$ageOG &
-                    sex %in% input$sex9I & intent == input$cod9I & drug %in% input$drugOG & 
-                    (year >= input$yrOG[[1]] & year <= input$yrOG[[2]]) ) %>%
+    if (input$DropE9 == "Intent") {
+      sub <- filter(df_EOp, jurisdiction == input$jurE9 & age_group == input$ageE9 &
+                    sex %in% input$sexE9I & intent == input$codE9I & drug %in% input$drugE9 & 
+                    (year >= input$yrE9[[1]] & year <= input$yrE9[[2]]) ) %>%
         distinct(drug, year, intent, sex, location, age_group, .keep_all = TRUE)
 
       p <- ggplot(sub) + aes(x = year, colour = drug, linetype = sex, group = 1) +
-        geom_line() + labs(x = "Year", title=paste0(input$stateOG,", Age: ",input$ageOG," Intent: ",input$cod9I) ) +
+        geom_line() + labs(x = "Year", title=paste0(input$jurE9,", Age: ",input$ageE9," Intent: ",input$codE9I) ) +
         scale_colour_manual(values = drugcols) +
         scale_linetype_manual(values = sextype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
       Legend <- "Drug by sex"
     }
-    if (input$Drop9 == "Sex") {
-      if (input$sex9S != "MF") {
-        sub <- filter(df_EOp, jurisdiction == input$stateOG & age_group == input$ageOG &
-                        sex == input$sex9S & intent %in% input$cod9S & drug %in% input$drugOG & 
-                        (year >= input$yrOG[[1]] & year <= input$yrOG[[2]]) ) %>%
+    if (input$DropE9 == "Sex") {
+      if (input$sexE9S != "MF") {
+        sub <- filter(df_EOp, jurisdiction == input$jurE9 & age_group == input$ageE9 &
+                        sex == input$sexE9S & intent %in% input$codE9S & drug %in% input$drugE9 & 
+                        (year >= input$yrE9[[1]] & year <= input$yrE9[[2]]) ) %>%
           distinct(drug, year, intent, sex, location, age_group, .keep_all = TRUE)
-        p <- ggplot(sub) + labs(x = "Year", title=paste0(input$stateOG,", Age: ",input$ageOG," Sex: ",input$sex9S) )
+        p <- ggplot(sub) + labs(x = "Year", title=paste0(input$jurE9,", Age: ",input$ageE9," Sex: ",input$sexE9S) )
       }
       else {
-        sub <- filter(df_EOp, jurisdiction == input$stateOG & age_group == input$ageOG &
-                        sex != "All" & intent %in% input$cod9S & drug %in% input$drugOG & 
-                        (year >= input$yrOG[[1]] & year <= input$yrOG[[2]]) ) %>%
+        sub <- filter(df_EOp, jurisdiction == input$jurE9 & age_group == input$ageE9 &
+                        sex != "All" & intent %in% input$codE9S & drug %in% input$drugE9 & 
+                        (year >= input$yrE9[[1]] & year <= input$yrE9[[2]]) ) %>%
           distinct(drug, year, intent, sex, location, age_group, .keep_all = TRUE)
         p <- ggplot(sub) + facet_grid(cols = vars(sex)) +
-          labs(x = "Year", title=paste0(input$stateOG,", Age: ",input$ageOG) )
+          labs(x = "Year", title=paste0(input$jurE9,", Age: ",input$ageE9) )
       }
       p <- p + aes(x = year, colour = drug, linetype = intent, group = 1) +
         geom_line() +
@@ -2091,7 +2089,7 @@ server <- function(input, output, session) {
     }
 
 
-    if (input$yaxOG == "num") {
+    if (input$yaxE9 == "num") {
       p <- p + aes(y = n, text = paste0(
                        "Year: ", year,
                        "<br>Deaths: ", n,
@@ -2102,7 +2100,7 @@ server <- function(input, output, session) {
           labs(y = "Number of deaths")
     }
     
-    if (input$yaxOG == "rateht" | input$yaxOG == "ratehtci") {
+    if (input$yaxE9 == "rateht" | input$yaxE9 == "ratehtci") {
       p <- p + aes(y = rate_ht, text = paste0(
                        "Year: ", year,
                        "<br>Deaths: ", n,
@@ -2112,12 +2110,12 @@ server <- function(input, output, session) {
                        "<br>Sex: ", sex
             )) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
             labs(y = "Deaths per 100,000")
-        if (input$yaxOG == "ratehtci") {
+        if (input$yaxE9 == "ratehtci") {
           p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
         }
     }
 
-    if (input$yaxOG == "ratem" | input$yaxOG == "ratemci") {
+    if (input$yaxE9 == "ratem" | input$yaxE9 == "ratemci") {
       p <- p + aes(y = rate_m, text = paste0(
                        "Year: ", year,
                        "<br>Deaths: ", n,
@@ -2127,7 +2125,7 @@ server <- function(input, output, session) {
                        "<br>Sex: ", sex
             )) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
             labs(y = "Deaths per 1,000,000")
-        if (input$yaxOG == "ratemci") {
+        if (input$yaxE9 == "ratemci") {
           p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
         }
     }
@@ -2168,7 +2166,7 @@ server <- function(input, output, session) {
   })
   
   # Exclusive opioids as percents ------------------------------------------
-  output$PlotOH <- renderPlotly({
+  output$EopPlotP <- renderPlotly({
     #needs to be sorted [order(...)]
     #weird proportions plot from 2015 onwards because of duplicates by AUS
     #- need to make distinct
@@ -2177,11 +2175,11 @@ server <- function(input, output, session) {
                                    "Exclusive pharmaceutical opioids",
                                    "Illicit and pharmaceutical opioids",
                                    "Other and unspecified opioids") &
-                    intent == input$codOH & 
-                    age_group == input$ageOH & 
-                    (year >= input$yrOH[[1]] & year <= input$yrOH[[2]]) & 
-                    sex == input$sexOH &
-                    jurisdiction == input$stateOH) %>% # & table!="10" & table!="18"
+                    intent == input$codEP & 
+                    age_group == input$ageEP & 
+                    (year >= input$yrEP[[1]] & year <= input$yrEP[[2]]) & 
+                    sex == input$sexEP &
+                    jurisdiction == input$jurEP) %>% # & table!="10" & table!="18"
       group_by(year, intent, sex, jurisdiction, age_group) %>% 
       distinct() %>%
       mutate(alldeaths = sum(n),

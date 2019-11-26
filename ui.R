@@ -83,7 +83,7 @@ bootstrapPage('',
               ),
 
               selectInput(
-                  "stateAll", "Jurisdiction:",
+                  "jurAll", "Jurisdiction:",
                   c("Australia",
                    "New South Wales",
                    "Victoria",
@@ -152,9 +152,8 @@ bootstrapPage('',
       tabPanel(value = "PlotR",
   # Remoteness by jurisdiction and intent (Tables R1, R4 & R5) -----------------------------------------
         "Drug-induced deaths by jurisdiction, remoteness area and intent",
-        h1("Drug-induced deaths"),
-        h3("by jurisdiction, remoteness area and intent"),
-        
+        h1("Drug-induced deaths by jurisdiction, remoteness area and intent"),
+
         tabsetPanel(type = "tabs",
           tabPanel("Plot",
             mainPanel(
@@ -180,7 +179,7 @@ bootstrapPage('',
                   selected = "rateht"
               ),
 
-              selectInput("stateR", "Jurisdiction:",
+              selectInput("jurR", "Jurisdiction:",
                   c(
                     "Australia",
                     "New South Wales",
@@ -193,8 +192,8 @@ bootstrapPage('',
               ),
         
               conditionalPanel(
-                condition = "input.stateR == 'Australia'",
-                checkboxGroupInput("regionRA", "Remoteness region:",
+                condition = "input.jurR == 'Australia'",
+                checkboxGroupInput("raRA", "Remoteness region:",
                    choices = c(
                      "Major Cities",
                      "Regional and Remote",
@@ -210,8 +209,8 @@ bootstrapPage('',
               ),
               
               conditionalPanel(
-                condition = "input.stateR != 'Australia'",
-                checkboxGroupInput("regionR", "Remoteness region:",
+                condition = "input.jurR != 'Australia'",
+                checkboxGroupInput("raR", "Remoteness region:",
                     choices = c(
                       "Major Cities",
                       "Regional and Remote"
@@ -264,7 +263,7 @@ bootstrapPage('',
               # ),
               
               selectInput(
-                  "stateRP", "Jurisdiction:",
+                  "jurRP", "Jurisdiction:",
                   c(
                     "Australia",
                     "New South Wales",
@@ -282,7 +281,7 @@ bootstrapPage('',
               ),
 
               conditionalPanel(
-                condition = "input.stateRP == 'Australia'",
+                condition = "input.jurRP == 'Australia'",
                 radioButtons("sexRP", "Sex:",
                     choices = c(
                       "Male",
@@ -294,7 +293,7 @@ bootstrapPage('',
               ),
               
               # conditionalPanel(
-              #   condition = "input.stateRP != 'Australia' || input.sexRP != 'All' || input.yaxRP != 'deaths'",
+              #   condition = "input.jurRP != 'Australia' || input.sexRP != 'All' || input.yaxRP != 'deaths'",
                 radioButtons("ageRP", "Age range:",
                     c("All ages","15 to 64"="15-64"),
                     selected = "All ages"
@@ -302,7 +301,7 @@ bootstrapPage('',
               # ),
 
               # conditionalPanel(
-              #   condition = "input.stateRP == 'Australia' && input.sexRP == 'All' & input.yaxRP == 'deaths'",
+              #   condition = "input.jurRP == 'Australia' && input.sexRP == 'All' & input.yaxRP == 'deaths'",
                 # checkboxGroupInput("ageRPA", "Age range:",
                 #     c(
                     # "15 to 24" = "15-24",
@@ -359,7 +358,7 @@ bootstrapPage('',
               ),
               
               selectInput(
-                 "stateDT", "Jurisdiction:",
+                 "jurDT", "Jurisdiction:",
                  c("Australia",
                     "New South Wales - All ages"="New South Wales",
                     "Victoria - All ages"="Victoria",
@@ -372,7 +371,7 @@ bootstrapPage('',
               ),
 
               conditionalPanel(
-                condition = "input.stateDT == 'Australia'",
+                condition = "input.jurDT == 'Australia'",
                    selectInput( "ageDT", "Age range:",
                     choices = c(
                       "All ages","15 to 64" = "15-64"
@@ -392,7 +391,7 @@ bootstrapPage('',
               conditionalPanel(
                   condition = "input.DropDT == 'IntSx'",
                   conditionalPanel(
-                    condition = "input.stateDT == 'Australia'",
+                    condition = "input.jurDT == 'Australia'",
                       selectInput("sexDTI", "Sex:",
                           choices = c("All",
                               "Female - select All ages as Age range"="Female",
@@ -416,7 +415,7 @@ bootstrapPage('',
                       )
                   ),
                   conditionalPanel(
-                    condition = "input.stateDT != 'Australia'",
+                    condition = "input.jurDT != 'Australia'",
                     selectInput("codDTIJ", "Intent:",
                                 choices = c("All", "Accidental"),
                                 selected = c("All")
@@ -487,7 +486,7 @@ bootstrapPage('',
                             selected = c("All", "Accidental", "Intentional", "Undetermined")
                       ),
                       conditionalPanel(
-                        condition = "input.stateDT == 'Australia'",
+                        condition = "input.jurDT == 'Australia'",
                           checkboxGroupInput("sexDTD", "Sex:",
                              choices = c("All",
                                          "Female - please select All ages as Age range"="Female",
@@ -711,18 +710,18 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(
-              withLoader(plotlyOutput("opioidPlot4", width = "100%", height = "600px"), 
+              withLoader(plotlyOutput("opPlot4", width = "100%", height = "600px"), 
      #           type = "html", loader = "loader4"),
                   type="image", loader="DT_NIDIP_tween.gif"),
               fluidRow(includeMarkdown("notesOpioidAPlot.md"))
             ),
 
             sidebarPanel(
-              sliderInput("yrOA", "Period",
+              sliderInput("yrO4", "Period",
                 min = 1997,
                 max = 2018, value = c(2008, 2018), sep = ""
               ),
-              selectInput( "yaxOA", "Plot:",
+              selectInput( "yaxO4", "Plot:",
                   c( "Number of deaths" = "num",
                   "Deaths per 100,000 people" = "rateht",
                   "Deaths per 100,000 people (95% CI)" = "ratehtci",
@@ -732,18 +731,17 @@ bootstrapPage('',
                   selected = "rateht"
               ),
 
-#Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
-              radioButtons("DropOA", "Variable for dropdown list:",
+#Below based on link: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
+              radioButtons("DropO4", "Variable for dropdown list:",
                 choices = c(
                   "Opioid",
                   "Age"
                 ),inline = T,
                 selected = c("Opioid")
               ),
-#              uiOutput("OAControl")
 
-              conditionalPanel( condition = "input.DropOA == 'Opioid'",
-                  selectInput("drugOAO", label = NULL,
+              conditionalPanel( condition = "input.DropO4 == 'Opioid'",
+                  selectInput("drugO4O", label = NULL,
                       choices = c(
                         "All opioids",
                         "Heroin",
@@ -754,7 +752,7 @@ bootstrapPage('',
                         "Other and unspecified opioids"
                       ),
                       selected = c("All opioids") ),
-                  checkboxGroupInput("ageOAO", "Age:",
+                  checkboxGroupInput("ageO4O", "Age:",
                       choices = c(
                           "15 to 24" = "15-24",
                           "25 to 34" = "25-34",
@@ -770,8 +768,8 @@ bootstrapPage('',
                   )
               ),
 
-              conditionalPanel( condition = "input.DropOA == 'Age'",
-                  selectInput("ageOAA", label = NULL,
+              conditionalPanel( condition = "input.DropO4 == 'Age'",
+                  selectInput("ageO4A", label = NULL,
                       choices = c(
                          "15 to 24" = "15-24",
                          "25 to 34" = "25-34",
@@ -784,7 +782,7 @@ bootstrapPage('',
                          "15 to 64" = "15-64"
                       ),
                       selected = c("15-64") ),
-                  checkboxGroupInput("drugOAA", "Opioid:",
+                  checkboxGroupInput("drugO4A", "Opioid:",
                       choices = c(
                           "All opioids",
                           "Heroin",
@@ -798,7 +796,7 @@ bootstrapPage('',
                   )
               ),
   
-              checkboxGroupInput( "codOA", "Intent:",
+              checkboxGroupInput( "codO4", "Intent:",
                   c("All", "Accidental", "Intentional", "Undetermined"),
                   selected = c("All", "Accidental", "Intentional", "Undetermined")
               )
@@ -809,7 +807,7 @@ bootstrapPage('',
       ),
 
       tabPanel(
-        value = "PlotOB",
+        value = "PlotO5",
       # Opioids by intent, opioid and sex (Table 5) -----------------------------------------
         "By opioid, intent and sex",
         h1("Opioid-induced deaths"),
@@ -820,19 +818,19 @@ bootstrapPage('',
           tabPanel( "Plot",
 
             mainPanel(
-              withLoader(plotlyOutput("opioidPlotB", width = "100%", height = "600px"),
+              withLoader(plotlyOutput("opPlot5", width = "100%", height = "600px"),
       #           type = "html", loader = "loader4"),
                   type="image", loader="DT_NIDIP_tween.gif"),
               fluidRow(includeMarkdown("notesOpioidBPlot.md"))
             ),
 
             sidebarPanel(
-              sliderInput("yrOB", "Period",
+              sliderInput("yrO5", "Period",
                 min = 1997, max = 2018,
                 value = c(2008, 2018), sep = ""
               ),
               selectInput(
-                "yaxOB", "Plot:",
+                "yaxO5", "Plot:",
                 c(
                   "Number of deaths" = "num",
                   "Deaths per 100,000 people" = "rateht",
@@ -844,12 +842,12 @@ bootstrapPage('',
               ),
 
               selectInput(
-                "ageOB", "Age range:",
+                "ageO5", "Age range:",
                 c("All ages","15 to 64" = "15-64"),
                 c("15-64")
               ),
         #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
-              radioButtons("DropOB", "Variable for dropdown list:",
+              radioButtons("DropO5", "Variable for dropdown list:",
                            choices = c(
                              "Opioid",
                              "Intent",
@@ -857,8 +855,8 @@ bootstrapPage('',
                            ),inline = T,
                            selected = c("Opioid")
               ),
-              conditionalPanel( condition = "input.DropOB == 'Opioid'",
-                  selectInput( "drugOBO", label = NULL,
+              conditionalPanel( condition = "input.DropO5 == 'Opioid'",
+                  selectInput( "drugO5O", label = NULL,
                        choices = c(
                            "All opioids",
                            "Heroin",
@@ -869,23 +867,23 @@ bootstrapPage('',
                            "Other and unspecified opioids"
                        ),
                        selected = c("All opioids")),
-                  checkboxGroupInput( "codOBO", "Intent:",
+                  checkboxGroupInput( "codO5O", "Intent:",
                       c("All", "Accidental", "Intentional", "Undetermined"),
                       selected = c("All")
                   ),
-                  checkboxGroupInput("sexOBO", "Sex:",
+                  checkboxGroupInput("sexO5O", "Sex:",
                        choices = c("All", "Female", "Male"),
                        selected = c("All", "Female", "Male") )
               ),
-              conditionalPanel( condition = "input.DropOB == 'Sex'",
-                  selectInput("sexOBS", "Sex:",
+              conditionalPanel( condition = "input.DropO5 == 'Sex'",
+                  selectInput("sexO5S", "Sex:",
                        choices = c("All", "Female", "Male","Male & Female"="MF"),
                        selected = c("All") ),
-                  checkboxGroupInput("codOBS", "Intent:",
+                  checkboxGroupInput("codO5S", "Intent:",
                        c("All", "Accidental", "Intentional", "Undetermined"),
                        selected = c("All", "Accidental", "Intentional", "Undetermined")
                   ),
-                  checkboxGroupInput("drugOBS", "Opioid:",
+                  checkboxGroupInput("drugO5S", "Opioid:",
                       choices = c(
                           "All opioids",
                           "Heroin",
@@ -899,14 +897,14 @@ bootstrapPage('',
                   )
               ),
               conditionalPanel(
-                  condition = "input.DropOB == 'Intent'",
-                      selectInput("codOBI", label = NULL,
+                  condition = "input.DropO5 == 'Intent'",
+                      selectInput("codO5I", label = NULL,
                            c("All", "Accidental", "Intentional", "Undetermined"),
                                  selected = c("All") ),
-                  checkboxGroupInput("sexOBI", "Sex:",
+                  checkboxGroupInput("sexO5I", "Sex:",
                                      choices = c("All", "Female", "Male"),
                                      selected = c("All", "Female", "Male") ),
-                  checkboxGroupInput("drugOBI", "Opioid:",
+                  checkboxGroupInput("drugO5I", "Opioid:",
                        choices = c(
                            "All opioids",
                            "Heroin",
@@ -926,8 +924,8 @@ bootstrapPage('',
       ),
 
       tabPanel(
-        value = "PlotOD",
-        # Opioids by intent, jurisdiction and sex (Table 6) ---------------------------------
+        value = "PlotO6",
+  # Opioids by intent, jurisdiction and sex (Table 6) ---------------------------------
         "By intent, sex and jurisdiction",
         h1("Opioid-induced deaths"),
         h3("By intent, jurisdiction and sex"),
@@ -937,7 +935,7 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(
-              withLoader(plotlyOutput("opioidPlotD", width = "100%", height = "600px"),
+              withLoader(plotlyOutput("opPlot6", width = "100%", height = "600px"),
               #           type = "html", loader = "loader4"),
                   type="image", loader="DT_NIDIP_tween.gif"),
               fluidRow(includeMarkdown("notesOpioidDPlot.md"))
@@ -967,7 +965,7 @@ bootstrapPage('',
               ),
     
               selectInput(
-                "stateOD", "Jurisdiction:",
+                "jurOD", "Jurisdiction:",
                 c(
                   "Australia",
                   "New South Wales",
@@ -1009,7 +1007,7 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(
-              withLoader(plotlyOutput("opioidPlot10", width = "100%", height = "600px"), 
+              withLoader(plotlyOutput("EopPlot10", width = "100%", height = "600px"), 
                          #           type = "html", loader = "loader4"),
                          #create animated gif logo in Photoshop
                          type="image", loader="DT_NIDIP_tween.gif"),
@@ -1108,7 +1106,7 @@ bootstrapPage('',
       ),
       
       tabPanel(
-        value = "PlotOG",
+        value = "PlotE9",
         # Exclusive opioids by jurisdiction, intent and sex (Table 9 & 11)-----------------------------------------
         "Exclusive opioids by opioid type, jurisdiction, intent and sex",
         h1("Opioid-induced deaths"),
@@ -1119,19 +1117,19 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(
-              withLoader(plotlyOutput("PlotOG", width = "100%", height = "600px"),
+              withLoader(plotlyOutput("EopPlot9", width = "100%", height = "600px"),
                          #           type = "html", loader = "loader4"),
                          type="image", loader="DT_NIDIP_tween.gif"),
               fluidRow(includeMarkdown("notesOpioidsExclusivePlot.md"))
             ),
             
             sidebarPanel(
-              sliderInput("yrOG", "Period",
+              sliderInput("yrE9", "Period",
                   min = 2007, max = 2018,
                   value = c(2008, 2018), sep = ""
               ),
               selectInput(
-                "yaxOG", "Plot:",
+                "yaxE9", "Plot:",
                 c(
                   "Number of deaths" = "num",
                   "Deaths per 100,000 people" = "rateht",
@@ -1143,7 +1141,7 @@ bootstrapPage('',
               ),
               
               selectInput(
-                "stateOG", "Jurisdiction:",
+                "jurE9", "Jurisdiction:",
                 c(
                   "Australia",
                   "New South Wales",
@@ -1158,14 +1156,14 @@ bootstrapPage('',
               ),
               
               selectInput(
-                "ageOG", "Age range:",
+                "ageE9", "Age range:",
                 c("All ages","15 to 64"="15-64"
                 ),
                 selected = "15-64"
               ),
               
               #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
-              radioButtons("Drop9", "Variable for dropdown list:",
+              radioButtons("DropE9", "Variable for dropdown list:",
                    choices = c(
                      "Intent",
                      "Sex"
@@ -1176,28 +1174,28 @@ bootstrapPage('',
               #             uiOutput("Control9"),
               #From: https://shiny.rstudio.com/reference/shiny/1.0.4/conditionalPanel.html
               conditionalPanel(
-                condition = "input.Drop9 == 'Intent'",
-                selectInput("cod9I", label = NULL,
+                condition = "input.DropE9 == 'Intent'",
+                selectInput("codE9I", label = NULL,
                     choices = c("All", "Accidental", "Intentional")
                 ),
-                checkboxGroupInput("sex9I", label = "Sex:",
+                checkboxGroupInput("sexE9I", label = "Sex:",
                      choices = c("All", "Female", "Male"),
                      selected = c("All")
                 )
               ),
               
               conditionalPanel(
-                condition = "input.Drop9 == 'Sex'",
-                selectInput("sex9S", label = NULL,
+                condition = "input.DropE9 == 'Sex'",
+                selectInput("sexE9S", label = NULL,
                     choices = c("All", "Female", "Male","Male & Female"="MF"),
                     selected = c("All") ) ,
                 checkboxGroupInput(
-                  "cod9S", label = "Intent:",
+                  "codE9S", label = "Intent:",
                   c("All", "Accidental", "Intentional"),
                   selected = c("All") )
               ),
               
-              checkboxGroupInput("drugOG", "Drug:",
+              checkboxGroupInput("drugE9", "Drug:",
                    choices = c(
                      "Exclusive illicit opioids",
                      "Exclusive pharmaceutical opioids",
@@ -1216,7 +1214,7 @@ bootstrapPage('',
       ),
       
       tabPanel(
-        value = "PlotOH",
+        value = "PlotEP",
         # Exclusive opioids percents (Tables 10 & 11) -----------------------------------------
         "Exclusive opioids as percentages",
         h1("Opioid-induced deaths"),
@@ -1227,19 +1225,19 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(
-              withLoader(plotlyOutput("PlotOH", width = "100%", height = "600px"),
+              withLoader(plotlyOutput("EopPlotP", width = "100%", height = "600px"),
       #           type = "html", loader = "loader4")
                    type="image", loader="DT_NIDIP_tween.gif")
             ),
             
             sidebarPanel(
-              sliderInput("yrOH", "Period",
+              sliderInput("yrEP", "Period",
                     min = 2007, max = 2018,
                     value = c(2008, 2018), sep = ""
               ),
               
               selectInput(
-                "stateOH", "Jurisdiction:",
+                "jurEP", "Jurisdiction:",
                 c(
                   "Australia",
                   "New South Wales",
@@ -1254,19 +1252,19 @@ bootstrapPage('',
               ),
               
               radioButtons(
-                "codOH", "Intent:",
+                "codEP", "Intent:",
                 c("All", "Accidental"),
                 selected = "All"
               ),
               
               radioButtons(
-                "ageOH", "Age range:",
+                "ageEP", "Age range:",
                 c("All ages","15 to 64"="15-64"
                 ),
                 selected = "15-64"
               ),
               
-              radioButtons("sexOH", "Sex:",
+              radioButtons("sexEP", "Sex:",
                    choices = c(
                      "Male",
                      "Female",
@@ -1281,28 +1279,28 @@ bootstrapPage('',
       ),
   
     tabPanel(
-      value = "PlotOE",
+      value = "PlotW7",
       # Opioids with other drugs by age and intent (Table 7)-----------------------------------------
       "Opioids with other drugs, by age and intent",
       h1("Opioid-induced deaths"),
-      h3("Opioids with other drugs"),
+      h3("Other drugs with opioids by age and intent"),
   
       tabsetPanel(
         type = "tabs",
         tabPanel(
           "Plot",
           mainPanel(width = 9,
-            withLoader(plotlyOutput("PlotOE", width = "100%", height = "600px"),
+            withLoader(plotlyOutput("WopPlot7", width = "100%", height = "600px"),
             #           type = "html", loader = "loader4"),
                 type="image", loader="DT_NIDIP_tween.gif"),
             fluidRow(includeMarkdown("notesOpioidsOtherDrugsPlot.md"))
           ),
           sidebarPanel(width = 3,
-            sliderInput( "yrOE", "Period",
+            sliderInput( "yrW7", "Period",
               min = 1997,
               max = 2018, value = c(2008, 2018), sep = ""
             ),
-            selectInput( "yaxOE", "Plot:",
+            selectInput( "yaxW7", "Plot:",
               c(
                 "Number of deaths" = "num",
                 "Deaths per 100,000 people" = "rateht",
@@ -1314,15 +1312,15 @@ bootstrapPage('',
             ),
   
             #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
-            radioButtons("DropOE", "Variable for dropdown list:",
+            radioButtons("DropW7", "Variable for dropdown list:",
                  choices = c(
                    "Drug with opioid"="Drug",
                    "Age"
                  ), inline = T,
                  selected = c("Drug")
             ),
-            conditionalPanel( condition = "input.DropOE == 'Drug'",
-                selectInput( "drugOED", label = NULL,
+            conditionalPanel( condition = "input.DropW7 == 'Drug'",
+                selectInput( "drugW7D", label = NULL,
                    choices = c(
                      "Alcohol",# = "All opioids with alcohol",
                      "Amphetamines",# = "All opioids with amphetamines",
@@ -1334,7 +1332,7 @@ bootstrapPage('',
                    ),
                    selected = c("Alcohol")
                 ),
-                checkboxGroupInput("ageOED", "Age:",
+                checkboxGroupInput("ageW7D", "Age:",
                     choices = c(
                       "15 to 24" = "15-24",
                       "25 to 34" = "25-34",
@@ -1350,8 +1348,8 @@ bootstrapPage('',
                 )
             ),
                 
-            conditionalPanel( condition = "input.DropOE == 'Age'",
-                selectInput("ageOEA", "Age:",
+            conditionalPanel( condition = "input.DropW7 == 'Age'",
+                selectInput("ageW7A", "Age:",
                     choices = c(
                       "15 to 24" = "15-24",
                       "25 to 34" = "25-34",
@@ -1365,7 +1363,7 @@ bootstrapPage('',
                     ),
                     selected = c("15-64")
                 ),
-                checkboxGroupInput("drugOEA", "All opioids with:",
+                checkboxGroupInput("drugW7A", "All opioids with:",
                     choices = c(
                       "Alcohol",# = "All opioids with alcohol",
                       "Amphetamines",# = "All opioids with amphetamines",
@@ -1378,7 +1376,7 @@ bootstrapPage('',
                     selected = c("Alcohol")
                 )
             ),
-            checkboxGroupInput("codOE", "Intent:",
+            checkboxGroupInput("codW7", "Intent:",
                 c("All", "Accidental", "Intentional", "Undetermined"),
                 selected = "All"
             )
@@ -1389,11 +1387,11 @@ bootstrapPage('',
     ),
   
     tabPanel(
-      value = "PlotOF",
+      value = "PlotW8",
   # Opioids with other drugs by sex (Table 8) -----------------------------------------
       "Opioids with other drugs, by sex and intent",
       h1("Opioid-induced deaths"),
-      h3("Opioids with other drugs"),
+      h3("Other drugs with opioids by sex and intent"),
   
   #    tabPanel(
   #      "Opioids and other drugs by sex",
@@ -1402,18 +1400,18 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(width = 9,
-              withLoader(plotlyOutput("PlotOF", width = "100%", height = "600px"),
+              withLoader(plotlyOutput("WopPlot8", width = "100%", height = "600px"),
               #   type = "html", loader = "loader4"),
                   type="image", loader="DT_NIDIP_tween.gif"),
               fluidRow(includeMarkdown("notesOpioidsOtherDrugsPlot.md"))
             ),
             sidebarPanel(width = 3,
-              sliderInput("yrOF", "Period",
+              sliderInput("yrW8", "Period",
                 min = 1997,
                 max = 2018, value = c(2008, 2018), sep = ""
               ),
               selectInput(
-                "yaxOF", "Plot:",
+                "yaxW8", "Plot:",
                 c(
                   "Number of deaths" = "num",
                   "Deaths per 100,000 people" = "rateht",
@@ -1423,41 +1421,41 @@ bootstrapPage('',
                 ),
                 selected = "rateht"
               ),
-              selectInput( "ageO8", "Age range:",
+              selectInput( "ageW8", "Age range:",
                   c("All ages","15 to 64"="15-64"
                   ),
                   selected = "15-64"
               ),
   
-              radioButtons("DropO8", "Variable for dropdown list:",
+              radioButtons("DropW8", "Variable for dropdown list:",
                            choices = c(
                              "Sex",
                              "Intent"
                            ),inline = T,
                            selected = c("Sex")
               ),
-              conditionalPanel( condition = "input.DropO8 == 'Sex'",
-                  selectInput("sexO8S", label = NULL,
+              conditionalPanel( condition = "input.DropW8 == 'Sex'",
+                  selectInput("sexW8S", label = NULL,
                       choices = c("All", "Female", "Male","Male & Female"="MF"),
                       selected = c("All")
                   ),
-                  checkboxGroupInput("codO8S", "Intent:",
+                  checkboxGroupInput("codW8S", "Intent:",
                        c("All", "Accidental", "Intentional", "Undetermined"),
                        selected = c("All", "Accidental", "Intentional", "Undetermined")
                   )
               ),
               conditionalPanel(
-                condition = "input.DropO8 == 'Intent'",
-                selectInput("codO8I", label = NULL,
+                condition = "input.DropW8 == 'Intent'",
+                selectInput("codW8I", label = NULL,
                       c("All", "Accidental", "Intentional", "Undetermined"),
                       selected = c("All") ),
-                checkboxGroupInput("sexO8I", "Sex:",
+                checkboxGroupInput("sexW8I", "Sex:",
                      choices = c("All", "Female", "Male"),
                      selected = c("All", "Female", "Male")
                 )
               ),
   
-              checkboxGroupInput("drugOF", "All opioids with:",
+              checkboxGroupInput("drugW8", "All opioids with:",
                 choices = c(
                   "Alcohol",# = "All opioids with alcohol",
                   "Amphetamines",# = "All opioids with amphetamines",
