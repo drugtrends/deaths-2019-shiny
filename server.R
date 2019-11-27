@@ -1,11 +1,5 @@
 #For ABS COD 2018 data received in Sept 2019
 #N. Man
-#TO FIX: # # # # # # # # # # # # # # # # # # # # # # # # # #
-#For renderUI !!!!Warning: Length of logical index must be 1 or ..., not 0!!!!
-#Still runs with the error
-#- drug type: table 23, 24 & 25 - still needs updating
-#- title graph with the selected group(s)??? (e.g. from dropdown list)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 library(shiny)
 library(shinythemes)
 library(ggplot2)
@@ -17,7 +11,6 @@ library(shinycustomloader)
 #reading RDS file format is apparently more efficient
 #https://appsilon.com/fast-data-loading-from-files-to-r/
 df <- readRDS("ABS_COD2018_All.rds")
-df_Stim <- readRDS("ABS_COD2018_Stim.rds")
 
 # agecols <- c(
 #   "15-24" = "#c09840",
@@ -31,6 +24,17 @@ df_Stim <- readRDS("ABS_COD2018_Stim.rds")
 #   "15-64" = "#fc8d59",
 #   "All ages" = "#e34a33"
 # )
+agecols <- c(
+  "15-24" = "#ff0000",
+  "25-34" = "#aa0055",
+  "35-44" = "#5500aa",
+  "45-54" = "#0000ff",
+  "55-64" = "#00aa80",
+  "65-74" = "#00ff00",
+  "75-84" = "#ffcc00",
+  "All ages" = "#000000",
+  "15-64" = "gray50"
+)
 
 agesexcols <- c(
 "15-24 All" = "#ff0000",
@@ -251,12 +255,32 @@ regcols <- c(
   "Regional and Remote" = "orange"
 )
 
-regtype <- c(
-  "Major Cities" = 1,
-  "Inner Regional" = 2,
-  "Outer Regional" = 3,
-  "Remote and Very Remote" = 4,
-  "Regional and Remote" = 2
+regcodcols <- c(
+  "Major Cities,All" = "red",
+  "Inner Regional,All" = "purple",
+  "Outer Regional,All" = "blue",
+  "Remote and Very Remote,All" = "forestgreen",
+  "Regional and Remote,All" = "orange",
+
+  "Major Cities,Accidental" = "red",
+  "Inner Regional,Accidental" = "purple",
+  "Outer Regional,Accidental" = "blue",
+  "Remote and Very Remote,Accidental" = "forestgreen",
+  "Regional and Remote,Accidental" = "orange"
+)
+
+regcodtype <- c(
+  "Major Cities,All" = 1,
+  "Inner Regional,All" = 1,
+  "Outer Regional,All" = 1,
+  "Remote and Very Remote,All" = 1,
+  "Regional and Remote,All" = 1,
+  
+  "Major Cities,Accidental" = 2,
+  "Inner Regional,Accidental" = 2,
+  "Outer Regional,Accidental" = 2,
+  "Remote and Very Remote,Accidental" = 2,
+  "Regional and Remote,Accidental" = 2
 )
 
 sextype <- c(
@@ -567,6 +591,7 @@ server <- function(input, output, session) {
 
   # Amphetamine plot (Table 2) --------------------------------------------------------
   output$amphetaminePlot <- renderPlotly({
+    df_Stim <- readRDS("ABS_COD2018_Stim.rds")
     sub <- subset(df_Stim, subset = (jurisdiction == "Australia" & sex == "All" & 
            drug == "Amphetamines" & nature == "Underlying" & intent %in% input$codA & 
            age_group %in% input$ageA & (year >= input$yrA[[1]] & year <= input$yrA[[2]])))
@@ -588,7 +613,7 @@ server <- function(input, output, session) {
         labs(y = "Number of deaths")
     }
     
-    else if (input$yaxA == "rateht" | input$yaxA == "ratehtci") {
+    else if (input$yaxA == "r5" | input$yaxA == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
           "Year: ", year,
           "<br>Deaths: ", n,
@@ -599,12 +624,12 @@ server <- function(input, output, session) {
         ) ) +
         scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
-      if (input$yaxA == "ratehtci") {
+      if (input$yaxA == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxA == "ratem" | input$yaxA == "ratemci") {
+    else if (input$yaxA == "r6" | input$yaxA == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
           "Year: ", year,
           "<br>Deaths: ", n,
@@ -615,7 +640,7 @@ server <- function(input, output, session) {
         ) ) +
         scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
-      if (input$yaxA == "ratemci") {
+      if (input$yaxA == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -656,6 +681,7 @@ server <- function(input, output, session) {
   
   # Cocaine plot (Table 3) ------------------------------------------------------------
   output$cocainePlot <- renderPlotly({
+    df_Stim <- readRDS("ABS_COD2018_Stim.rds")
     sub <- subset(df_Stim, subset = (drug == "Cocaine" & intent %in% input$codC & nature == "Underlying" &
                                        age_group %in% input$ageC & sex == "All" & jurisdiction == "Australia" &
                                        (year >= input$yrC[[1]] & year <= input$yrC[[2]])))
@@ -679,7 +705,7 @@ server <- function(input, output, session) {
         labs(y = "Number of deaths")
     }
     
-    else if (input$yaxC == "rateht" | input$yaxC == "ratehtci") {
+    else if (input$yaxC == "r5" | input$yaxC == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -690,12 +716,12 @@ server <- function(input, output, session) {
       ) ) +
         scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
-      if (input$yaxC == "ratehtci") {
+      if (input$yaxC == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxC == "ratem" | input$yaxC == "ratemci") {
+    else if (input$yaxC == "r6" | input$yaxC == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -706,7 +732,7 @@ server <- function(input, output, session) {
       ) ) +
         scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
-      if (input$yaxC == "ratemci") {
+      if (input$yaxC == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -775,13 +801,21 @@ server <- function(input, output, session) {
       sub <- filter(df, age_group %in% input$ageAll & jurisdiction == input$jurAll &
                                   intent == input$codAllI & sex %in% input$sexAllI &
                                   (year >= input$yrAll[[1]] & year <= input$yrAll[[2]]) )
-
-      p <- ggplot(sub) + aes(x = year, colour = age_sex, linetype = age_sex, group = 1) + 
-        geom_line() + scale_colour_manual(values = agesexcols) +
-        scale_linetype_manual(values = agesextype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x)))) +
-        labs(title=paste0(input$jurAll,", Intent: ",input$codAllI) )
-      Legend <- "Age & sex"
+      p <- ggplot(sub) + aes(x = year) + geom_line() +
+        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      if (dim.data.frame(input$sexAllI)[2]==1) {
+        p <- p + aes(colour = age_group, group = 1) + 
+          scale_colour_manual(values = agecols) +
+          labs(title=paste0(input$jurAll,", Intent: ",input$codAllI,", Sex: ",input$sexAllI) )
+        Legend <- "Age"
+      }
+      else {
+        p <- p + aes(colour = age_sex, linetype = age_sex, group = 1) + 
+          scale_colour_manual(values = agesexcols) +
+          scale_linetype_manual(values = agesextype) +
+          labs(title=paste0(input$jurAll,", Intent: ",input$codAllI) )
+        Legend <- "Age & sex"
+      }
     }
     else if (input$DropAll == "Sex") {
       if (input$sexAllS != "MF") {
@@ -820,7 +854,7 @@ server <- function(input, output, session) {
         labs(x = "Year", y = "Number of deaths")
     }
     
-    else if (input$yaxAll == "rateht" | input$yaxAll == "ratehtci") {
+    else if (input$yaxAll == "r5" | input$yaxAll == "r5ci") {
       p <- p + aes(y = rate_ht,
              text = paste0(
                "Year: ", year,
@@ -833,12 +867,12 @@ server <- function(input, output, session) {
              )
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(x = "Year", y = "Deaths per 100,000")
-      if (input$yaxAll == "ratehtci") {
+      if (input$yaxAll == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxAll == "ratem" | input$yaxAll == "ratemci") {
+    else if (input$yaxAll == "r6" | input$yaxAll == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
@@ -850,11 +884,11 @@ server <- function(input, output, session) {
              )
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(x = "Year", y = "Deaths per 1,000,000")
-      if (input$yaxAll == "ratemci") {
+      if (input$yaxAll == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
-    
+
     validate(need(nrow(sub) > 0, "No data selected"))
 
     # Set theme, remove default legend title and vertical gridlines
@@ -903,10 +937,10 @@ server <- function(input, output, session) {
                     sex == "All" & intent %in% input$codR & region %in% regR &
                     (year >= input$yrR[[1]] & year <= input$yrR[[2]]) )
 
-    p <- ggplot(sub) + aes(x = year, colour = region, linetype = intent , group = 1) +
+    p <- ggplot(sub) + aes(x = year, colour = reg_intent, linetype = reg_intent , group = 1) +
         geom_line() + labs(x = "Year", title=paste0(input$jurR,", All ages") ) +
-        scale_colour_manual(values = regcols) +
-        scale_linetype_manual(values = codtype) +
+        scale_colour_manual(values = regcodcols) +
+        scale_linetype_manual(values = regcodtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
       Legend <- "Region by intent"
 
@@ -921,7 +955,7 @@ server <- function(input, output, session) {
         labs(y = "Number of deaths")
     }
     
-    if (input$yaxR == "rateht" | input$yaxR == "ratehtci") {
+    if (input$yaxR == "r5" | input$yaxR == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -931,12 +965,12 @@ server <- function(input, output, session) {
 #        ,"<br>Sex: ", sex
       )) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
-      if (input$yaxR == "ratehtci") {
+      if (input$yaxR == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    if (input$yaxR == "ratem" | input$yaxR == "ratemci") {
+    if (input$yaxR == "r6" | input$yaxR == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -946,7 +980,7 @@ server <- function(input, output, session) {
 #        ,"<br>Sex: ", sex
       )) + scale_y_continuous(limits = c(0, max(sub$rate_m,.1))) +
         labs(y = "Percentage of drug-induced deaths among all deaths")
-      if (input$yaxR == "ratemci") {
+      if (input$yaxR == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -1143,6 +1177,9 @@ server <- function(input, output, session) {
       LO <- "h"
       Legend <- ""
       LY <- -0.15
+      if (input$sexDTI!="All") {
+        validate(need(nrow(sub) > 0, "Please select All ages for age range."))
+      }
     }
     
     if (input$DropDT == "Drug") {
@@ -1156,6 +1193,10 @@ server <- function(input, output, session) {
           scale_colour_manual(values = sexcols) +
           scale_linetype_manual(values = sexcodtype)
         Legend <- "Sex & intent"
+        if (input$sexDTD!="All") {
+#Warning about length > 1 but still works for the purpose
+          validate(need(nrow(sub) > 0, "Please select All ages for age range."))
+        }
       }
       if (input$jurDT != "Australia") {
         sub <- subset(df_DT, subset = (intent %in% input$codDTD & drug == input$drugDTD & 
@@ -1186,7 +1227,7 @@ server <- function(input, output, session) {
         labs(y = "Number of deaths")
     }
     
-    else if (input$yaxDT == "rateht" | input$yaxDT == "ratehtci") {
+    else if (input$yaxDT == "r5" | input$yaxDT == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1198,12 +1239,12 @@ server <- function(input, output, session) {
       )
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
-      if (input$yaxDT == "ratehtci") {
+      if (input$yaxDT == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxDT == "ratem" | input$yaxDT == "ratemci") {
+    else if (input$yaxDT == "r6" | input$yaxDT == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1215,7 +1256,7 @@ server <- function(input, output, session) {
       )
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
-      if (input$yaxDT == "ratemci") {
+      if (input$yaxDT == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -1302,7 +1343,7 @@ server <- function(input, output, session) {
         labs(y = "Number of deaths")
     }
 
-    else if (input$yaxDTA == "rateht" | input$yaxDTA == "ratehtci") {
+    else if (input$yaxDTA == "r5" | input$yaxDTA == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1314,12 +1355,12 @@ server <- function(input, output, session) {
       )
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
-      if (input$yaxDTA == "ratehtci") {
+      if (input$yaxDTA == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
 
-    else if (input$yaxDTA == "ratem" | input$yaxDTA == "ratemci") {
+    else if (input$yaxDTA == "r6" | input$yaxDTA == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1331,7 +1372,7 @@ server <- function(input, output, session) {
       )
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
-      if (input$yaxDTA == "ratemci") {
+      if (input$yaxDTA == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -1415,7 +1456,7 @@ server <- function(input, output, session) {
         labs(y = "Number of deaths")
     }
     
-    else if (input$yaxO4 == "rateht" | input$yaxO4 == "ratehtci") {
+    else if (input$yaxO4 == "r5" | input$yaxO4 == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1425,12 +1466,12 @@ server <- function(input, output, session) {
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
-      if (input$yaxO4 == "ratehtci") {
+      if (input$yaxO4 == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxO4 == "ratem" | input$yaxO4 == "ratemci") {
+    else if (input$yaxO4 == "r6" | input$yaxO4 == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1440,7 +1481,7 @@ server <- function(input, output, session) {
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
-      if (input$yaxO4 == "ratemci") {
+      if (input$yaxO4 == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -1547,7 +1588,7 @@ server <- function(input, output, session) {
         labs(x = "Year", y = "Number of deaths")
     }
     
-    else if (input$yaxO5 == "rateht" | input$yaxO5 == "ratehtci") {
+    else if (input$yaxO5 == "r5" | input$yaxO5 == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1560,12 +1601,12 @@ server <- function(input, output, session) {
       ) +
         scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(x = "Year", y = "Deaths per 100,000")
-      if (input$yaxO5 == "ratehtci") {
+      if (input$yaxO5 == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxO5 == "ratem" | input$yaxO5 == "ratemci") {
+    else if (input$yaxO5 == "r6" | input$yaxO5 == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1578,7 +1619,7 @@ server <- function(input, output, session) {
       ) +
         scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(x = "Year", y = "Deaths per 1,000,000")
-      if (input$yaxO5 == "ratemci") {
+      if (input$yaxO5 == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -1645,7 +1686,7 @@ server <- function(input, output, session) {
         scale_y_continuous(limits = c(0, max(sub$n, 250)))
     }
     
-    else if (input$yaxOD == "rateht" | input$yaxOD == "ratehtci") {
+    else if (input$yaxOD == "r5" | input$yaxOD == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1656,12 +1697,12 @@ server <- function(input, output, session) {
       )
       ) + labs(y = "Deaths per 100,000") +
         scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5)))
-      if (input$yaxOD == "ratehtci") {
+      if (input$yaxOD == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yaxOD == "ratem" | input$yaxOD == "ratemci") {
+    else if (input$yaxOD == "r6" | input$yaxOD == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1672,7 +1713,7 @@ server <- function(input, output, session) {
       )
       ) + labs(y = "Deaths per 1,000,000") +
         scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25)))
-      if (input$yaxOD == "ratemci") {
+      if (input$yaxOD == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -1715,12 +1756,15 @@ server <- function(input, output, session) {
 # Opioids with other drugs (Table 7) -----------------------------------------------------------------
   output$WopPlot7 <- renderPlotly({
     df_OpW <- readRDS("ABS_COD2018_OpW.rds")
-    if (input$DropW7 == "Drug") {
     sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                    drug == input$drugW7D & intent %in% input$codW7 & age_group %in% input$ageW7D & 
-                    (year >= input$yrW7[[1]] & year <= input$yrW7[[2]]) & sex=="All")
-#    sub$age_intent <- paste(sub$age_group,sub$intent,sep=",")
-    
+            intent %in% input$codW7 & (year >= input$yrW7[[1]] & year <= input$yrW7[[2]]) & sex=="All")
+    if ( is.null(input$showW7) ) {
+      sub <- filter(sub, set == "OpioidW")
+    }
+
+    if (input$DropW7 == "Drug") {
+    sub <- filter(sub, drug == input$drugW7D & age_group %in% input$ageW7D)
+
     p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
         labs(x = "Year", title=paste0("All opioids with ",input$drugW7D) ) + geom_line() +
         scale_colour_manual(values = agecodcols) + scale_linetype_manual(values = agecodtype) +
@@ -1728,57 +1772,60 @@ server <- function(input, output, session) {
     Legend <- "Age by intent"
     }
     if (input$DropW7 == "Age") {
-      sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                    drug %in% input$drugW7A & intent %in% input$codW7 & age_group == input$ageW7A & 
-                      (year >= input$yrW7[[1]] & year <= input$yrW7[[2]]) & sex=="All")
+      sub <- filter(sub, drug %in% input$drugW7A & age_group == input$ageW7A)
       
       p <- ggplot(sub) + aes(x = year, colour = drug, linetype = intent, group = 1) +
         labs(x = "Year") + geom_line() +
         scale_colour_manual(values = drugcols) + scale_linetype_manual(values = codtype) +
         scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
-      Legend <- "Drug with opioid <br>by intent"
+      Legend <- "Drug by intent"
     }
     
-    if (input$yaxW7 == "num") {
-        p <- p + aes(y = n, text = paste0(
-                     "Year: ", year,
-                     "<br>Deaths: ", n,
-                     "<br>Drug with opioid: ", str_to_title(drug),
-                     "<br>Intent: ", str_to_title(intent),
-                     "<br>Sex: ", sex,
-                     "<br>Age group: ", age_group ) ) + 
-                scale_y_continuous(limits = c(0, max(sub$n, 250) ) ) +
-                labs(y = "Number of deaths")
+    if ( is.character(input$showW7) ) {
+      p <- p + aes(alpha=primary) +
+        scale_alpha_manual(values = c(0.3 , 1) )
+      Legend <- paste0(Legend,"<br> by death data type")
     }
 
-    if (input$yaxW7 == "rateht" | input$yaxW7 == "ratehtci") {
+    if (input$yaxW7 == "num") {
+        p <- p + aes(y = n, text = paste0(
+               "Year: ", year,
+               "<br>Deaths: ", n,
+               "<br>Drug: ", str_to_title(drug),
+               "<br>Intent: ", str_to_title(intent),
+               "<br>Sex: ", sex,
+               "<br>Age group: ", age_group ) ) + 
+              scale_y_continuous(limits = c(0, max(sub$n, 250) ) ) +
+              labs(y = "Number of deaths")
+    }
+    if (input$yaxW7 == "r5" | input$yaxW7 == "r5ci") {
         p <- p + aes(y = rate_ht, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-               "<br>Drug with opioid: ", str_to_title(drug),
+               "<br>Drug: ", str_to_title(drug),
                "<br>Intent: ", str_to_title(intent),
                "<br>Sex: ", sex,
                "<br>Age group: ", age_group
             )) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
             labs(y = "Deaths per 100,000")
 
-        if (input$yaxW7 == "ratehtci") {
+        if (input$yaxW7 == "r5ci") {
           p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
         }
     }
     
-    if (input$yaxW7 == "ratem" | input$yaxW7 == "ratemci") {
+    if (input$yaxW7 == "r6" | input$yaxW7 == "r6ci") {
         p <- p + aes(y = rate_m, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-               "<br>Drug with opioid: ", str_to_title(drug),
+               "<br>Drug: ", str_to_title(drug),
                "<br>Intent: ", str_to_title(intent),
                "<br>Sex: ", sex,
                "<br>Age group: ", age_group) ) + 
                scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) + labs(y = "Deaths per 1,000,000")
-        if (input$yaxW7 == "ratemci") {
+        if (input$yaxW7 == "r6ci") {
             p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
         }
     }
@@ -1821,19 +1868,19 @@ server <- function(input, output, session) {
   # Opioids and other drugs by sex (Table 8) ------------------------------------------
   output$WopPlot8 <- renderPlotly({
     df_OpW <- readRDS("ABS_COD2018_OpW.rds")
+    sub <- filter(df_OpW, drug %in% input$drugW8 & age_group == input$ageW8 & 
+          (year >= input$yrW8[[1]] & year <= input$yrW8[[2]]) )
+    if ( is.null(input$showW8) ) {
+      sub <- filter(sub, set == "OpioidW")
+    }
+
     if (input$DropW8 == "Sex") {
       if (input$sexW8S != "MF") {
-        sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                        drug %in% input$drugW8 & intent %in% input$codW8S & 
-                        sex == input$sexW8S & age_group == input$ageW8 & 
-                        (year >= input$yrW8[[1]] & year <= input$yrW8[[2]] ) )
+        sub <- filter(sub, intent %in% input$codW8S & sex == input$sexW8S )
         p <- ggplot(sub)
       }
       else {
-        sub <- filter(df_OpW, #jurisdiction == "Australia" & word(drug, start = 1, end = 3) == "All opioids with" &
-                    drug %in% input$drugW8 & intent %in% input$codW8S & 
-                    sex != "All" & age_group == input$ageW8 & 
-                    (year >= input$yrW8[[1]] & year <= input$yrW8[[2]] ) )
+        sub <- filter(sub, intent %in% input$codW8S & sex != "All" )
         p <- ggplot(sub) + facet_grid(cols = vars(sex))
       }
       p <- p + aes(x = year, colour = drug, linetype = intent, group = 1) + 
@@ -1842,27 +1889,30 @@ server <- function(input, output, session) {
             scale_colour_manual(values = drugcols) +
             scale_linetype_manual(values = codtype) +
             scale_x_continuous(breaks = function(x) unique(floor(pretty(x))) )
-      Legend = "Drug with opioid<br>by intent"
+      Legend <- "Drug by intent"
     }
     if (input$DropW8 == "Intent") {
-        sub <- filter(df_OpW, drug %in% input$drugW8 & intent == input$codW8I &
-                      sex %in% input$sexW8I & age_group == input$ageW8 & 
-                      (year >= input$yrW8[[1]] & year <= input$yrW8[[2]] ) )
-        print(input$DropW8)
+        sub <- filter(sub, intent == input$codW8I & sex %in% input$sexW8I )
         p <- ggplot(sub) + aes(x = year, colour = drug, linetype = sex, group = 1) + 
               geom_line() + 
               labs(x = "Year", title = paste0("Age group:",input$ageW8,"  Intent: ",input$codW8I) ) +
               scale_colour_manual(values = drugcols) +
               scale_linetype_manual(values = sextype) +
               scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
-        Legend = "Drug with opioid<br>by sex"
+        Legend <- "Drug by sex"
     }
     
+    if ( is.character(input$showW8) ) {
+      p <- p + aes(alpha=primary) +
+        scale_alpha_manual(values = c(0.3 , 1) )
+      Legend <- paste0(Legend,"<br> by death data type")
+    }
+
     if (input$yaxW8 == "num") {
       p <- p + aes(y = n, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
-               "<br>Drug with opioid: ", str_to_title(drug),
+               "<br>Drug: ", str_to_title(drug),
                "<br>Intent: ", str_to_title(intent),
                "<br>Age group: ", age_group,
                "<br>Sex: ", sex
@@ -1870,24 +1920,24 @@ server <- function(input, output, session) {
             scale_y_continuous(limits = c(0, max(sub$n, 250))) + labs(y = "Number of deaths")
     }
     
-    if (input$yaxW8 == "rateht" | input$yaxW8 == "ratehtci") {
+    if (input$yaxW8 == "r5" | input$yaxW8 == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-               "<br>Drug with opioid: ", str_to_title(drug),
+               "<br>Drug: ", str_to_title(drug),
                "<br>Intent: ", str_to_title(intent),
                "<br>Age group: ", age_group,
                "<br>Sex: ", sex
            )) + geom_line() +
           scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
           labs(y = "Deaths per 100,000")
-        if (input$yaxW8 == "ratehtci") {
+        if (input$yaxW8 == "r5ci") {
           p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
         }
     }
     
-    if (input$yaxW8 == "ratem" | input$yaxW8 == "ratemci") {
+    if (input$yaxW8 == "r6" | input$yaxW8 == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
@@ -1898,7 +1948,7 @@ server <- function(input, output, session) {
             )) + geom_line() +
             scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
             labs(y = "Deaths per 1,000,000")
-        if (input$yaxW8 == "ratemci") {
+        if (input$yaxW8 == "r6ci") {
           p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
         }
     }
@@ -1983,7 +2033,7 @@ server <- function(input, output, session) {
         labs(y = "Number of deaths")
     }
     
-    else if (input$yax10 == "rateht" | input$yax10 == "ratehtci") {
+    else if (input$yax10 == "r5" | input$yax10 == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -1993,12 +2043,12 @@ server <- function(input, output, session) {
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
-      if (input$yax10 == "ratehtci") {
+      if (input$yax10 == "r5ci") {
         p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
       }
     }
     
-    else if (input$yax10 == "ratem" | input$yax10 == "ratemci") {
+    else if (input$yax10 == "r6" | input$yax10 == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
@@ -2008,7 +2058,7 @@ server <- function(input, output, session) {
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
-      if (input$yax10 == "ratemci") {
+      if (input$yax10 == "r6ci") {
         p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
       }
     }
@@ -2100,7 +2150,7 @@ server <- function(input, output, session) {
           labs(y = "Number of deaths")
     }
     
-    if (input$yaxE9 == "rateht" | input$yaxE9 == "ratehtci") {
+    if (input$yaxE9 == "r5" | input$yaxE9 == "r5ci") {
       p <- p + aes(y = rate_ht, text = paste0(
                        "Year: ", year,
                        "<br>Deaths: ", n,
@@ -2110,12 +2160,12 @@ server <- function(input, output, session) {
                        "<br>Sex: ", sex
             )) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
             labs(y = "Deaths per 100,000")
-        if (input$yaxE9 == "ratehtci") {
+        if (input$yaxE9 == "r5ci") {
           p <- p + geom_ribbon(aes(ymin = rate_ht_lcl, ymax = rate_ht_ucl), alpha = 0.1, size = 0)
         }
     }
 
-    if (input$yaxE9 == "ratem" | input$yaxE9 == "ratemci") {
+    if (input$yaxE9 == "r6" | input$yaxE9 == "r6ci") {
       p <- p + aes(y = rate_m, text = paste0(
                        "Year: ", year,
                        "<br>Deaths: ", n,
@@ -2125,7 +2175,7 @@ server <- function(input, output, session) {
                        "<br>Sex: ", sex
             )) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
             labs(y = "Deaths per 1,000,000")
-        if (input$yaxE9 == "ratemci") {
+        if (input$yaxE9 == "r6ci") {
           p <- p + geom_ribbon(aes(ymin = rate_m_lcl, ymax = rate_m_ucl), alpha = 0.1, size = 0)
         }
     }

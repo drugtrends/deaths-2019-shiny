@@ -74,12 +74,12 @@ bootstrapPage('',
               selectInput( "yaxAll", "Plot:",
                   c(
                   "Number of deaths" = "num",
-                  "Deaths per 100,000 people" = "rateht",
-                  "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                  "Deaths per 1,000,000 people" = "ratem",
-                  "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                  "Deaths per 100,000 people" = "r5",
+                  "Deaths per 100,000 people (95% CI)" = "r5ci",
+                  "Deaths per 1,000,000 people" = "r6",
+                  "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                   ),
-                  selected = "rateht"
+                  selected = "r5"
               ),
 
               selectInput(
@@ -171,12 +171,12 @@ bootstrapPage('',
               selectInput("yaxR", "Plot:",
                   c(
                     "Number of deaths" = "num",
-                    "Deaths per 100,000 people" = "rateht",
-                    "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                    "Deaths per 1,000,000 people" = "ratem",
-                    "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                    "Deaths per 100,000 people" = "r5",
+                    "Deaths per 100,000 people (95% CI)" = "r5ci",
+                    "Deaths per 1,000,000 people" = "r6",
+                    "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                   ),
-                  selected = "rateht"
+                  selected = "r5"
               ),
 
               selectInput("jurR", "Jurisdiction:",
@@ -349,12 +349,12 @@ bootstrapPage('',
                 "yaxDT", "Plot:",
                  c(
                    "Number of deaths" = "num",
-                   "Deaths per 100,000 people" = "rateht",
-                   "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                   "Deaths per 1,000,000 people" = "ratem",
-                   "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                   "Deaths per 100,000 people" = "r5",
+                   "Deaths per 100,000 people (95% CI)" = "r5ci",
+                   "Deaths per 1,000,000 people" = "r6",
+                   "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                  ),
-                 selected = "rateht"
+                 selected = "r5"
               ),
               
               selectInput(
@@ -562,12 +562,12 @@ bootstrapPage('',
                    "yaxDTA", "Plot:",
                    c(
                      "Number of deaths" = "num",
-                     "Deaths per 100,000 people" = "rateht",
-                     "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                     "Deaths per 1,000,000 people" = "ratem",
-                     "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                     "Deaths per 100,000 people" = "r5",
+                     "Deaths per 100,000 people (95% CI)" = "r5ci",
+                     "Deaths per 1,000,000 people" = "r6",
+                     "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                    ),
-                   selected = "rateht"
+                   selected = "r5"
                ),
 
   #       Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
@@ -723,12 +723,12 @@ bootstrapPage('',
               ),
               selectInput( "yaxO4", "Plot:",
                   c( "Number of deaths" = "num",
-                  "Deaths per 100,000 people" = "rateht",
-                  "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                  "Deaths per 1,000,000 people" = "ratem",
-                  "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                  "Deaths per 100,000 people" = "r5",
+                  "Deaths per 100,000 people (95% CI)" = "r5ci",
+                  "Deaths per 1,000,000 people" = "r6",
+                  "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                   ),
-                  selected = "rateht"
+                  selected = "r5"
               ),
 
 #Below based on link: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
@@ -833,12 +833,12 @@ bootstrapPage('',
                 "yaxO5", "Plot:",
                 c(
                   "Number of deaths" = "num",
-                  "Deaths per 100,000 people" = "rateht",
-                  "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                  "Deaths per 1,000,000 people" = "ratem",
-                  "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                  "Deaths per 100,000 people" = "r5",
+                  "Deaths per 100,000 people (95% CI)" = "r5ci",
+                  "Deaths per 1,000,000 people" = "r6",
+                  "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                 ),
-                selected = "rateht"
+                selected = "r5"
               ),
 
               selectInput(
@@ -950,12 +950,12 @@ bootstrapPage('',
                 "yaxOD", "Plot:",
                 c(
                   "Number of deaths" = "num",
-                  "Deaths per 100,000 people" = "rateht",
-                  "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                  "Deaths per 1,000,000 people" = "ratem",
-                  "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                  "Deaths per 100,000 people" = "r5",
+                  "Deaths per 100,000 people (95% CI)" = "r5ci",
+                  "Deaths per 1,000,000 people" = "r6",
+                  "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                 ),
-                selected = "rateht"
+                selected = "r5"
               ),
     
               selectInput(
@@ -1021,12 +1021,12 @@ bootstrapPage('',
               ),
               selectInput( "yax10", "Plot:",
                    c( "Number of deaths" = "num",
-                      "Deaths per 100,000 people" = "rateht",
-                      "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                      "Deaths per 1,000,000 people" = "ratem",
-                      "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                      "Deaths per 100,000 people" = "r5",
+                      "Deaths per 100,000 people (95% CI)" = "r5ci",
+                      "Deaths per 1,000,000 people" = "r6",
+                      "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                    ),
-                   selected = "rateht"
+                   selected = "r5"
               ),
               
               radioButtons("Drop10", "Variable for dropdown list:",
@@ -1132,12 +1132,12 @@ bootstrapPage('',
                 "yaxE9", "Plot:",
                 c(
                   "Number of deaths" = "num",
-                  "Deaths per 100,000 people" = "rateht",
-                  "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                  "Deaths per 1,000,000 people" = "ratem",
-                  "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                  "Deaths per 100,000 people" = "r5",
+                  "Deaths per 100,000 people (95% CI)" = "r5ci",
+                  "Deaths per 1,000,000 people" = "r6",
+                  "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                 ),
-                selected = "rateht"
+                selected = "r5"
               ),
               
               selectInput(
@@ -1303,12 +1303,12 @@ bootstrapPage('',
             selectInput( "yaxW7", "Plot:",
               c(
                 "Number of deaths" = "num",
-                "Deaths per 100,000 people" = "rateht",
-                "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                "Deaths per 1,000,000 people" = "ratem",
-                "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                "Deaths per 100,000 people" = "r5",
+                "Deaths per 100,000 people (95% CI)" = "r5ci",
+                "Deaths per 1,000,000 people" = "r6",
+                "Deaths per 1,000,000 people (95% CI)" = "r6ci"
               ),
-              selected = "rateht"
+              selected = "r5"
             ),
   
             #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
@@ -1414,12 +1414,12 @@ bootstrapPage('',
                 "yaxW8", "Plot:",
                 c(
                   "Number of deaths" = "num",
-                  "Deaths per 100,000 people" = "rateht",
-                  "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                  "Deaths per 1,000,000 people" = "ratem",
-                  "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                  "Deaths per 100,000 people" = "r5",
+                  "Deaths per 100,000 people (95% CI)" = "r5ci",
+                  "Deaths per 1,000,000 people" = "r6",
+                  "Deaths per 1,000,000 people (95% CI)" = "r6ci"
                 ),
-                selected = "rateht"
+                selected = "r5"
               ),
               selectInput( "ageW8", "Age range:",
                   c("All ages","15 to 64"="15-64"
@@ -1490,14 +1490,14 @@ bootstrapPage('',
           type = "tabs",
           tabPanel(
             "Plot",
-            mainPanel(
+            mainPanel(width = 9,
               withLoader(plotlyOutput("amphetaminePlot", width = "100%", height = "600px"),
     #           type = "html", loader = "loader4"),
                 type="image", loader="NIDIP_MovingS.gif"),
               fluidRow(includeMarkdown("notesAmphetaminesPlot.md"))
             ),
 
-            sidebarPanel(
+            sidebarPanel(width = 3,
             sliderInput("yrA", "Period",
               min = 1997, max = 2018,
               value = c(2008, 2018), sep = ""
@@ -1506,12 +1506,12 @@ bootstrapPage('',
               "yaxA", "Plot:",
               c(
                 "Number of deaths" = "num",
-                "Deaths per 100,000 people" = "rateht",
-                "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                "Deaths per 1,000,000 people" = "ratem",
-                "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                "Deaths per 100,000 people" = "r5",
+                "Deaths per 100,000 people (95% CI)" = "r5ci",
+                "Deaths per 1,000,000 people" = "r6",
+                "Deaths per 1,000,000 people (95% CI)" = "r6ci"
               ),
-              selected = "rateht"
+              selected = "r5"
             ),
 
             checkboxGroupInput("codA", "Intent:",
@@ -1549,7 +1549,7 @@ bootstrapPage('',
         type = "tabs",
         tabPanel(
           "Plot",
-          mainPanel(
+          mainPanel(width = 9,
             withLoader(plotlyOutput("cocainePlot", width = "100%", height = "600px"),
             #          type = "html", loader = "loader4"),
             #create animated gif logo in Photoshop
@@ -1557,7 +1557,7 @@ bootstrapPage('',
             fluidRow(includeMarkdown("notesCocainePlot.md"))
           ),
 
-          sidebarPanel(
+          sidebarPanel(width = 3,
             sliderInput("yrC", "Period",
               min = 1997,
               max = 2018, value = c(2008, 2018), sep = ""
@@ -1566,12 +1566,12 @@ bootstrapPage('',
               "yaxC", "Plot:",
               c(
                 "Number of deaths" = "num",
-                "Deaths per 100,000 people" = "rateht",
-                "Deaths per 100,000 people (95% CI)" = "ratehtci",
-                "Deaths per 1,000,000 people" = "ratem",
-                "Deaths per 1,000,000 people (95% CI)" = "ratemci"
+                "Deaths per 100,000 people" = "r5",
+                "Deaths per 100,000 people (95% CI)" = "r5ci",
+                "Deaths per 1,000,000 people" = "r6",
+                "Deaths per 1,000,000 people (95% CI)" = "r6ci"
               ),
-              selected = "rateht"
+              selected = "r5"
             ),
 
             checkboxGroupInput(
@@ -1614,8 +1614,8 @@ bootstrapPage('',
 
 #seem to be ignored
 #  renderCSS(type="image", loader="DT_NIDIP_onion30.gif"),
-  tags$style(type = 'text/css', '.navbar { background-color: #2E823F;}'
-      , '.navbar-default .dropdown-menu {background-color: #2E823F;}' #this one worked
+  tags$style(type = 'text/css', '.navbar { background-color: #24813f;}'
+      , '.navbar-default .dropdown-menu {background-color: #24813f;}' #this one worked
     #  , '.navbar-default .dropdown-toggle {background-color: #475c07;}' # works but only where it is a dropdown
       , '.irs-from, .irs-to, .irs-single {background: #338822;}' #color for year sliders
       , '.irs-bar { border-top: 1px solid #338822;
