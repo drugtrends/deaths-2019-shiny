@@ -1,4 +1,6 @@
 #### Opioid-induced deaths
+The following ICD-10 codes have been used to extract and examine opioid-induced deaths, i.e. where opioid toxicity was considered to be the underlying cause of death.
+<br>
 
 | **Cause of death** | **UCOD**        |                 | **ACOD**        |
 | --- | --- | --- | ---|

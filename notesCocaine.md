@@ -1,5 +1,6 @@
 #### Cocaine-induced deaths
-
+The following ICD-10 codes have been used to extract and examine cocaine-induced deaths, i.e. where cocaine toxicity was considered to be the underlying cause of death.
+<br>
 | **Cause of death** | **UCOD** | **with** | **ACOD** |
 | --- | --- | --- | --- |
 | Accidental | F14 | with | X42 |

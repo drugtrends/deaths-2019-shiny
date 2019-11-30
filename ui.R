@@ -1,6 +1,7 @@
 #For ABS COD 2018 data received in Sept 2019
 #N. Man
 library(shiny)
+library(shinyTree)
 library(shinythemes)
 library(ggplot2)
 library(ggthemes)
@@ -43,7 +44,7 @@ bootstrapPage('',
 #   , column(width = 4, img(src="DrugTrends-Logo.png", style="height: 25px")),
 
   theme = shinytheme("yeti"),
-#   title=div(img(src="DrugTrends-Logo.png", style="height: 25px"), "Deaths induced by:"),
+#  title=div(img(src="DrugTrends-Logo.png", style="height: 25px"), "Deaths induced by:"),
   title= "Deaths induced by:",
   id = "Plot",
   # All drugs menu tab ---------------------------------------------------------------
@@ -52,13 +53,13 @@ bootstrapPage('',
       
     # All drugs by jurisdiction, intent, age and sex (Tables 1a, 1b & 1c) ---------------------------
       tabPanel("Drug-induced deaths by jurisdiction, intent, age and sex",
-        value = "PlotAll",
+        value = "allPage",
         h1("Drug-induced deaths by jurisdiction, intent, age and sex"),
 
         tabsetPanel(
           type = "tabs",
           tabPanel("Plot",
-            mainPanel(
+            mainPanel(width=9,
               withLoader(plotlyOutput("allPlot", width = "100%", height = "600px"),
 #                 type = "html", loader = "loader4"),
 #create animated gif logo in Photoshop; put DT_NIDIP_tween.gif in www directory
@@ -66,7 +67,7 @@ bootstrapPage('',
               fluidRow(includeMarkdown("notesAllDrugsPlot.md"))
             ),
 
-            sidebarPanel(
+            sidebarPanel(width=3,
               sliderInput( "yrAll", "Period",
                   min = 1997, max = 2018,
                   value = c(2008, 2018), sep = ""
@@ -140,7 +141,7 @@ bootstrapPage('',
                      "75 to 84" = "75-84",
                      "All ages",
                      "15 to 64" = "15-64"),
-                  selected = "15-64"
+                  selected = c("All ages")
               )
     #         downloadButton("AllDrugHtml", "Generate report") #WIP: html download - only static if html only
             )
@@ -245,8 +246,8 @@ bootstrapPage('',
             "Plot",
             mainPanel(
               withLoader(plotlyOutput("remotePlotP", width = "100%", height = "600px"),
-                         #           type = "html", loader = "loader4")
-                         type="image", loader="DT_NIDIP_tween.gif")
+                         type="image", loader="DT_NIDIP_tween.gif"),
+              fluidRow(includeMarkdown("notesRemotePlot.md"))
             ),
             
             sidebarPanel(
@@ -314,7 +315,7 @@ bootstrapPage('',
                 #       "All ages",
                 #       "15 to 64" = "15-64"
                 #     ),
-                #     selected = "15-64"
+                #     selected = c("All ages")
                 # )
               # )
             )
@@ -333,14 +334,14 @@ bootstrapPage('',
           type = "tabs",
           tabPanel(
             "Plot",
-            mainPanel(
-              withLoader(plotlyOutput("drugtypePlot", width = "100%", height = "600px"),
+            mainPanel(width = 9,
+              withLoader(plotlyOutput("DTPlot", width = "100%", height = "600px"),
                         #   type = "html", loader = "loader4"),
                         type="image", loader="DT_NIDIP_tween.gif"),
               fluidRow(includeMarkdown("notesAllByDrugJPlot.md"))
             ),
             
-            sidebarPanel(
+            sidebarPanel(width = 3,
               sliderInput("yrDT", "Period",
                            min = 1997, max = 2018,
                            value = c(2008, 2018), sep = ""
@@ -376,15 +377,15 @@ bootstrapPage('',
                     choices = c(
                       "All ages","15 to 64" = "15-64"
                     ),
-                    selected = c("15-64")
+                    selected = c("All ages")
                    )
               ),
   #       Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
               radioButtons("DropDT", "Variable for dropdown list:",
                   choices = c(
-                      "Sex (only Australia) and Intent"="IntSx",
+                      "Sex (only Aus) & Intent"="IntSx",
                       "Drug"="Drug"
-                  ),inline = T,
+                  ), #inline = T,
                   selected = c("IntSx")
               ),
 
@@ -425,29 +426,33 @@ bootstrapPage('',
                        choices = c(
                           "OPIOIDS",
                           "heroin",
-                          "natural and semi-synthetic opioids",
+                          "natural & semi-synthetic opioids",
                           "methadone",
                           "synthetic opioids",
+                          "ALCOHOL",
                           "AMPHETAMINES",
+                          "ANTIDEPRESSANTS",
+                          "tricyclic & tetracyclic antidepressants",
+                          "other & unspecified antidepressants",
                           "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
                           "barbiturates",
                           "benzodiazepines",
-                          "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
-                          ="antiepileptic and sedative-hypnotic drugs, unspecified",
-                          "ANTIDEPRESSANTS",
-                          "tricyclic and tetracyclic antidepressants",
-                          "other and unspecified antidepressants",
+                          "antiepileptic & sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
+                          ="antiepileptic & sedative-hypnotic drugs, unspecified",
                           "ANTIPSYCHOTICS & NEUROLEPTICS",
-                          "other and unspecified antipsychotics (e.g. quetiapine)"
-                          ="other and unspecified antipsychotics",
+                          "other & unspecified antipsychotics (e.g. quetiapine)"
+                          ="other & unspecified antipsychotics",
+                          "CANNABINOIDS",
+                          "COCAINE",
                           "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS"="NONOPIOID ANALGESICS",
                           "4-aminophenol derivatives (e.g. paracetamol)"="4-aminophenol derivatives",
-                          "other nonsteroidal anti-inflammatory drugs",
-                          "ALCOHOL",
-                          "COCAINE",
-                          "CANNABIS DERIVATIVES"
+                          "other nonsteroidal anti-inflammatory drugs"
                        ),
-                      selected = c("AMPHETAMINES", "COCAINE", "OPIOIDS", "ALCOHOL")
+                      selected = c("OPIOIDS", "ALCOHOL", "AMPHETAMINES", "ANTIDEPRESSANTS", 
+                        "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
+                        "ANTIPSYCHOTICS & NEUROLEPTICS", "CANNABINOIDS",
+                        "COCAINE", "NONOPIOID ANALGESICS"
+                      )
                    )
                 ),
                
@@ -457,27 +462,27 @@ bootstrapPage('',
                          choices = c(
                             "OPIOIDS",
                             "heroin",
-                            "natural and semi-synthetic opioids",
+                            "natural & semi-synthetic opioids",
                             "methadone",
                             "synthetic opioids",
                             "AMPHETAMINES",
                             "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
                             "barbiturates",
                             "benzodiazepines",
-                            "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
-                            ="antiepileptic and sedative-hypnotic drugs, unspecified",
+                            "antiepileptic & sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
+                            ="antiepileptic & sedative-hypnotic drugs, unspecified",
                             "ANTIDEPRESSANTS",
-                            "tricyclic and tetracyclic antidepressants",
-                            "other and unspecified antidepressants",
+                            "tricyclic & tetracyclic antidepressants",
+                            "other & unspecified antidepressants",
                             "ANTIPSYCHOTICS & NEUROLEPTICS",
-                            "other and unspecified antipsychotics (e.g. quetiapine)"
-                            ="other and unspecified antipsychotics",
+                            "other & unspecified antipsychotics (e.g. quetiapine)"
+                            ="other & unspecified antipsychotics",
                             "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS"="NONOPIOID ANALGESICS",
                             "4-aminophenol derivatives (e.g. paracetamol)"="4-aminophenol derivatives",
                             "other nonsteroidal anti-inflammatory drugs",
                             "ALCOHOL",
                             "COCAINE",
-                            "CANNABIS DERIVATIVES"
+                            "CANNABINOIDS"
                          ),
                          selected = c("ALCOHOL") ),
                  
@@ -500,31 +505,31 @@ bootstrapPage('',
                #     choices = c(
                #       "All ages","15 to 64" = "15-64"
                #     ),
-               #     selected = "15-64"
+               #     selected = c("All ages")
                # ),
                # 
                # checkboxGroupInput("drugDT", "Drug:",
                #    choices = c(
                #      "OPIOIDS",
                #      "heroin",
-               #      "natural and semi-synthetic opioids",
+               #      "natural & semi-synthetic opioids",
                #      "methadone",
                #      "synthetic opioids",
                #      "AMPHETAMINES",
                #      "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
                #      "barbiturates",
                #      "benzodiazepines",
-               #      "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)",
+               #      "antiepileptic & sedative-hypnotic drugs, unspecified (e.g. pregabalin)",
                #      "ANTIDEPRESSANTS",
-               #      "tricyclic and tetracyclic antidepressants",
-               #      "other and unspecified antidepressants",
+               #      "tricyclic & tetracyclic antidepressants",
+               #      "other & unspecified antidepressants",
                #      "ANTIPSYCHOTICS & NEUROLEPTICS",
-               #      "other and unspecified antipsychotics (e.g. quetiapine)",
+               #      "other & unspecified antipsychotics (e.g. quetiapine)",
                #      "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS",
                #      "4-aminophenol derivatives (e.g. paracetamol)",
                #      "other nonsteroidal anti-inflammatory drugs",
                #      "Alcohol",
-               #      "CANNABIS DERIVATIVES",
+               #      "CANNABINOIDS",
                #      "Cocaine"
                #    ),
                #    selected = c("AMPHETAMINES", "Cocaine", "OPIOIDS", "Alcohol")
@@ -546,14 +551,14 @@ bootstrapPage('',
            type = "tabs",
            tabPanel(
              "Plot",
-             mainPanel(
-               withLoader(plotlyOutput("drugtypePlotA", width = "100%", height = "600px"),
+             mainPanel(width = 9,
+               withLoader(plotlyOutput("DTPlotA", width = "100%", height = "600px"),
                 #   type = "html", loader = "loader4"),
                     type="image", loader="DT_NIDIP_tween.gif"),
                fluidRow(includeMarkdown("notesAllByDrugPlot.md"))
              ),
 
-             sidebarPanel(
+             sidebarPanel(width = 3,
                sliderInput("yrDTA", "Period",
                   min = 1997, max = 2018,
                   value = c(2008, 2018), sep = ""
@@ -573,7 +578,7 @@ bootstrapPage('',
   #       Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
                radioButtons("DropDTA", "Variable for dropdown list:",
                   choices = c(
-                    "Age and Intent"="Age_Intent",
+                    "Age & Intent"="Age_Intent",
                     "Drug"="Drug"
                   ),inline = T,
                   selected = c("Age_Intent")
@@ -608,34 +613,37 @@ bootstrapPage('',
                         "All ages",
                         "15 to 64" = "15-64"
                       ),
-                      selected = c("15-64")
+                      selected = c("All ages")
                   ),
                   checkboxGroupInput("drugDTAI", "Drug:",
                       choices = c(
                          "OPIOIDS",
                          "heroin",
-                         "natural and semi-synthetic opioids",
+                         "natural & semi-synthetic opioids",
                          "methadone",
                          "synthetic opioids",
                          "AMPHETAMINES",
                          "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
                          "barbiturates",
                          "benzodiazepines",
-                         "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
-                         ="antiepileptic and sedative-hypnotic drugs, unspecified",
+                         "antiepileptic & sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
+                         ="antiepileptic & sedative-hypnotic drugs, unspecified",
                          "ANTIDEPRESSANTS",
-                         "tricyclic and tetracyclic antidepressants",
-                         "other and unspecified antidepressants",
+                         "tricyclic & tetracyclic antidepressants",
+                         "other & unspecified antidepressants",
                          "ANTIPSYCHOTICS & NEUROLEPTICS",
-                         "other and unspecified antipsychotics (e.g. quetiapine)"="other and unspecified antipsychotics",
+                         "other & unspecified antipsychotics (e.g. quetiapine)"="other & unspecified antipsychotics",
                          "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS"="NONOPIOID ANALGESICS",
                          "4-aminophenol derivatives (e.g. paracetamol)"="4-aminophenol derivatives",
                          "other nonsteroidal anti-inflammatory drugs",
                          "ALCOHOL",
                          "COCAINE",
-                         "CANNABIS DERIVATIVES"
+                         "CANNABINOIDS"
                       ),
-                     selected = c("AMPHETAMINES", "COCAINE", "OPIOIDS", "ALCOHOL")
+                     selected = c("OPIOIDS", "ALCOHOL", "AMPHETAMINES", "ANTIDEPRESSANTS", 
+                                  "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
+                                  "ANTIPSYCHOTICS & NEUROLEPTICS", "CANNABINOIDS", 
+                                  "COCAINE", "NONOPIOID ANALGESICS")
                   )
                ),
 
@@ -645,26 +653,26 @@ bootstrapPage('',
                     choices = c(
                       "OPIOIDS",
                       "heroin",
-                      "natural and semi-synthetic opioids",
+                      "natural & semi-synthetic opioids",
                       "methadone",
                       "synthetic opioids",
                       "AMPHETAMINES",
                       "ANTIEPILEPTIC, SEDATIVE-HYPNOTIC & ANTIPARKINSONISM DRUGS",
                       "barbiturates",
                       "benzodiazepines",
-                      "antiepileptic and sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
-                        ="antiepileptic and sedative-hypnotic drugs, unspecified",
+                      "antiepileptic & sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
+                        ="antiepileptic & sedative-hypnotic drugs, unspecified",
                       "ANTIDEPRESSANTS",
-                      "tricyclic and tetracyclic antidepressants",
-                      "other and unspecified antidepressants",
+                      "tricyclic & tetracyclic antidepressants",
+                      "other & unspecified antidepressants",
                       "ANTIPSYCHOTICS & NEUROLEPTICS",
-                      "other and unspecified antipsychotics (e.g. quetiapine)"="other and unspecified antipsychotics",
+                      "other & unspecified antipsychotics (e.g. quetiapine)"="other & unspecified antipsychotics",
                       "NONOPIOID ANALGESICS, ANTIPYRETICS & ANTIRHEUMATICS"="NONOPIOID ANALGESICS",
                       "4-aminophenol derivatives (e.g. paracetamol)"="4-aminophenol derivatives",
                       "other nonsteroidal anti-inflammatory drugs",
                       "ALCOHOL",
                       "COCAINE",
-                      "CANNABIS DERIVATIVES"
+                      "CANNABINOIDS"
                       ),
                      selected = c("ALCOHOL") ),
 
@@ -683,7 +691,7 @@ bootstrapPage('',
                       "All ages",
                       "15 to 64" = "15-64"
                     ),
-                    selected = "15-64"   )
+                    selected = c("All ages") )
                )
              )
            ),
@@ -747,9 +755,9 @@ bootstrapPage('',
                         "Heroin",
                         "Opium",
                         "Methadone",
-                        "Natural and semi-synthetic opioids",
+                        "Natural & semi-synthetic opioids",
                         "Synthetic opioids",
-                        "Other and unspecified opioids"
+                        "Other & unspecified opioids"
                       ),
                       selected = c("All opioids") ),
                   checkboxGroupInput("ageO4O", "Age:",
@@ -764,7 +772,7 @@ bootstrapPage('',
                           "All ages",
                           "15 to 64" = "15-64"
                       ),
-                      selected = c("15-64")
+                      selected = c("All ages")
                   )
               ),
 
@@ -781,16 +789,16 @@ bootstrapPage('',
                          "All ages",
                          "15 to 64" = "15-64"
                       ),
-                      selected = c("15-64") ),
+                      selected = c("All ages") ),
                   checkboxGroupInput("drugO4A", "Opioid:",
                       choices = c(
                           "All opioids",
                           "Heroin",
                           "Opium",
                           "Methadone",
-                          "Natural and semi-synthetic opioids",
+                          "Natural & semi-synthetic opioids",
                           "Synthetic opioids",
-                          "Other and unspecified opioids"
+                          "Other & unspecified opioids"
                       ),
                       selected = c("All opioids")
                   )
@@ -844,7 +852,7 @@ bootstrapPage('',
               selectInput(
                 "ageO5", "Age range:",
                 c("All ages","15 to 64" = "15-64"),
-                c("15-64")
+                selected = c("All ages")
               ),
         #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
               radioButtons("DropO5", "Variable for dropdown list:",
@@ -862,9 +870,9 @@ bootstrapPage('',
                            "Heroin",
                            "Opium",
                            "Methadone",
-                           "Natural and semi-synthetic opioids",
+                           "Natural & semi-synthetic opioids",
                            "Synthetic opioids",
-                           "Other and unspecified opioids"
+                           "Other & unspecified opioids"
                        ),
                        selected = c("All opioids")),
                   checkboxGroupInput( "codO5O", "Intent:",
@@ -889,9 +897,9 @@ bootstrapPage('',
                           "Heroin",
                           "Opium",
                           "Methadone",
-                          "Natural and semi-synthetic opioids",
+                          "Natural & semi-synthetic opioids",
                           "Synthetic opioids",
-                          "Other and unspecified opioids"
+                          "Other & unspecified opioids"
                          ),
                          selected = c("All opioids")
                   )
@@ -910,9 +918,9 @@ bootstrapPage('',
                            "Heroin",
                            "Opium",
                            "Methadone",
-                           "Natural and semi-synthetic opioids",
+                           "Natural & semi-synthetic opioids",
                            "Synthetic opioids",
-                           "Other and unspecified opioids"
+                           "Other & unspecified opioids"
                        ),
                        selected = c("All opioids")
                   )
@@ -961,7 +969,7 @@ bootstrapPage('',
               selectInput(
                 "ageOD", "Age range:",
                 c("All ages","15 to 64" = "15-64"),
-                selected = "15-64"
+                selected = c("All ages")
               ),
     
               selectInput(
@@ -1007,7 +1015,7 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(
-              withLoader(plotlyOutput("EopPlot10", width = "100%", height = "600px"), 
+              withLoader(plotlyOutput("OpEPlot10", width = "100%", height = "600px"), 
                          #           type = "html", loader = "loader4"),
                          #create animated gif logo in Photoshop
                          type="image", loader="DT_NIDIP_tween.gif"),
@@ -1043,8 +1051,8 @@ bootstrapPage('',
                       choices = c(
                         "Exclusive illicit opioids",
                         "Exclusive pharmaceutical opioids",
-                        "Illicit and pharmaceutical opioids",
-                        "Other and unspecified opioids"
+                        "Illicit & pharmaceutical opioids",
+                        "Other & unspecified opioids"
                       ),
                       selected = c(
                         "Exclusive illicit opioids" )
@@ -1061,7 +1069,7 @@ bootstrapPage('',
                          "All ages",
                          "15 to 64" = "15-64"
                       ),
-                      selected = c("15-64")
+                      selected = c("All ages")
                   )
               ),
               
@@ -1079,14 +1087,14 @@ bootstrapPage('',
                         "All ages",
                         "15 to 64" = "15-64"
                       ),
-                  selected = c("15-64") ),
+                  selected = c("All ages") ),
 
                   checkboxGroupInput("drug10A", "Opioid:",
                       choices = c(
                         "Exclusive illicit opioids",
                         "Exclusive pharmaceutical opioids",
-                        "Illicit and pharmaceutical opioids",
-                        "Other and unspecified opioids"
+                        "Illicit & pharmaceutical opioids",
+                        "Other & unspecified opioids"
                       ),
                       selected = c(
                         "Exclusive illicit opioids",
@@ -1117,7 +1125,7 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(
-              withLoader(plotlyOutput("EopPlot9", width = "100%", height = "600px"),
+              withLoader(plotlyOutput("OpEPlot9", width = "100%", height = "600px"),
                          #           type = "html", loader = "loader4"),
                          type="image", loader="DT_NIDIP_tween.gif"),
               fluidRow(includeMarkdown("notesOpioidsExclusivePlot.md"))
@@ -1159,7 +1167,7 @@ bootstrapPage('',
                 "ageE9", "Age range:",
                 c("All ages","15 to 64"="15-64"
                 ),
-                selected = "15-64"
+                selected = c("All ages")
               ),
               
               #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
@@ -1199,8 +1207,8 @@ bootstrapPage('',
                    choices = c(
                      "Exclusive illicit opioids",
                      "Exclusive pharmaceutical opioids",
-                     "Illicit and pharmaceutical opioids",
-                     "Other and unspecified opioids"
+                     "Illicit & pharmaceutical opioids",
+                     "Other & unspecified opioids"
                    ),
                    selected = c(
                      "Exclusive illicit opioids",
@@ -1225,7 +1233,7 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(
-              withLoader(plotlyOutput("EopPlotP", width = "100%", height = "600px"),
+              withLoader(plotlyOutput("OpEPlotP", width = "100%", height = "600px"),
       #           type = "html", loader = "loader4")
                    type="image", loader="DT_NIDIP_tween.gif")
             ),
@@ -1261,7 +1269,7 @@ bootstrapPage('',
                 "ageEP", "Age range:",
                 c("All ages","15 to 64"="15-64"
                 ),
-                selected = "15-64"
+                selected = c("All ages")
               ),
               
               radioButtons("sexEP", "Sex:",
@@ -1290,7 +1298,7 @@ bootstrapPage('',
         tabPanel(
           "Plot",
           mainPanel(width = 9,
-            withLoader(plotlyOutput("WopPlot7", width = "100%", height = "600px"),
+            withLoader(plotlyOutput("OpWPlot7", width = "100%", height = "600px"),
             #           type = "html", loader = "loader4"),
                 type="image", loader="DT_NIDIP_tween.gif"),
             fluidRow(includeMarkdown("notesOpioidsOtherDrugsPlot.md"))
@@ -1322,13 +1330,14 @@ bootstrapPage('',
             conditionalPanel( condition = "input.DropW7 == 'Drug'",
                 selectInput( "drugW7D", label = NULL,
                    choices = c(
+                     "4-aminophenol derivatives (e.g. paracetamol)" = "4-aminophenol derivatives",
                      "Alcohol",# = "All opioids with alcohol",
                      "Amphetamines",# = "All opioids with amphetamines",
-                     "Antidepressants",# = "All opioids with antidepressants",
-                     "Antipsychotics",# = "All opioids with antipsychotics",
-                     "Benzodiazepines",# = "All opioids with benzodiazepines",
-                     "Paracetamol",# = "All opioids with paracetamol",
-                     "Pregabalin" # = "All opioids with pregabalin"
+                     "Antidepressants",
+                     "Antiepileptic & sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
+                     = "Antiepileptic & sedative-hypnotic drugs, unspecified",
+                     "Antipsychotics & neuroleptics",
+                     "Benzodiazepines"
                    ),
                    selected = c("Alcohol")
                 ),
@@ -1344,7 +1353,7 @@ bootstrapPage('',
                       "All ages",
                       "15 to 64" = "15-64"
                     ),
-                    selected = c("15-64")
+                    selected = c("All ages")
                 )
             ),
                 
@@ -1361,21 +1370,26 @@ bootstrapPage('',
                       "All ages",
                       "15 to 64" = "15-64"
                     ),
-                    selected = c("15-64")
+                    selected = c("All ages")
                 ),
                 checkboxGroupInput("drugW7A", "All opioids with:",
                     choices = c(
+                      "4-aminophenol derivatives (e.g. paracetamol)" = "4-aminophenol derivatives",
                       "Alcohol",# = "All opioids with alcohol",
                       "Amphetamines",# = "All opioids with amphetamines",
-                      "Antidepressants",# = "All opioids with antidepressants",
-                      "Antipsychotics",# = "All opioids with antipsychotics",
-                      "Benzodiazepines",# = "All opioids with benzodiazepines",
-                      "Paracetamol",# = "All opioids with paracetamol",
-                      "Pregabalin"# = "All opioids with pregabalin"
+                      "Antidepressants",
+                      "Antiepileptic & sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
+                      = "Antiepileptic & sedative-hypnotic drugs, unspecified",
+                      "Antipsychotics & neuroleptics",
+                      "Benzodiazepines"
                     ),
                     selected = c("Alcohol")
+                ),
+                checkboxGroupInput("showW7", "Also show:",
+                    choices = c("all drug-induced deaths")
                 )
             ),
+
             checkboxGroupInput("codW7", "Intent:",
                 c("All", "Accidental", "Intentional", "Undetermined"),
                 selected = "All"
@@ -1400,7 +1414,7 @@ bootstrapPage('',
           tabPanel(
             "Plot",
             mainPanel(width = 9,
-              withLoader(plotlyOutput("WopPlot8", width = "100%", height = "600px"),
+              withLoader(plotlyOutput("OpWPlot8", width = "100%", height = "600px"),
               #   type = "html", loader = "loader4"),
                   type="image", loader="DT_NIDIP_tween.gif"),
               fluidRow(includeMarkdown("notesOpioidsOtherDrugsPlot.md"))
@@ -1424,7 +1438,7 @@ bootstrapPage('',
               selectInput( "ageW8", "Age range:",
                   c("All ages","15 to 64"="15-64"
                   ),
-                  selected = "15-64"
+                  selected = c("All ages")
               ),
   
               radioButtons("DropW8", "Variable for dropdown list:",
@@ -1457,15 +1471,19 @@ bootstrapPage('',
   
               checkboxGroupInput("drugW8", "All opioids with:",
                 choices = c(
+                  "4-aminophenol derivatives (e.g. paracetamol)" = "4-aminophenol derivatives",
                   "Alcohol",# = "All opioids with alcohol",
                   "Amphetamines",# = "All opioids with amphetamines",
-                  "Antidepressants",# = "All opioids with antidepressants",
-                  "Antipsychotics",# = "All opioids with antipsychotics",
-                  "Benzodiazepines",# = "All opioids with benzodiazepines",
-                  "Paracetamol",# = "All opioids with paracetamol",
-                  "Pregabalin"# = "All opioids with pregabalin"
+                  "Antidepressants",
+                  "Antiepileptic & sedative-hypnotic drugs, unspecified (e.g. pregabalin)"
+                  = "Antiepileptic & sedative-hypnotic drugs, unspecified",
+                  "Antipsychotics & neuroleptics",
+                  "Benzodiazepines"
                 ),
                 selected = c("Alcohol")
+              ),
+              checkboxGroupInput("showW8", "Also show:",
+                                 choices = c("all drug-induced deaths")
               )
             )
           ),
@@ -1514,25 +1532,33 @@ bootstrapPage('',
               selected = "r5"
             ),
 
-            checkboxGroupInput("codA", "Intent:",
-              c("All", "Accidental"),
-              selected = "All"
-            ),
+            HTML("<p>Intent:</p>"),
+            shinyTree("codA", 
+                checkbox = TRUE, theme="proton", themeIcons = FALSE),
+            
+            # checkboxGroupInput("codA", "Intent:",
+            #   c("All", "Accidental"),
+            #   selected = "All"
+            # ),
 
-            checkboxGroupInput("ageA", "Age:",
-              choices = c(
-                "15 to 24" = "15-24",
-                "25 to 34" = "25-34",
-                "35 to 44" = "35-44",
-                "45 to 54" = "45-54",
-                "55 to 64" = "55-64",
-                "65 to 74" = "65-74",
-                "75 to 84" = "75-84",
-                "All ages",
-                "15 to 64" = "15-64"
-              ),
-              selected = c("15-64")
-            )
+            HTML("<p>Age:</p>"),
+            shinyTree("ageA", 
+                checkbox = TRUE, theme="proton", themeIcons = FALSE)
+
+            # checkboxGroupInput("ageA", "Age:",
+            #   choices = c(
+            #     "15 to 24" = "15-24",
+            #     "25 to 34" = "25-34",
+            #     "35 to 44" = "35-44",
+            #     "45 to 54" = "45-54",
+            #     "55 to 64" = "55-64",
+            #     "65 to 74" = "65-74",
+            #     "75 to 84" = "75-84",
+            #     "All ages",
+            #     "15 to 64" = "15-64"
+            #   ),
+            #   selected = c("All ages")
+            # )
           )
         ),
         tabPanel("Notes", includeMarkdown("notesAmphetamines.md"))
@@ -1587,7 +1613,7 @@ bootstrapPage('',
               choices = c(
                 "All ages","15 to 64" = "15-64"
               ),
-                selected = c("15-64")
+                selected = c("All ages")
             )
           )
         ),

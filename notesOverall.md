@@ -1,6 +1,6 @@
 These data are provided by the [Australian Bureau of Statistics](http://www.abs.gov.au/) (ABS) using data from the National Coronial Information System (NCIS). Changes in data coding and collection have occurred over the time period reported. 
 
-The ABS undertake a revision process for coroner-certified deaths over a 3-year period; accordingly, data for 2016, 2017 and 2018 are not final. These figures should be viewed in conjunction with the ABS [Explanatory Notes 50-58](http://www.abs.gov.au/AUSSTATS/abs@.nsf/Lookup/3303.0Explanatory%20Notes12016?OpenDocument).
+The ABS undertake a revision process for coroner-certified deaths over a 3-year period; accordingly, data for 2016, 2017 and 2018 are not final. Causes of death data for 2017 and 2018 are preliminary and subject to two further revisions; data for 2016 are revised and subject to another revision. These figures should be viewed in conjunction with the ABS [Explanatory Notes 50-58](http://www.abs.gov.au/AUSSTATS/abs@.nsf/Lookup/3303.0Explanatory%20Notes12016?OpenDocument).
 
 In addition to the revision process, the ABS undertook further processing improvements from 2008 onwards. For both open and closed cases, the ABS increasingly use additional information from the NCIS (e.g. autopsy, police and toxicology reports) where available to apply more specific cause of death codes. These processing improvements are likely to have an impact on the number of drug-induced deaths reported from 2008 onwards. 
 
@@ -32,6 +32,6 @@ As part of the coronial investigation of drug-related deaths, the coroner assign
 
 **3. Undetermined,** where there was insufficient information for the coroner to make a determination on the intent. 
 
-**4. Other,** where intent could not be classified to any of the above categories. Numbers in this category is very few.
+**4. Other,** where intent could not be classified to any of the above categories. Numbers in this category is very small.
 
 We have disaggregated by intent type where numbers are sufficient to protect confidentiality of individuals.

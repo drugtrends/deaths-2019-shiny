@@ -1,6 +1,6 @@
+### Drug-induced deaths defined by underlying cause of death (UCOD) codes
 A [Tabulation list](https://www.abs.gov.au/AUSSTATS/abs@.nsf/Latestproducts/3303.0Appendix22018?opendocument&tabname=Notes&prodno=3303.0&issue=2018&num=&view=) of ICD-codes to identify causes of death attributable to drug-induced mortality was developed by the ABS based on a drug-induced death tabulation created by United States Centre for Disease Control and Prevention (CDC). We have adopted these codes for our definition of all drug-induced deaths as given below. Deaths related to tobacco (ICD-10 – F17) or alcohol (ICD-10 – F10) have been excluded from the analysis.
 
-### Underlying cause of death (UCOD) codes defining drug-induced deaths:
 <small>
 - D52.1 – Drug-induced folate deficiency anaemia;
 - D59.0 – Drug-induced haemolytic anaemia;
@@ -21,8 +21,8 @@ A [Tabulation list](https://www.abs.gov.au/AUSSTATS/abs@.nsf/Latestproducts/3303
 - F13.7-F13.9 – Use of sedative or hypnotics causing late onset psychosis, other mental and behavioural disorders and unspecified behavioural disorders.
 - F14.0-F14.5 – Use of cocaine causing intoxication, harmful use (abuse), dependence, withdrawal or psychosis
 - F14.7-F14.9 – Use of cocaine causing late onset psychosis, other mental and behavioural disorders and unspecified behavioural disorders.
-- F15.0-F15.5 – Use of caffeine causing intoxication, harmful use (abuse), dependence, withdrawal or psychosis
-- F15.7-F15.9 – Use of caffeine causing late onset psychosis, other mental and behavioural disorders and unspecified behavioural disorders.
+- F15.0-F15.5 – Use of amphetamine-related causing intoxication, harmful use (abuse), dependence, withdrawal or psychosis
+- F15.7-F15.9 – Use of amphetamine-related causing late onset psychosis, other mental and behavioural disorders and unspecified behavioural disorders.
 - F16.0-F16.5 – Use of hallucinogens causing intoxication, harmful use (abuse), dependence, withdrawal or psychosis
 - F16.7-F16.9 – Use of hallucinogens causing late onset psychosis, other mental and behavioural disorders and unspecified behavioural disorders.
 - F18.0-F18.5 – Use of volatile solvents causing intoxication, harmful use (abuse), dependence, withdrawal or psychosis
@@ -64,7 +64,6 @@ A [Tabulation list](https://www.abs.gov.au/AUSSTATS/abs@.nsf/Latestproducts/3303
 
 ### Definition of intent among drug-induced deaths
 
-
 | **Intent** | **UCOD** | | **ACOD** |
 | --- | --- | --- | --- |
 | **Accidental**          | X40-X44             | with | any |
@@ -73,6 +72,6 @@ A [Tabulation list](https://www.abs.gov.au/AUSSTATS/abs@.nsf/Latestproducts/3303
 |                         | Drug-induced deaths | with | X60-X64 |
 | **Undetermined** &nbsp; | Y10-Y14             | with | any |
 |                         | Drug-induced deaths | with | Y10-Y14 |
-| **All intents**         | Drug-induced deaths |                    |   |
+| **All intents**         | Drug-induced deaths |      |   |
 
 <br>

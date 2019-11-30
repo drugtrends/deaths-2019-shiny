@@ -1,6 +1,11 @@
+### Remoteness area
+
+Remoteness area by place of usual residence is mainly built up from Mesh Blocks and in a small number of cases from Statistical Area Level 2 based on the ASGS 2016 boundaries. Please refer to ABS for details on [remoteness structure classifications](https://www.abs.gov.au/websitedbs/D3310114.nsf/home/remoteness+structure).
+<br>
+
+### Drug-induced deaths defined by underlying cause of death (UCOD) codes
 A [Tabulation list](https://www.abs.gov.au/AUSSTATS/abs@.nsf/Latestproducts/3303.0Appendix22018?opendocument&tabname=Notes&prodno=3303.0&issue=2018&num=&view=) of ICD-codes to identify causes of death attributable to drug-induced mortality was developed by the ABS based on a drug-induced death tabulation created by United States Centre for Disease Control and Prevention (CDC). We have adopted these codes for our definition of all drug-induced deaths as given below. Deaths related to tobacco (ICD-10 – F17) or alcohol (ICD-10 – F10) have been excluded from the analysis.
 
-### Underlying cause of death (UCOD) codes defining drug-induced deaths:
 <small>
 - D52.1 – Drug-induced folate deficiency anaemia;
 - D59.0 – Drug-induced haemolytic anaemia;
@@ -70,8 +75,3 @@ A [Tabulation list](https://www.abs.gov.au/AUSSTATS/abs@.nsf/Latestproducts/3303
 | **Accidental**          | X40-X44             | with | any |
 |                         | Drug-induced deaths &nbsp; | with &nbsp; | X40-X44 |
 | **All intents**         | Drug-induced deaths |                    |   |
-
-### Remoteness area
-
-Remoteness area by place of usual residence is mainly derived from Mesh Blocks and in a small number of cases from Statistical Area Level 2 based on the ASGS 2016 boundaries. Please refer to ABS for details on [remoteness structure classifications](https://www.abs.gov.au/websitedbs/D3310114.nsf/home/remoteness+structure).
-<br>
