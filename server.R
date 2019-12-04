@@ -50,12 +50,13 @@ agecodcols <- c(
   "All ages" = "#000000",
   "15-64" = "gray50",
 
+  "All" = "#000000",
   "15-24 All" = "#ff0000",
   "25-34 All" = "#aa0055",
   "35-44 All" = "#5500aa",
   "45-54 All" = "#0000ff",
   "55-64 All" = "#00aa80",
-  "65-74 All" = "#00cc00",
+  "65-74 All" = "#00ff00",
   "75-84 All" = "#ffcc00",
   "All ages All" = "#000000",
   "15-64 All" = "gray50",
@@ -65,7 +66,7 @@ agecodcols <- c(
   "35-44 Male" = "#5500aa",
   "45-54 Male" = "#0000ff",
   "55-64 Male" = "#00aa80",
-  "65-74 Male" = "#00cc00",
+  "65-74 Male" = "#00ff00",
   "75-84 Male" = "#ffcc00",
   "All ages Male" = "#000000",
   "15-64 Male" = "808080",
@@ -75,53 +76,58 @@ agecodcols <- c(
   "35-44 Female" = "#5500aa",
   "45-54 Female" = "#0000ff",
   "55-64 Female" = "#00aa80",
-  "65-74 Female" = "#00cc00",
+  "65-74 Female" = "#00ff00",
   "75-84 Female" = "#ffcc00",
   "All ages Female" = "#000000",
   "15-64 Female" = "808080",
   
+  "Accidental" = "#000000",
   "15-24 Accidental" = "#ff0000",
   "25-34 Accidental" = "#aa0055",
   "35-44 Accidental" = "#5500aa",
   "45-54 Accidental" = "#0000ff",
   "55-64 Accidental" = "#00aa80",
-  "65-74 Accidental" = "#00cc00",
+  "65-74 Accidental" = "#00ff00",
   "75-84 Accidental" = "#ffcc00",
   "All ages Accidental" = "#000000",
   "15-64 Accidental" = "#808080",
   
+  "Intentional" = "#000000",
   "15-24 Intentional" = "#ff0000",
   "25-34 Intentional" = "#aa0055",
   "35-44 Intentional" = "#5500aa",
   "45-54 Intentional" = "#0000ff",
   "55-64 Intentional" = "#00aa80",
-  "65-74 Intentional" = "#00cc00",
+  "65-74 Intentional" = "#00ff00",
   "75-84 Intentional" = "#ffcc00",
   "All ages Intentional" = "#000000",
   "15-64 Intentional" = "#808080",
   
+  "Undetermined" = "#000000",
   "15-24 Undetermined" = "#ff0000",
   "25-34 Undetermined" = "#aa0055",
   "35-44 Undetermined" = "#5500aa",
   "45-54 Undetermined" = "#0000ff",
   "55-64 Undetermined" = "#00aa80",
-  "65-74 Undetermined" = "#00cc00",
+  "65-74 Undetermined" = "#00ff00",
   "75-84 Undetermined" = "#ffcc00",
   "All ages Undetermined" = "#000000",
   "15-64 Undetermined" = "#808080",
   
-  "15-24 Other" = "#c09840",
-  "25-34 Other" = "#76b74b",
-  "35-44 Other" = "#6b8bcd",
-  "45-54 Other" = "#8d62ca",
-  "55-64 Other" = "#c75fa1",
-  "65-74 Other" = "#fc8d59",
-  "75-84 Other" = "#e34a33",
+  "Other" = "#000000",
+  "15-24 Other" = "#ff0000",
+  "25-34 Other" = "#aa0055",
+  "35-44 Other" = "#5500aa",
+  "45-54 Other" = "#0000ff",
+  "55-64 Other" = "#00aa80",
+  "65-74 Other" = "#00ff00",
+  "75-84 Other" = "#ffcc00",
   "All ages Other" = "#000000",
   "15-64 Other" = "#808080"
 )
 
 agecodtype <- c(
+  "All" = 1,
   "15-24 All" = 1,
   "25-34 All" = 1,
   "35-44 All" = 1,
@@ -152,6 +158,7 @@ agecodtype <- c(
   "All ages Female" = 3,
   "15-64 Female" = 3,
   
+  "Accidental" = 2,
   "15-24 Accidental" = 2,
   "25-34 Accidental" = 2,
   "35-44 Accidental" = 2,
@@ -162,6 +169,7 @@ agecodtype <- c(
   "All ages Accidental" = 2,
   "15-64 Accidental" = 2,
 
+  "Intentional" = 3,
   "15-24 Intentional" = 3,
   "25-34 Intentional" = 3,
   "35-44 Intentional" = 3,
@@ -172,6 +180,7 @@ agecodtype <- c(
   "All ages Intentional" = 3,
   "15-64 Intentional" = 3,
 
+  "Undetermined" = 4,
   "15-24 Undetermined" = 4,
   "25-34 Undetermined" = 4,
   "35-44 Undetermined" = 4,
@@ -288,20 +297,21 @@ sexcols <- c(
 #   "Aus" = "#666666"
 # )
 
-opcols <- c("Alcohol"="purple",
-  "Amphetamines"="hotpink",
-  "Antidepressants"="orange",
-  "Antipsychotics & neuroleptics"="blue",
-  "Benzodiazepines"="chartreuse",
-  "4-aminophenol derivatives"="cyan",
-  "Antiepileptic & sedative-hypnotic drugs, unspecified"="forestgreen",
-
-  "All opioids" = "#000000",
-  "Heroin" = "orange",
-  "Opium" = "brown",
-  "Methadone" = "red",
-  "Synthetic opioids" = "blue",
-  "Natural & semi-synthetic opioids" = "purple",
+opcols <- c(
+  # "Alcohol"="purple",
+  # "Amphetamines"="hotpink",
+  # "Antidepressants"="orange",
+  # "Antipsychotics & neuroleptics"="blue",
+  # "Benzodiazepines"="chartreuse",
+  # "4-aminophenol derivatives"="cyan",
+  # "Antiepileptic & sedative-hypnotic drugs,\nunspecified"="forestgreen",
+  # 
+  # "All opioids" = "#000000",
+  # "Heroin" = "orange",
+  # "Opium" = "brown",
+  # "Methadone" = "red",
+  # "Synthetic opioids" = "blue",
+  # "Natural & semi-synthetic opioids" = "purple",
 # "Other & unspecified opioids" = "#CC6677",
 # "Cocaine" = "brown",
   
@@ -372,7 +382,15 @@ opwcodcols <- c(
   "Benzodiazepines,Undetermined"="chartreuse",
   "4-aminophenol derivatives,Undetermined"="cyan")
 
-opcodcols <- c("All opioids,All" = "#000000",
+opcodcols <- c("All opioids" = "#000000",
+  "Heroin" = "orange",
+  "Opium" = "brown",
+  "Methadone" = "red",
+  "Synthetic opioids" = "blue",
+  "Natural & semi-synthetic opioids" = "purple",
+  "Other & unspecified opioids"="#00bb33",
+  
+  "All opioids,All" = "#000000",
   "Heroin,All" = "orange",
   "Opium,All" = "brown",
   "Methadone,All" = "red",
@@ -809,48 +827,61 @@ server <- function(input, output, session) {
   #   tagList(xDT,yDT)
   # })
 # })
-  output$ageA <- renderTree({
-    list(
-      "10-year age groups" = list("15-24"="",
-        "25-34"="", "35-44"="", "45-54"="",
-        "55-64"="", "65-74"="", "75-84"=""),
-      "15-64" = "",
-      "All ages" = "")
-  })
-  output$codA <- renderTree({
-    # intA=list("Intent:"=list(
-    #   'All' = '1',
-    #   'Accidental' = '2') )
-    intA=list(
-      'All' = '1',
-      'Accidental' = '2')
-#Trying: https://stackoverflow.com/questions/55258868/shinytree-with-default-selected-value
-     attr(intA[[1]]['All'],"stselected")=TRUE #doesn't work for selecting default but doesn't break it either
-     attr(intA[[1]],"stopened")=TRUE
-     intA
-  })
+
+####For shinyTree - need to work out how to set default values
+#   output$ageA <- renderTree({
+#     list(
+#       "10-year age groups" = list("15-24"="",
+#         "25-34"="", "35-44"="", "45-54"="",
+#         "55-64"="", "65-74"="", "75-84"=""),
+#       "15-64" = "",
+#       "All ages" = "")
+#   })
+#   output$codA <- renderTree({
+#     # intA=list("Intent:"=list(
+#     #   'All' = '1',
+#     #   'Accidental' = '2') )
+#     intA=list(
+#       'All' = '1',
+#       'Accidental' = '2')
+# #Trying: https://stackoverflow.com/questions/55258868/shinytree-with-default-selected-value
+#      attr(intA[[1]]['All'],"stselected")=TRUE #doesn't work for selecting default but doesn't break it either
+#      attr(intA[[1]],"stopened")=TRUE
+#      intA
+#   })
+
   # Amphetamine plot (Table 2) --------------------------------------------------------
   output$amphetaminePlot <- renderPlotly({
     df_Stim <- readRDS("ABS_COD2018_Stim.rds")
+####For shinyTree
 #    print( dim.data.frame(get_selected(input$ageA,c("classid"))) )
 #    print( get_selected(input$codA) )
-    ageA <- get_selected(input$ageA,c("classid"))
-    codA <- get_selected(input$codA,c("classid"))
+  # ageA <- get_selected(input$ageA,c("classid"))
+  # codA <- get_selected(input$codA,c("classid"))
     sub <- subset(df_Stim, subset = (jurisdiction == "Australia" & sex == "All" & 
-           drug == "Amphetamines" & nature == "Underlying" & intent %in% codA & 
-           age_group %in% ageA & (year >= input$yrA[[1]] & year <= input$yrA[[2]])))
-   p <- ggplot(sub) + geom_line() + labs(x = "Year") +
-        aes(x = year, linetype = age_intent, colour = age_intent, group = 1) +
-        scale_colour_manual(values = agecodcols) +
-        scale_linetype_manual(values = agecodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+           drug == "Amphetamines" & nature == "Underlying" & intent %in% input$codA & 
+           age_group %in% input$ageA & (year >= input$yrA[[1]] & year <= input$yrA[[2]])))
+    p <- ggplot(sub) + geom_line() + labs(x = "Year") +
+      aes(x = year, group = 1) +
+      scale_colour_manual(values = agecodcols) +
+      scale_x_continuous(breaks = seq(input$yrA[[1]],input$yrA[[2]],2) )
+    if (dim.data.frame(input$codA)[2]==1) {
+      p <- p + aes(colour = age_group) +
+        labs(title = paste0("Intent: ",input$codA) )
+      Legend <- "Age"
+    }
+    else {
+      p <- p + aes(colour = age_intent, linetype = age_intent) +
+        scale_linetype_manual(values = agecodtype)
+      Legend <- "Age by intent"
+    }
 
     if (input$yaxA == "num") {
       p <- p + aes(y = n, text = paste0(
           "Year: ", year,
           "<br>Deaths: ", n,
           "<br>Intent: ", str_to_title(intent),
-          "<br>Nature: ", str_to_title(nature),
+#          "<br>Nature: ", str_to_title(nature),
           "<br>Age group: ", age_group
         ) ) +
         scale_y_continuous(limits = c(0, max(sub$n, 250)))+
@@ -863,7 +894,7 @@ server <- function(input, output, session) {
           "<br>Deaths: ", n,
           "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
           "<br>Intent: ", str_to_title(intent),
-          "<br>Nature: ", str_to_title(nature),
+#          "<br>Nature: ", str_to_title(nature),
           "<br>Age group: ", age_group
         ) ) +
         scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
@@ -879,7 +910,7 @@ server <- function(input, output, session) {
           "<br>Deaths: ", n,
           "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
           "<br>Intent: ", str_to_title(intent),
-          "<br>Nature: ", str_to_title(nature),
+#          "<br>Nature: ", str_to_title(nature),
           "<br>Age group: ", age_group
         ) ) +
         scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
@@ -913,12 +944,12 @@ server <- function(input, output, session) {
           xanchor = "left", yanchor = "bottom"
         ))  %>%
       add_annotations(
-        text = "Age by intent", xref = "paper", yref = "paper",
+        text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 1.0, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>% 
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>% 
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))  })
@@ -934,14 +965,14 @@ server <- function(input, output, session) {
       geom_line() + labs(x = "Year") +
       scale_linetype_manual(values = agecodtype) +
       scale_colour_manual(values = agecodcols) +
-      scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      scale_x_continuous(breaks = seq(input$yrC[[1]],input$yrC[[2]],2) )
     
     if (input$yaxC == "num") {
       p <- p + aes(y = n, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Intent: ", str_to_title(intent),
-        "<br>Nature: ", str_to_title(nature),
+#        "<br>Nature: ", str_to_title(nature),
         "<br>Age group: ", age_group
       )
       ) +
@@ -955,7 +986,7 @@ server <- function(input, output, session) {
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
         "<br>Intent: ", str_to_title(intent),
-        "<br>Nature: ", str_to_title(nature),
+#        "<br>Nature: ", str_to_title(nature),
         "<br>Age group: ", age_group
       ) ) +
         scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
@@ -971,7 +1002,7 @@ server <- function(input, output, session) {
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
         "<br>Intent: ", str_to_title(intent),
-        "<br>Nature: ", str_to_title(nature),
+#        "<br>Nature: ", str_to_title(nature),
         "<br>Age group: ", age_group
       ) ) +
         scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
@@ -1007,10 +1038,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = "Age by intent", xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 0.95, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>% 
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>% 
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -1047,14 +1078,14 @@ server <- function(input, output, session) {
                                   (year >= input$yrAll[[1]] & year <= input$yrAll[[2]]) )
       p <- ggplot(sub) + aes(x = year) + geom_line() +
         scale_colour_manual(values = agecodcols) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrAll[[1]],input$yrAll[[2]],2) ) #function(x) unique(floor(pretty(x,high.u.bias = 0,u5.bias = .1))))
       if (dim.data.frame(input$sexAllI)[2]==1) {
         p <- p + aes(colour = age_group, group = 1) + 
           labs(title=paste0(input$jurAll,", Intent: ",input$codAllI,", Sex: ",input$sexAllI) )
         Legend <- "Age"
       }
       else {
-        p <- p + aes(colour = age_sex, linetype = age_sex, group = 1) + 
+        p <- p + aes(colour = age_sex, linetype = age_sex, group = 1) +
           scale_linetype_manual(values = agecodtype) +
           labs(title=paste0(input$jurAll,", Intent: ",input$codAllI) )
         Legend <- "Age & sex"
@@ -1083,15 +1114,21 @@ server <- function(input, output, session) {
           labs(title=paste0(Title,", Intent: ",input$codAllS) )
         Legend <- "Age"
       }
+      else if (dim.data.frame(input$ageAll)[2]==1) {
+        p <- p + aes(linetype = intent, group = 1) + 
+          scale_linetype_manual(values = agecodtype) +
+          labs(title=paste0(Title,", Age: ",input$ageAll) )
+        Legend <- "Intent"
+      }
       else {
         p <- p + aes(colour = age_intent, linetype = age_intent, group = 1) + 
           scale_colour_manual(values = agecodcols) +
           scale_linetype_manual(values = agecodtype) +
-          labs(title=paste0(input$jurAll,", Intent: ",input$codAllI) )
+          labs(title= Title )
         Legend <- "Age by intent"
       }
       p <- p + aes(x = year) + geom_line() +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrAll[[1]],input$yrAll[[2]],2))
     }
     
     if (input$yaxAll == "num") {
@@ -1153,12 +1190,6 @@ server <- function(input, output, session) {
     
     ggplotly(p, tooltip = "text") %>%
       add_annotations(
-        text = Legend, xref = "paper", yref = "paper",
-        x = 1.02, xanchor = "left",
-        y = 1.0, yanchor = "bottom", # Same y as legend below
-        legendtitle = TRUE, showarrow = FALSE
-      ) %>%
-      add_annotations(
         text = 'Source: <a href="https://ndarc.med.unsw.edu.au/resource/trends-drug-induced-deaths-australia-1997-2018">DrugTrends</a>, NDARC',
         xref = "paper", yref = "paper",
         x = 0, xanchor = "left",
@@ -1173,7 +1204,13 @@ server <- function(input, output, session) {
           xref = "paper", yref = "paper", 
           xanchor = "left", yanchor = "bottom"
         ))  %>%
-      layout(legend = list(y = 0.95, yanchor = "top", traceorder = "normal"), margin = list(b = 80)) %>% 
+      add_annotations(
+        text = Legend, xref = "paper", yref = "paper",
+        x = 1.02, xanchor = "left",
+        y = 0.99, yanchor = "bottom", # Same y as legend below
+        legendtitle = TRUE, showarrow = FALSE
+      ) %>%
+      layout(legend = list(y = 0.99, yanchor = "top", traceorder = "normal"), margin = list(b = 80)) %>% 
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -1196,7 +1233,7 @@ server <- function(input, output, session) {
         geom_line() + labs(x = "Year", title=paste0(input$jurR,", All ages") ) +
         scale_colour_manual(values = regcodcols) +
         scale_linetype_manual(values = regcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrR[[1]],input$yrR[[2]],2) )
       Legend <- "Region by intent"
 
     if (input$yaxR == "num") {
@@ -1266,10 +1303,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 0.95, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>%
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>%
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -1352,7 +1389,7 @@ server <- function(input, output, session) {
     #   
     # }
     p <- p + labs(x = "Year") +
-      scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      scale_x_continuous(breaks = seq(input$yrRP[[1]],input$yrRP[[2]],2) )
     
     validate(need(nrow(sub) > 0, "No data selected"))
     
@@ -1380,10 +1417,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = "Remoteness area", xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 0.95, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>%
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>%
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -1426,14 +1463,14 @@ server <- function(input, output, session) {
           p <- ggplot(sub) + labs(title=paste0(
             input$jurDT,", Age: All ages, Sex: All persons, Intent: ",input$codDTIJ) )
       }
-        p <- p + aes(x = year, colour = str_wrap(drug,50), linetype = str_wrap(drug,50), group = 1) +
+        p <- p + aes(x = year, colour = drug, linetype = drug, group = 1) +
         geom_line() + labs(x = "Year") +
         scale_colour_manual(values = dtcols) +
         scale_linetype_manual(values = dttype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrDT[[1]],input$yrDT[[2]],2) )
       Legend <- "" #"Related drug"
       LO <- "v"
-      LY <- 0.95
+      LY <- 0.99
 #      LO <- "h"
 #      LY <- -0.15
       if (input$sexDTI!="All") {
@@ -1468,9 +1505,9 @@ server <- function(input, output, session) {
         Legend <- "Intent"
       }
       p <- p + geom_line() + labs(x = "Year") +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrDT[[1]],input$yrDT[[2]],2) )
       LO <- "v"
-      LY <- 0.95
+      LY <- 0.99
     }
     
     if (input$yaxDT == "num") {
@@ -1571,10 +1608,10 @@ server <- function(input, output, session) {
       geom_line() + labs(x = "Year") +
       scale_colour_manual(values = dtcols) +
       scale_linetype_manual(values = dttype) +
-      scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      scale_x_continuous(breaks = seq(input$yrDTA[[1]],input$yrDTA[[2]],2) )
     Legend <- "Related drug"
     LO <- "v"
-    LY <- 0.95
+    LY <- 0.99
 #    LO <- "h"
 #    LY <- -0.15
     }
@@ -1586,10 +1623,10 @@ server <- function(input, output, session) {
         geom_line() + labs(x = "Year") +
         scale_colour_manual(values = agecodcols) +
         scale_linetype_manual(values = agecodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrDTA[[1]],input$yrDTA[[2]],2) )
       Legend <- "Age by intent"
       LO <- "v"
-      LY <- 0.95
+      LY <- 0.99
     }
 
     if (input$yaxDTA == "num") {
@@ -1597,7 +1634,7 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Drug: ", str_to_title(drug),
-        "<br>Nature: ", str_to_title(nature),
+#        "<br>Nature: ", str_to_title(nature),
         "<br>Intent: ", str_to_title(intent),
         "<br>Age: ", age_group
       )
@@ -1611,7 +1648,7 @@ server <- function(input, output, session) {
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
         "<br>Drug: ", str_to_title(drug),
-        "<br>Nature: ", str_to_title(nature),
+#        "<br>Nature: ", str_to_title(nature),
         "<br>Intent: ", str_to_title(intent),
         "<br>Age: ", age_group
       )
@@ -1628,7 +1665,7 @@ server <- function(input, output, session) {
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
         "<br>Drug: ", drug,
-        "<br>Nature: ", str_to_title(nature),
+#        "<br>Nature: ", str_to_title(nature),
         "<br>Intent: ", str_to_title(intent),
         "<br>Age: ", age_group
       )
@@ -1665,7 +1702,7 @@ server <- function(input, output, session) {
       add_annotations(
         text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 1.0 , yanchor = "bottom",
+        y = 0.99 , yanchor = "bottom",
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
 #      layout(legend = list(orientation = "h", y = -0.15, yanchor = "top"), margin = list(b = 100, l = 100)) %>%
@@ -1681,29 +1718,59 @@ server <- function(input, output, session) {
     #Based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html  
     if (input$DropO4 == "Opioid") {
       sub <- subset(df_Op, subset = (sex == "All" & location == "Aus" & drug == input$drugO4O &
-                                       intent %in% input$codO4 & age_group %in% input$ageO4O &
-                                       (year >= input$yrO4[[1]] & year <= input$yrO4[[2]])))
-      p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
-        geom_line() + labs(x = "Year", title=input$drugO4O) +
+                 intent %in% input$codO4 & age_group %in% input$ageO4O &
+                 (year >= input$yrO4[[1]] & year <= input$yrO4[[2]])))
+  ####For user-defined year intervals
+  #     yr <- as.numeric(input$xaxO4)
+  #     yr <- (input$yrO4[[2]]-input$yrO4[[1]])/yr
+      p <- ggplot(sub) + aes(x = year, group = 1) +
+        geom_line() + labs(x = "Year") +
         scale_colour_manual(values = agecodcols) +
-        scale_linetype_manual(values = agecodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
-      Legend <- "Age by intent"
+        scale_x_continuous(breaks = seq(input$yrO4[[1]],input$yrO4[[2]],2) )
+  ####For user-defined year intervals
+  #     function(x) unique(floor( pretty(x,n=yr) ) )
+      Title <- input$drugO4O
+
+      if (dim.data.frame(input$codO4)[2]==1 | (dim.data.frame(input$codO4)[2]==2 & input$cod2O4==2) ) {
+        p <- p + aes(colour = age_group)
+        Legend <- "Age"
+      }
+      else {
+        p <- p + aes(colour = age_intent, linetype = age_intent) +
+          scale_linetype_manual(values = agecodtype)
+        Legend <- "Age by intent"
+      }
     }
     
     else if (input$DropO4 == "Age") {
       sub <- subset(df_Op, subset = (sex == "All" & location == "Aus" & drug %in% input$drugO4A &
-                                       intent %in% input$codO4 & age_group == input$ageO4A &
-                                       (year >= input$yrO4[[1]] & year <= input$yrO4[[2]])))
-      
-      p <- ggplot(sub) + aes(x = year, colour = op_intent, linetype = op_intent, group = 1) +
-        geom_line() + labs(x = "Year", title=paste0("Age: ",input$ageO4A)) +
+                 intent %in% input$codO4 & age_group == input$ageO4A &
+                 (year >= input$yrO4[[1]] & year <= input$yrO4[[2]])))
+      p <- ggplot(sub) + aes(x = year, group = 1) +
+        geom_line() + labs(x = "Year") +
         scale_colour_manual(values = opcodcols) +
-        scale_linetype_manual(values = opcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
-      Legend <- "Drug by intent"
+        scale_x_continuous(breaks = seq(input$yrO4[[1]],input$yrO4[[2]],2) )
+  #     function(x) unique(floor( pretty(x,n=yr) ) )
+      Title <- paste0("Age: ",input$ageO4A)
+
+      if (dim.data.frame(input$codO4)[2]==1 | (dim.data.frame(input$codO4)[2]==2 & input$cod2O4==2) ) {
+        p <- p + aes(colour = drug)
+        Legend <- "Drug"
+      }
+      else {
+        p <- p + aes(colour = op_intent, linetype = op_intent) +
+          scale_linetype_manual(values = opcodtype)
+        Legend <- "Drug by intent"
+      }
     }
-      
+    
+    if (dim.data.frame(input$codO4)[2]==1) {
+      Title <- paste0(Title,"; Intent: ",input$codO4)
+    }
+    if (dim.data.frame(input$codO4)[2]==2 & input$cod2O4==2) {
+      p <- p + facet_grid(cols = vars(intent) )
+    }
+
     if (input$yaxO4 == "num") {
       p <- p + aes(y = n,
                    text = paste0(
@@ -1749,9 +1816,11 @@ server <- function(input, output, session) {
     validate(need(nrow(sub) > 0, "No data selected"))
     
     # Set theme, remove default legend title and vertical gridlines
-    p <- p + theme_light() + theme(legend.title = element_blank()) +
+    p <- p + labs(title = Title) + theme_light() + theme(legend.title = element_blank()) +
       theme(panel.grid.minor.x = element_blank(),
-            panel.grid.major.x = element_blank())
+            panel.grid.major.x = element_blank(),
+            strip.background = element_rect(fill="#a9e7bb"),
+            strip.text = element_text(color="#000000", face = "bold") )
     
     ggplotly(p, tooltip = "text") %>%
       add_annotations(
@@ -1772,10 +1841,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 1.0, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>%
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>%
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -1796,7 +1865,7 @@ server <- function(input, output, session) {
         geom_line() +
         scale_colour_manual(values = sexcols) +
         scale_linetype_manual(values = sexcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrO5[[1]],input$yrO5[[2]],2) )
       Legend <- "Sex by intent"
     }
     else if (input$DropO5 == "Intent") {
@@ -1808,7 +1877,7 @@ server <- function(input, output, session) {
         geom_line() +
         scale_colour_manual(values = opcodcols) +
         scale_linetype_manual(values = opcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrO5[[1]],input$yrO5[[2]],2) )
       Legend <- "Drug by sex"
     }
     else if (input$DropO5 == "Sex") {
@@ -1830,7 +1899,7 @@ server <- function(input, output, session) {
         geom_line() +
         scale_colour_manual(values = opcodcols) +
         scale_linetype_manual(values = opcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrO5[[1]],input$yrO5[[2]],2) )
       Legend <- "Drug by intent"
     }
     
@@ -1909,10 +1978,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 1.0, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>% 
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>% 
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -1931,7 +2000,7 @@ server <- function(input, output, session) {
       geom_line() + labs(x = "Year", title=paste0(input$jurOD,", ",input$ageOD) ) +
       scale_colour_manual(values = sexcols) + #statecols
       scale_linetype_manual(values = sexcodtype) + #sextype
-      scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+      scale_x_continuous(breaks = seq(input$yrOD[[1]],input$yrOD[[2]],2) )
     
     if (input$yaxOD == "num") {
       p <- p + aes(y = n, text = paste0(
@@ -2003,10 +2072,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = "Sex by intent", xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 0.95, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>% 
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>% 
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -2027,7 +2096,7 @@ server <- function(input, output, session) {
     p <- ggplot(sub) + aes(x = year, colour = age_intent, linetype = age_intent, group = 1) +
         labs(x = "Year", title=paste0("All opioids with ",input$drugW7D) ) + geom_line() +
         scale_colour_manual(values = agecodcols) + scale_linetype_manual(values = agecodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrW7[[1]],input$yrW7[[2]],2) )
     Legend <- "Age by intent"
     }
     if (input$DropW7 == "Age") {
@@ -2036,7 +2105,7 @@ server <- function(input, output, session) {
       p <- ggplot(sub) + aes(x = year, colour = str_wrap(op_intent,50), linetype = str_wrap(op_intent,50), group = 1) +
         labs(x = "Year") + geom_line() +
         scale_colour_manual(values = opwcodcols) + scale_linetype_manual(values = opwcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrW7[[1]],input$yrW7[[2]],2) )
       Legend <- "Drug by intent"
     }
     
@@ -2115,10 +2184,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 1.0 , yanchor = "bottom", # Same y as legend below
+        y = 0.99 , yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>%
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>%
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                       "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                       "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -2147,7 +2216,7 @@ server <- function(input, output, session) {
             labs(x = "Year", title = paste0("Age group:",input$ageW8,"  Sex: ",input$sexW8S) ) +
             scale_colour_manual(values = opwcodcols) +
             scale_linetype_manual(values = opwcodtype) +
-            scale_x_continuous(breaks = function(x) unique(floor(pretty(x))) )
+            scale_x_continuous(breaks = seq(input$yrW8[[1]],input$yrW8[[2]],2)  )
       Legend <- "Drug by intent"
     }
     if (input$DropW8 == "Intent") {
@@ -2157,7 +2226,7 @@ server <- function(input, output, session) {
               labs(x = "Year", title = paste0("Age group:",input$ageW8,"  Intent: ",input$codW8I) ) +
               scale_colour_manual(values = opwcodcols) +
               scale_linetype_manual(values = opwcodtype) +
-              scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+              scale_x_continuous(breaks = seq(input$yrW8[[1]],input$yrW8[[2]],2) )
         Legend <- "Drug by sex"
     }
 
@@ -2240,10 +2309,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 1.0, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>%
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>%
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                     "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                     "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -2254,7 +2323,7 @@ server <- function(input, output, session) {
   output$OpEPlot10 <- renderPlotly({
     df_OpE <- readRDS("ABS_COD2018_OpE.rds")
       if (input$Drop10 == "Opioid") {
-      sub <- filter(df_OpE, sex == "All" & location == "Aus" & # nature == "Underlying" &
+      sub <- filter(df_OpE, sex == "All" & location == "Aus" &
                   drug == input$drug10O & intent %in% input$cod10 & age_group %in% input$age10O &
                   (year >= input$yr10[[1]] & year <= input$yr10[[2]])) %>%
         distinct(drug, year, intent, sex, location, age_group, .keep_all = TRUE)
@@ -2264,12 +2333,12 @@ server <- function(input, output, session) {
         geom_line() + labs(x = "Year", title=input$drug10O) +
         scale_colour_manual(values = agecodcols) +
         scale_linetype_manual(values = agecodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yr10[[1]],input$yr10[[2]],2) )
       Legend <- "Age by intent"
     }
     
     else if (input$Drop10 == "Age") {
-      sub <- subset(df_OpE, subset = (sex == "All" & location == "Aus" & # nature == "Underlying" &
+      sub <- subset(df_OpE, subset = (sex == "All" & location == "Aus" &
                   drug %in% input$drug10A & intent %in% input$cod10 & age_group == input$age10A &
                   (year >= input$yr10[[1]] & year <= input$yr10[[2]]))) %>%
         distinct(drug, year, intent, sex, location, age_group, .keep_all = TRUE)
@@ -2278,7 +2347,7 @@ server <- function(input, output, session) {
         geom_line() + labs(x = "Year", title=paste0("Age: ",input$age10A)) +
         scale_colour_manual(values = opcodcols) +
         scale_linetype_manual(values = opcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yr10[[1]],input$yr10[[2]],2) )
       Legend <- "Drug by intent"
     }
     
@@ -2350,10 +2419,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 1.0, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>%
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>%
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                           "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                           "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -2372,7 +2441,7 @@ server <- function(input, output, session) {
         geom_line() + labs(x = "Year", title=paste0(input$jurE9,", Age: ",input$ageE9," Intent: ",input$codE9I) ) +
         scale_colour_manual(values = opcodcols) +
         scale_linetype_manual(values = opcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrE9[[1]],input$yrE9[[2]],2) )
       Legend <- "Drug by sex"
     }
     if (input$DropE9 == "Sex") {
@@ -2396,7 +2465,7 @@ server <- function(input, output, session) {
         geom_line() +
         scale_colour_manual(values = opcodcols) +
         scale_linetype_manual(values = opcodtype) +
-        scale_x_continuous(breaks = function(x) unique(floor(pretty(x))))
+        scale_x_continuous(breaks = seq(input$yrE9[[1]],input$yrE9[[2]],2) )
       Legend <- "Drug by intent"
     }
 
@@ -2470,10 +2539,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = Legend, xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 0.95, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>%
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>%
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                              "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                              "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
@@ -2516,7 +2585,7 @@ server <- function(input, output, session) {
       labs(x = "Year", y = "Percent of opioid induced deaths") +
       theme_light() + 
       theme(legend.title = element_blank()) + 
-      scale_x_continuous(breaks = function(x) unique(floor(pretty(x)))) +
+      scale_x_continuous(breaks = seq(input$yrEP[[1]],input$yrEP[[2]],2) ) +
       scale_fill_manual(values = opcols) #c("#d3d798", "#b3bd50", "#95a327", "#6a7d14"))
 #      scale_fill_manual(values = c("#c1c870", "#748a34", "#465d02", "#1f3300"))
     
@@ -2545,10 +2614,10 @@ server <- function(input, output, session) {
       add_annotations(
         text = "Drug", xref = "paper", yref = "paper",
         x = 1.02, xanchor = "left",
-        y = 0.95, yanchor = "bottom", # Same y as legend below
+        y = 0.99, yanchor = "bottom", # Same y as legend below
         legendtitle = TRUE, showarrow = FALSE
       ) %>%
-      layout(legend = list(y = 0.95, yanchor = "top"), margin = list(b = 80)) %>%
+      layout(legend = list(y = 0.99, yanchor = "top"), margin = list(b = 80)) %>%
       config(displaylogo=F, modeBarButtonsToRemove = list("sendDataToCloud","zoom2d","pan2d","select2d","lasso2d",
                                                         "zoomIn2d","zoomOut2d","autoScale2d","hoverClosestCartesian",
                                                         "hoverCompareCartesian", "resetScale2d", "toggleSpikelines"))
