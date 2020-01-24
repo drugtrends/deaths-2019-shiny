@@ -88,3 +88,8 @@ a:hover,a:focus {
   border-bottom: 1px solid #6a7d14;
   background: #6a7d14
 }
+
+/*doesn't work*/
+.jstree-default .jstree-clicked, .jstree-proton .jstree-clicked {
+  background: #95a327
+}

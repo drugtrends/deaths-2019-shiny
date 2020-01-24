@@ -1,16 +1,17 @@
 #For ABS COD 2018 data received in Sept 2019
 #N. Man
 library(shiny)
-library(shinyTree)
+#library(shinyTree)
 #library(shinythemes)
 library(ggplot2)
-library(ggthemes)
+#library(ggthemes)
 library(dplyr)
+#library(tidyverse) #for str_to_title but really not needed
 library(plotly)
 library(shinycustomloader)
 #for drug type plots
 #https://stackoverflow.com/questions/47062532/multiple-lines-for-text-per-legend-label-in-ggplot2
-library(stringr)
+#library(stringr) messes up ordering and not needed if already coded with \n in data
 
 #reading RDS file format is apparently more efficient
 #https://appsilon.com/fast-data-loading-from-files-to-r/
@@ -648,6 +649,7 @@ load("death_2018.RData")
 #   "other nonsteroidal anti-inflammatory drugs"=3,
 #   "AMPHETAMINES"=1
 # )
+
 # Allow for site's state to be bookmarked via the url
 # See https://shiny.rstudio.com/articles/bookmarking-state.html for details
 enableBookmarking("url")
@@ -657,13 +659,11 @@ server <- function(input, output, session) {
   # Allow direct linking to specific tabs (with default configs)  
   observe({
 # https://shiny.rstudio.com/reference/shiny/0.14/parseQueryString.html
-    query <- parseQueryString(session$clientData$url_search)
- # print(query[2])
-#     query1 <- paste(names(query), query, sep = "=", collapse=", ")
-#     print(query1)
-# # https://stackoverflow.com/questions/32872222/how-do-you-pass-parameters-to-a-shiny-app-via-url
+  # query <- parseQueryString(session$clientData$url_search)
+  # query1 <- paste(names(query), query, sep = "=", collapse=", ")
+  # print(query1)
+  # https://stackoverflow.com/questions/32872222/how-do-you-pass-parameters-to-a-shiny-app-via-url
 #     if (!is.null(input$Bulletin)) {
-#       print(query[2])
 # #      updateTextInput(session, "text", value = query[2])
 #     }
 #can try when there is time???
@@ -680,7 +680,13 @@ server <- function(input, output, session) {
     #     }
     #   }
     # }
-      # if(query1 == "tab=allPage"){
+
+  # https://github.com/daattali/advanced-shiny/blob/master/url-inputs
+    # if (!is.null(query[['Plot']])) {
+    #   updateTextInput(session, "Plot", value = query[['Plot']])
+    # }
+    
+    # if(query1 == "tab=allPage"){
     #   updateTabsetPanel(session, inputId = "Plot", selected = "allPage")
     # }
     # if(query1 == "tab=DTPage"){
@@ -718,6 +724,11 @@ server <- function(input, output, session) {
     # }
   # Trigger this observer every time an input changes
     reactiveValuesToList(input)
+#    print(input)
+    print(input$Plot)
+    #Shorten URL - https://shiny.rstudio.com/reference/shiny/latest/setBookmarkExclude.html
+    setBookmarkExclude(c("plotly_hover-A","plotly_afterplot-A",
+           ".clientValue-default-plotlyCrosstalkOpts"))
     session$doBookmark()
   })
 
@@ -725,14 +736,11 @@ server <- function(input, output, session) {
     updateQueryString(url)
   })
 
-
 # Radio buttons for dropdown list-----------------------------------------------------------------------------------------
 #Below based on: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
-#!!!ERROR!!! Warning: Length of logical index must be 1 or 8580, not 0
-#maybe because it is experimental?
-#observe function still doesn't work but might have got rid of potential error with using *if statement* in tagList
-#Might need this???: https://stackoverflow.com/questions/42169380/shiny-renderui-with-multiple-inputs
-# observe({
+#To try??? https://stackoverflow.com/questions/42169380/shiny-renderui-with-multiple-inputs
+#To try??? https://shiny.rstudio.com/gallery/dynamic-ui.html
+  # observe({
   #   if (input$E9Drop == "Intent")
   #     x <- selectInput("codE9I", label = NULL,
   #                      c("All", "Accidental", "Intentional", "Undetermined", "Other") )
@@ -750,7 +758,7 @@ server <- function(input, output, session) {
   #   output$Control9 <- renderUI({
   #     tagList(x,y)
   #   })
-# })
+  # })
   
 #   observe({
   #   if (input$DTDrop == "Age_Intent")
@@ -901,7 +909,7 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
           "Year: ", year,
           "<br>Deaths: ", n,
-          "<br>Intent: ", str_to_title(intent),
+          "<br>Intent: ", intent,
 #          "<br>Nature: ", str_to_title(nature),
           "<br>Age group: ", age_group
         ) ) +
@@ -914,7 +922,7 @@ server <- function(input, output, session) {
           "Year: ", year,
           "<br>Deaths: ", n,
           "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-          "<br>Intent: ", str_to_title(intent),
+          "<br>Intent: ", intent,
 #          "<br>Nature: ", str_to_title(nature),
           "<br>Age group: ", age_group
         ) ) +
@@ -930,7 +938,7 @@ server <- function(input, output, session) {
           "Year: ", year,
           "<br>Deaths: ", n,
           "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-          "<br>Intent: ", str_to_title(intent),
+          "<br>Intent: ", intent,
 #          "<br>Nature: ", str_to_title(nature),
           "<br>Age group: ", age_group
         ) ) +
@@ -992,7 +1000,7 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
 #        "<br>Nature: ", str_to_title(nature),
         "<br>Age group: ", age_group
       )
@@ -1006,7 +1014,7 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
 #        "<br>Nature: ", str_to_title(nature),
         "<br>Age group: ", age_group
       ) ) +
@@ -1022,7 +1030,7 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
 #        "<br>Nature: ", str_to_title(nature),
         "<br>Age group: ", age_group
       ) ) +
@@ -1156,7 +1164,7 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
               "Year: ", year,
               "<br>Deaths: ", n,
-              "<br>Intent: ", str_to_title(intent),
+              "<br>Intent: ", intent,
 #             "<br>Jurisdiction: ", location,
               "<br>Age: ", age_group,
               "<br>Sex: ", sex
@@ -1171,7 +1179,7 @@ server <- function(input, output, session) {
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-               "<br>Intent: ", str_to_title(intent), 
+               "<br>Intent: ", intent, 
   #            "<br>Jurisdiction: ", location,
                "<br>Age: ", age_group,
                "<br>Sex: ", sex
@@ -1188,7 +1196,7 @@ server <- function(input, output, session) {
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-               "<br>Intent: ", str_to_title(intent), 
+               "<br>Intent: ", intent, 
     #          "<br>Jurisdiction: ", location,
                "<br>Age: ", age_group,
                "<br>Sex: ", sex
@@ -1261,8 +1269,8 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
-        "<br>Region: ", str_to_title(region),
-        "<br>Intent: ", str_to_title(intent)
+        "<br>Region: ", region,
+        "<br>Intent: ", intent
 #        ,"<br>Sex: ", sex
       )) + scale_y_continuous(limits = c(0, max(sub$n, 250))) +
         labs(y = "Number of deaths")
@@ -1273,8 +1281,8 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-        "<br>Region: ", str_to_title(region),
-        "<br>Intent: ", str_to_title(intent)
+        "<br>Region: ", region,
+        "<br>Intent: ", intent
 #        ,"<br>Sex: ", sex
       )) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
@@ -1288,8 +1296,8 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_m, 2), "% (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-        "<br>Region: ", str_to_title(region),
-        "<br>Intent: ", str_to_title(intent)
+        "<br>Region: ", region,
+        "<br>Intent: ", intent
 #        ,"<br>Sex: ", sex
       )) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl,.1))) +
         labs(y = "Percentage of drug-induced deaths among all deaths")
@@ -1356,7 +1364,7 @@ server <- function(input, output, session) {
         sub <- filter(sub, region!="Regional and Remote") %>%
           group_by(year, intent, sex, jurisdiction, age_group) %>% 
           distinct() %>%
-          mutate(alldeaths = sum(n),
+          mutate(#alldeaths = sum(n),
                  percent = round(n/sum(n)*100, 2),
                  region = fct_rev(region))
       }
@@ -1364,7 +1372,7 @@ server <- function(input, output, session) {
         sub <- filter(sub, region=="Regional and Remote" | region=="Major Cities" ) %>%
           group_by(year, intent, sex, jurisdiction, age_group) %>% 
           distinct() %>%
-          mutate(alldeaths = sum(n),
+          mutate(#alldeaths = sum(n),
                  percent = round(n/sum(n)*100, 2),
                  region = factor(region, levels = c( "Regional and Remote",
                                                      "Major Cities"
@@ -1375,11 +1383,11 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Percent: ", percent, "%",
-        "<br>Area: ", str_to_title(region),
+        "<br>Area: ", region,
         "<br>Jurisdiction: ", jurisdiction,
         "<br>Age: ", age_group,
         "<br>Sex: ", sex,
-        "<br>Intent: ", str_to_title(intent)
+        "<br>Intent: ", intent
       ))) + geom_area() + labs(y = "Percent of drug-induced deaths") +
       scale_fill_manual(values = regcols) #c("#d3d798", "#b3bd50", "#95a327", "#6a7d14"))
 #     scale_fill_manual(values = c("#c1c870", "#748a34", "#465d02", "#1f3300"))
@@ -1396,8 +1404,8 @@ server <- function(input, output, session) {
     #     p <- p + aes(y = n, text = paste0(
     #       "Year: ", year,
     #       "<br>Deaths: ", n,
-    #       "<br>Region: ", str_to_title(region),
-    #       "<br>Intent: ", str_to_title(intent)
+    #       "<br>Region: ", region,
+    #       "<br>Intent: ", intent
     #       #        ,"<br>Sex: ", sex
     #     )) + scale_y_continuous(limits = c(0, max(sub$n, 250))) +
     #       labs(y = "Number of deaths")
@@ -1529,8 +1537,8 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
-        "<br>Drug: ", str_to_title(drug),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Drug: ", toupper(substring(drug, 1,1)), tolower(substring(drug, 2)),
+        "<br>Intent: ", intent,
         "<br>Sex: ", sex,
         "<br>Age: ", age_group
       )
@@ -1543,8 +1551,8 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-        "<br>Drug: ", str_to_title(drug),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Drug: ", toupper(substring(drug, 1,1)), tolower(substring(drug, 2)),
+        "<br>Intent: ", intent,
         "<br>Sex: ", sex,
         "<br>Age: ", age_group
       )
@@ -1561,7 +1569,7 @@ server <- function(input, output, session) {
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
         "<br>Drug: ", drug,
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
         "<br>Sex: ", sex,
         "<br>Age: ", age_group
       )
@@ -1619,7 +1627,7 @@ server <- function(input, output, session) {
       sub <- subset(ABS_COD2018_DT, subset = (intent==input$DTAIcod & nature=="Underlying" & age_group == input$DTAIage
                     & sex == "All" & jurisdiction == "Australia" & drug %in% input$DTAIdrug
                     & (year >= input$DTAyr[[1]] & year <= input$DTAyr[[2]] ) ) )
-    p <- ggplot(sub) + aes(x = year, colour = str_wrap(drug,50), linetype = str_wrap(drug,50), group = 1) +
+    p <- ggplot(sub) + aes(x = year, colour = drug, linetype = drug, group = 1) +
       geom_line() + labs(x = "Year") +
       scale_colour_manual(values = dtcols) +
       scale_linetype_manual(values = dttype) +
@@ -1648,9 +1656,9 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
-        "<br>Drug: ", str_to_title(drug),
+        "<br>Drug: ", toupper(substring(drug, 1,1)), tolower(substring(drug, 2)),
 #        "<br>Nature: ", str_to_title(nature),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
         "<br>Age: ", age_group
       )
       ) + scale_y_continuous(limits = c(0, max(sub$n, 250))) +
@@ -1662,9 +1670,9 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-        "<br>Drug: ", str_to_title(drug),
+        "<br>Drug: ", toupper(substring(drug, 1,1)), tolower(substring(drug, 2)),
 #        "<br>Nature: ", str_to_title(nature),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
         "<br>Age: ", age_group
       )
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
@@ -1681,7 +1689,7 @@ server <- function(input, output, session) {
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
         "<br>Drug: ", drug,
 #        "<br>Nature: ", str_to_title(nature),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
         "<br>Age: ", age_group
       )
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
@@ -1791,8 +1799,8 @@ server <- function(input, output, session) {
                    text = paste0(
                      "Year: ", year,
                      "<br>Deaths: ", n,
-                     "<br>Opioid: ", str_to_title(drug),
-                     "<br>Intent: ", str_to_title(intent),
+                     "<br>Opioid: ", drug,
+                     "<br>Intent: ", intent,
                      "<br>Age group: ", age_group)
       ) +  scale_y_continuous(limits = c(0, max(sub$n, 250))) +
         labs(y = "Number of deaths")
@@ -1803,8 +1811,8 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-        "<br>Opioid: ", str_to_title(drug),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Opioid: ", drug,
+        "<br>Intent: ", intent,
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
@@ -1818,8 +1826,8 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-        "<br>Opioid: ", str_to_title(drug),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Opioid: ", drug,
+        "<br>Intent: ", intent,
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
@@ -1923,7 +1931,7 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Age group: ", age_group,
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
         "<br>Opioid: ", drug,
         "<br>Sex: ", sex
       ) ) +
@@ -1937,7 +1945,7 @@ server <- function(input, output, session) {
         "<br>Deaths: ", n,
         "<br>Age group: ", age_group,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
         "<br>Opioid: ", drug,
         "<br>Sex: ", sex
       ) ) +
@@ -1954,7 +1962,7 @@ server <- function(input, output, session) {
         "<br>Deaths: ", n,
         "<br>Age group: ", age_group,
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Intent: ", intent,
         "<br>Opioid: ", drug,
         "<br>Sex: ", sex
       ) ) +
@@ -2021,7 +2029,7 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
         "Year: ", year,
         "<br>Deaths: ", n,
-        "<br>Intent: ", str_to_title(intent), 
+        "<br>Intent: ", intent, 
         "<br>Jurisdiction: ", location,
         "<br>Sex: ", sex
       )
@@ -2034,7 +2042,7 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-        "<br>Intent: ", str_to_title(intent), 
+        "<br>Intent: ", intent, 
         "<br>Jurisdiction: ", location,
         "<br>Sex: ", sex
       )
@@ -2050,7 +2058,7 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-        "<br>Intent: ", str_to_title(intent), 
+        "<br>Intent: ", intent, 
         "<br>Jurisdiction: ", location,
         "<br>Sex: ", sex
       )
@@ -2134,8 +2142,8 @@ server <- function(input, output, session) {
         p <- p + aes(y = n, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
-               "<br>Drug: ", str_to_title(drug),
-               "<br>Intent: ", str_to_title(intent),
+               "<br>Drug: ", drug,
+               "<br>Intent: ", intent,
                "<br>Sex: ", sex,
                "<br>Age group: ", age_group ) ) + 
               scale_y_continuous(limits = c(0, max(sub$n, 250) ) ) +
@@ -2146,8 +2154,8 @@ server <- function(input, output, session) {
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-               "<br>Drug: ", str_to_title(drug),
-               "<br>Intent: ", str_to_title(intent),
+               "<br>Drug: ", drug,
+               "<br>Intent: ", intent,
                "<br>Sex: ", sex,
                "<br>Age group: ", age_group
             )) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
@@ -2163,8 +2171,8 @@ server <- function(input, output, session) {
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-               "<br>Drug: ", str_to_title(drug),
-               "<br>Intent: ", str_to_title(intent),
+               "<br>Drug: ", drug,
+               "<br>Intent: ", intent,
                "<br>Sex: ", sex,
                "<br>Age group: ", age_group) ) + 
                scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) + labs(y = "Deaths per 1,000,000")
@@ -2226,8 +2234,8 @@ server <- function(input, output, session) {
         sub <- subset(sub, intent %in% input$W8Scod & sex != "All" )
         p <- ggplot(sub) + facet_grid(cols = vars(sex))
       }
-      p <- p + aes(x = year, colour = str_wrap(op_intent,50), 
-            linetype = str_wrap(op_intent,50), group = 1) + geom_line() + 
+      p <- p + aes(x = year, colour = op_intent,
+            linetype = op_intent, group = 1) + geom_line() + 
             labs(x = "Year", title = paste0("Age group:",input$W8age,"  Sex: ",input$W8Ssex) ) +
             scale_colour_manual(values = opWcodcols) +
             scale_linetype_manual(values = opWcodtype) +
@@ -2255,8 +2263,8 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
                "Year: ", year,
                "<br>Deaths: ", n,
-               "<br>Drug: ", str_to_title(drug),
-               "<br>Intent: ", str_to_title(intent),
+               "<br>Drug: ", drug,
+               "<br>Intent: ", intent,
                "<br>Age group: ", age_group,
                "<br>Sex: ", sex
             )) +
@@ -2268,8 +2276,8 @@ server <- function(input, output, session) {
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-               "<br>Drug: ", str_to_title(drug),
-               "<br>Intent: ", str_to_title(intent),
+               "<br>Drug: ", drug,
+               "<br>Intent: ", intent,
                "<br>Age group: ", age_group,
                "<br>Sex: ", sex
            )) + geom_line() +
@@ -2285,8 +2293,8 @@ server <- function(input, output, session) {
                "Year: ", year,
                "<br>Deaths: ", n,
                "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-               "<br>Drug: ", str_to_title(drug),
-               "<br>Intent: ", str_to_title(intent),
+               "<br>Drug: ", drug,
+               "<br>Intent: ", intent,
                "<br>Sex: ", sex
             )) + geom_line() +
             scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
@@ -2371,8 +2379,8 @@ server <- function(input, output, session) {
                    text = paste0(
                      "Year: ", year,
                      "<br>Deaths: ", n,
-                     "<br>Opioid: ", str_to_title(drug),
-                     "<br>Intent: ", str_to_title(intent),
+                     "<br>Opioid: ", drug,
+                     "<br>Intent: ", intent,
                      "<br>Age group: ", age_group)
       ) +  scale_y_continuous(limits = c(0, max(sub$n, 250))) +
         labs(y = "Number of deaths")
@@ -2383,8 +2391,8 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-        "<br>Opioid: ", str_to_title(drug),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Opioid: ", drug,
+        "<br>Intent: ", intent,
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
         labs(y = "Deaths per 100,000")
@@ -2398,8 +2406,8 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-        "<br>Opioid: ", str_to_title(drug),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Opioid: ", drug,
+        "<br>Intent: ", intent,
         "<br>Age group: ", age_group)
       ) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
         labs(y = "Deaths per 1,000,000")
@@ -2489,8 +2497,8 @@ server <- function(input, output, session) {
       p <- p + aes(y = n, text = paste0(
                        "Year: ", year,
                        "<br>Deaths: ", n,
-                       "<br>Drug: ", str_to_title(drug),
-                       "<br>Intent: ", str_to_title(intent),
+                       "<br>Drug: ", drug,
+                       "<br>Intent: ", intent,
                        "<br>Sex: ", sex
           )) + scale_y_continuous(limits = c(0, max(sub$n, 250))) +
           labs(y = "Number of deaths")
@@ -2501,8 +2509,8 @@ server <- function(input, output, session) {
                        "Year: ", year,
                        "<br>Deaths: ", n,
                        "<br>Rate: ", round(rate_ht, 2), " (", round(rate_ht_lcl, 2), ", ", round(rate_ht_ucl, 2), ")",
-                       "<br>Drug: ", str_to_title(drug),
-                       "<br>Intent: ", str_to_title(intent),
+                       "<br>Drug: ", drug,
+                       "<br>Intent: ", intent,
                        "<br>Sex: ", sex
             )) + scale_y_continuous(limits = c(0, max(sub$rate_ht_ucl, 2.5))) +
             labs(y = "Deaths per 100,000")
@@ -2516,8 +2524,8 @@ server <- function(input, output, session) {
                        "Year: ", year,
                        "<br>Deaths: ", n,
                        "<br>Rate: ", round(rate_m, 2), " (", round(rate_m_lcl, 2), ", ", round(rate_m_ucl, 2), ")",
-                       "<br>Drug: ", str_to_title(drug),
-                       "<br>Intent: ", str_to_title(intent),
+                       "<br>Drug: ", drug,
+                       "<br>Intent: ", intent,
                        "<br>Sex: ", sex
             )) + scale_y_continuous(limits = c(0, max(sub$rate_m_ucl, 25))) +
             labs(y = "Deaths per 1,000,000")
@@ -2568,8 +2576,8 @@ server <- function(input, output, session) {
     #needs to be sorted [order(...)]
     #weird proportions plot from 2015 onwards because of duplicates by AUS
     #- need to make distinct
-    df_OpE <- readRDS("ABS_COD2018_OpE.rds")
-    sub <- filter(df_OpE, drug %in% c( "Exclusive illicit opioids",
+#    df_OpE <- readRDS("ABS_COD2018_OpE.rds")
+    sub <- filter(ABS_COD2018_OpE, drug %in% c( "Exclusive illicit opioids",
                                    "Exclusive pharmaceutical opioids",
                                    "Illicit & pharmaceutical opioids",
                                    "Other & unspecified opioids") &
@@ -2580,7 +2588,7 @@ server <- function(input, output, session) {
                     jurisdiction == input$EPjur) %>% # & table!="10" & table!="18"
       group_by(year, intent, sex, jurisdiction, age_group) %>% 
       distinct() %>%
-      mutate(alldeaths = sum(n),
+      mutate(#alldeaths = sum(n),
              percent = round(n/sum(n)*100, 2),
              drug = factor(drug, levels = c( "Other & unspecified opioids",
                                              "Illicit & pharmaceutical opioids",
@@ -2592,8 +2600,8 @@ server <- function(input, output, session) {
         "Year: ", year,
         "<br>Deaths: ", n,
         "<br>Percent: ", percent, "%",
-        "<br>Drug: ", str_to_title(drug),
-        "<br>Intent: ", str_to_title(intent),
+        "<br>Drug: ", drug,
+        "<br>Intent: ", intent,
         "<br>Sex: ", sex
     ))) +
       geom_area() +

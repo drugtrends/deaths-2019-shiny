@@ -1,18 +1,17 @@
 #For ABS COD 2018 data received in Sept 2019
 #N. Man
 library(shiny)
-library(shinyTree)
+#library(shinyTree)
 #library(shinythemes)
-library(ggplot2)
-library(ggthemes)
-library(tidyverse)
+#library(ggplot2)
+#library(ggthemes)
 library(plotly)
 library(shinycustomloader)
 
 #https://stackoverflow.com/questions/54403211/how-to-modify-the-themes-of-shinythemes
 #css <- HTML("td, th { padding: 10; }") # doesn't work
 
-ui <- function(req) {
+ui <- function(request) {
 
 #test dummy for passing query parameters
 #textInput("Bulletin",NULL, "")
@@ -48,6 +47,9 @@ ui <- function(req) {
 #  title=div(img(src="DrugTrends-Logo.png", style="height: 25px"), "Deaths induced by:"),
     title= "Deaths induced by:",
     id = "Plot",
+
+#might be helpful for reusing repetitive inputs like year???
+#https://rstudio.github.io/shinydashboard/structure.html
   # All drugs menu tab ---------------------------------------------------------------
     navbarMenu("All drugs",
       
@@ -103,7 +105,6 @@ ui <- function(req) {
                   ), inline = T,
                   selected = c("Intent")
               ),
-
 #Alternative to conditionalPanel: https://shiny.rstudio.com/reference/shiny/1.0.4/renderUI.html
 #             uiOutput("AllBControl"),
 #From: https://shiny.rstudio.com/reference/shiny/1.0.4/conditionalPanel.html
@@ -1179,9 +1180,10 @@ ui <- function(req) {
                 ), inline = T,
                 selected = c("Intent")
               ),
-              
-              #             uiOutput("Control9"),
-              #From: https://shiny.rstudio.com/reference/shiny/1.0.4/conditionalPanel.html
+
+            #https://shiny.rstudio.com/gallery/dynamic-ui.html
+            # uiOutput("Control9"),
+#From: https://shiny.rstudio.com/reference/shiny/1.0.4/conditionalPanel.html
               conditionalPanel(
                 condition = "input.E9Drop == 'Intent'",
                 selectInput("E9Icod", label = NULL,
@@ -1511,6 +1513,7 @@ ui <- function(req) {
                 min = 1997, max = 2018,
                 value = c(1997, 2018), sep = ""
               ),
+#             uiOutput("year"),
               selectInput(
                 "Amyax", "Plot:",
                 c(
@@ -1523,11 +1526,11 @@ ui <- function(req) {
                 selected = "r5"
               ),
   
-            # HTML("<p>Intent:</p>"),
-            # shinyTree("codA", 
-            #     checkbox = TRUE, theme="proton", themeIcons = FALSE),
-            # HTML("<p>Age:</p>"),
-            # shinyTree("ageA", 
+            # HTML("<p><b>Intent:</b></p>"),
+            # shinyTree("Amcod",
+            #     checkbox = TRUE, themeIcons = FALSE),
+            # HTML("<b>Age:</b>"),
+            # shinyTree("Amage",
             #     checkbox = TRUE, theme="proton", themeIcons = FALSE)
               
               checkboxGroupInput("Amcod", "Intent:",
@@ -1577,6 +1580,7 @@ ui <- function(req) {
                 min = 1997, max = 2018,
                 value = c(1997, 2018), sep = ""
               ),
+#             uiOutput("year"),
               selectInput("Cyax", "Plot:",
                 c("Number of deaths" = "num",
                   "Deaths per 100,000 people" = "r5",
@@ -1622,8 +1626,7 @@ ui <- function(req) {
       #   column(width = 8, includeMarkdown("notesCitation.md"))
       #  , column(width = 4, includeHTML("DTLogo.html"))
       # )
-    )
-#  ),
+    )#  ),
 
 #seem to be ignored
 #  renderCSS(type="image", loader="DT_NIDIP_onion30.gif"),
