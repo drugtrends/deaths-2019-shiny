@@ -13,23 +13,36 @@ body {
 }
 /*links*/
 a {
-  color: #95a327;
+  color: #00a65a;
   text-decoration: none
 }
 
 a:hover,a:focus {
-  color: #6a7d14;
+  color: #008749;
   text-decoration: underline
 }
-/*plot & notes tabs*/
+/*plot & notes tabs*//*for shinydashboard*/
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+  position: relative;
+  min-height: 1px;
+  padding-right: 0px;
+  padding-left: 0px
+}
+.navbar-brand {
+    height: 50px;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    padding-left: 5px
+}  
 .nav-tabs>li>a {
-  background-color: #e7e7e7;
+/*  background-color: #e7e7e7;*/
   color: #222222;
-  padding: 5px 20px;
+  padding: 5px 20px
 }
 /*navbar default background color*/
 .navbar,.navbar-default .navbar-brand,.navbar-default .dropdown-menu,.navbar-default .navbar-nav {
-  background-color: #6a7d14
+  background-color: #008749
 }
 /*navbar title font color - not list*/
 .navbar-default .navbar-brand,.navbar-default .navbar-brand:hover,
@@ -48,7 +61,7 @@ a:hover,a:focus {
 .navbar-default .navbar-nav>a:focus,
 .navbar-default .navbar-nav>.open>a:focus,
 .navbar-default .navbar-nav>.active>a:focus {
-  background-color: #b3bd50;
+  background-color: #00a65a;
   color: #222222
 }
 /*navbar hover color*/
@@ -82,14 +95,18 @@ a:hover,a:focus {
 */
 
 /*slider input*/
-.irs-from, .irs-to, .irs-single, .irs-grid-pol {background: #6a7d14}
+.irs-from, .irs-to, .irs-single, .irs-grid-pol {background: #008749}
 .irs-bar { 
-  border-top: 1px solid #6a7d14;
-  border-bottom: 1px solid #6a7d14;
-  background: #6a7d14
+  border-top: 1px solid #008749;
+  border-bottom: 1px solid #008749;
+  background: #008749
 }
-
-/*doesn't work*/
-.jstree-default .jstree-clicked, .jstree-proton .jstree-clicked {
-  background: #95a327
+/*shinydashboard background*/
+.content-wrapper, .right-side {
+  background-color: #ffffff
+}
+.content {
+  padding: 0px;
+  padding-left: 0px;
+  padding-right: 0px
 }
