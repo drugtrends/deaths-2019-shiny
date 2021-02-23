@@ -6,7 +6,8 @@ library(ggplot2)
 library(shinycustomloader)
 
 #https://appsilon.com/fast-data-loading-from-files-to-r/
-load("death_2018.Rdata")
+# load("death_2018.Rdata")
+load("death_2019.Rdata")
 
 PlotFn <- function(Pd,Gp,Yax,Yr,Varc="age_group",Varl="intent",Labc="<br>Age: ",Labl="<br>Intent: ") {
   # print(Yax)
@@ -14,59 +15,59 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="age_group",Varl="intent",Labc="<br>Age: ",
     Gp <- Gp + geom_line() + aes(y=n, text=paste0(
         "Year: ",year,
         "<br>Deaths: ",n,
-        Labl,eval(parse(text=Varl)),
-        Labc,eval(parse(text=Varc))
+        Labl,get(Varl),
+        Labc,get(Varc)
       )) +
       scale_y_continuous(limits=c(0, max(Pd$n, 250))) +
       labs(y="Number of deaths")
   }
 
-  else if (Yax=="r5" | Yax=="r5ci") {
-    if (Yax=="r5") {
-      Gp <- Gp + geom_line() + aes(y=rate_ht, text=paste0(
+  else if (Yax=="cr" | Yax=="crci") {
+    if (Yax=="cr") {
+      Gp <- Gp + geom_line() + aes(y=cr, text=paste0(
           "Year: ",year,
           "<br>Deaths: ",n,
-          "<br>Rate: ",round(rate_ht, 2)," (", round(rate_ht_lcl, 2),",", round(rate_ht_ucl, 2),")",
-          Labl,eval(parse(text=Varl)),
-          Labc,eval(parse(text=Varc))
+          "<br>Crude rate: ",round(cr, 2)," (", round(cr_lci, 2),",", round(cr_uci, 2),")",
+          Labl,get(Varl),
+          Labc,get(Varc)
         ))
     }
     else {
 #"Warning: Ignoring unknown aesthetics: text" because it is used with geom_line but we don't want text box with the ribbon
-      Gp <- Gp + geom_line(aes(y=rate_ht, text=paste0(
+      Gp <- Gp + geom_line(aes(y=cr, text=paste0(
           "Year: ",year,
           "<br>Deaths: ",n,
-          "<br>Rate: ",round(rate_ht, 2)," (", round(rate_ht_lcl, 2),",", round(rate_ht_ucl, 2),")",
-          Labl,eval(parse(text=Varl)),
-          Labc,eval(parse(text=Varc))
+          "<br>Crude rate: ",round(cr, 2)," (", round(cr_lci, 2),",", round(cr_uci, 2),")",
+          Labl,get(Varl),
+          Labc,get(Varc)
         ))) +
-        geom_ribbon(aes(ymin=rate_ht_lcl, ymax=rate_ht_ucl), alpha=0.1, size=0)
+        geom_ribbon(aes(ymin=cr_lci, ymax=cr_uci), alpha=0.1, size=0)
     }
-    Gp <- Gp + scale_y_continuous(limits=c(0, max(Pd$rate_ht_ucl, 2.5))) +
-      labs(y="Deaths per 100,000")
+    Gp <- Gp + scale_y_continuous(limits=c(0, max(Pd$cr_uci, 2.5))) +
+      labs(y="Crude mortality rate per 100,000")
   }
 
-  else if (Yax=="r6" | Yax=="r6ci") {
-    if (Yax=="r6") {
-      Gp <- Gp + geom_line() + aes(y=rate_m, text=paste0(
+  else if (Yax=="sr" | Yax=="srci") {
+    if (Yax=="sr") {
+      Gp <- Gp + geom_line() + aes(y=sr, text=paste0(
           "Year: ",year,
           "<br>Deaths: ",n,
-          "<br>Rate: ",round(rate_m, 2)," (", round(rate_m_lcl, 2),",", round(rate_m_ucl, 2),")",
-          Labl,eval(parse(text=Varl)),
-          Labc,eval(parse(text=Varc))
+          "<br>Age standardised rate: ",round(sr, 2)," (", round(sr_lci, 2),",", round(sr_uci, 2),")",
+          Labl,get(Varl),
+          Labc,get(Varc)
         ))
     }
     else {
-      Gp <- Gp + geom_line(aes(y=rate_m, text=paste0(
+      Gp <- Gp + geom_line(aes(y=sr, text=paste0(
           "Year: ",year,
           "<br>Deaths: ",n,
-          "<br>Rate: ",round(rate_m, 2)," (", round(rate_m_lcl, 2),",", round(rate_m_ucl, 2),")",
-          Labl,eval(parse(text=Varl)),
-          Labc,eval(parse(text=Varc))
-        ))) + geom_ribbon(aes(ymin=rate_m_lcl, ymax=rate_m_ucl), alpha=0.1, size=0)
+          "<br>Rate: ",round(sr, 2)," (", round(sr_lci, 2),",", round(sr_uci, 2),")",
+          Labl,get(Varl),
+          Labc,get(Varc)
+        ))) + geom_ribbon(aes(ymin=sr_lci, ymax=sr_uci), alpha=0.1, size=0)
     }
-    Gp <- Gp + scale_y_continuous(limits=c(0, max(Pd$rate_m_ucl, 25))) +
-      labs(y="Deaths per 1,000,000")
+    Gp <- Gp + scale_y_continuous(limits=c(0, max(Pd$sr_uci, 2.5))) +
+      labs(y="Age standardised mortality rate per 100,000")
   }
 
   Gp <- Gp + aes(x=year, group=1) + labs(x="Year") +
@@ -266,6 +267,10 @@ server <- function(input, output, session) {
     sub <- subset(ABS_COD2018_Stim, jurisdiction=="Australia" & sex=="All" & 
            drug=="Amphetamines" & nature=="Underlying" & intent %in% input$cod2C & 
            age_group %in% input$ageAll & (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
+    if ( input$Ashow==F ) {
+      sub <- subset(sub, set=="Stimulants")
+    }
+
     gp <- ggplot(sub) + scale_colour_manual(values=agecodcols)
     if (dim.data.frame(input$cod2C)[2]==1) {
       gp <- gp + aes(colour=age_group) +
@@ -276,6 +281,11 @@ server <- function(input, output, session) {
       gp <- gp + aes(colour=age_intent, linetype=age_intent) +
         scale_linetype_manual(values=agecodtype)
       Legend <- "Age by intent"
+    }
+    if ( input$Ashow==T ) {
+      gp <- gp + aes(alpha=primary) +
+        scale_alpha_manual(values=c(1,0.3) )
+      Legend <- paste0(Legend,"<br> by death data type")
     }
 
     varl <- "intent"
@@ -301,10 +311,37 @@ server <- function(input, output, session) {
     sub <- subset(ABS_COD2018_Stim, drug=="Cocaine" & intent %in% input$cod2C &
         nature=="Underlying" & age_group %in% input$Cage & sex=="All" &
         jurisdiction=="Australia" & (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
+    if ( input$Ashow==F ) {
+      sub <- subset(sub, set=="Stimulants")
+    }
     
-    gp <- ggplot(sub) + aes(linetype=age_intent, colour=age_intent) +
-      scale_linetype_manual(values=agecodtype) +
-      scale_colour_manual(values=agecodcols)
+    if (dim.data.frame(input$cod2C)[2]==1 & dim.data.frame(input$Cage)[2]==1) {
+      gp <- ggplot(sub) + labs(title="Age: ",input$Cage, ", Intent: ",input$cod2C )
+      Legend <- "Age"
+    }
+    else if (dim.data.frame(input$cod2C)[2]==1) {
+      gp <- ggplot(sub) + aes(colour=age_group) + 
+        scale_colour_manual(values=age2codcols) +
+        labs(title="Intent: ",input$cod2C )
+      Legend <- "Age"
+    }
+    else if (dim.data.frame(input$Cage)[2]==1) {
+      gp <- ggplot(sub) + aes(linetype=intent) + 
+        scale_linetype_manual(values=agecodtype) +
+        labs(title="Age: ",input$Cage )
+      Legend <- "Intent"
+    }
+    else {
+      gp <- ggplot(sub) + aes(colour=age_intent, linetype=age_intent) + 
+        scale_colour_manual(values=age2codcols) +
+        scale_linetype_manual(values=agecodtype)
+      Legend <- "Age by intent"
+    }
+    if ( input$Ashow==T ) {
+      gp <- gp + aes(alpha=primary) +
+        scale_alpha_manual(values=c(1,0.3) )
+      Legend <- paste0(Legend,"<br> by death data type")
+    }
 
     varl <- "intent"
     labl <- "<br>Intent: "
@@ -315,13 +352,13 @@ server <- function(input, output, session) {
     yr <- input$yr97
     gp <- PlotFn(Pd=sub,Gp=gp,Yax=yax,Yr=yr,Varl=,varl,Varc=varc,Labl=labl,Labc=labc)
 
-    PlyFn(Gp=gp,Lt="Age by intent",X=LX(),Y=LY(),O=LO())
+    PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
   })
 
  # All drug deaths by jurisdiction, intent, sex & age (Table 1a, 1b, 1c) -----------------------------------------------------------------
   output$AllPlot <- renderPlotly({
     if (input$dropSI=="Intent") {
-      sub <- subset(ABS_COD2018_All, age_group %in% input$ageAll & jurisdiction==input$jur &
+      sub <- subset(ABS_COD2019_All, age_group %in% input$ageAll & jurisdiction==input$jur &
         intent==input$AllIcod & sex %in% input$sexC &
         (year>=input$yr97[[1]] & year<=input$yr97[[2]]) )
       gp <- ggplot(sub) + scale_colour_manual(values=agecodcols)
@@ -343,7 +380,7 @@ server <- function(input, output, session) {
     }
     else if (input$dropSI=="Sex") {
       if (input$sex4R != "MF") {
-        sub <- subset(ABS_COD2018_All, subset=(
+        sub <- subset(ABS_COD2019_All, subset=(
           age_group %in% input$ageAll & jurisdiction==input$jur &
           intent %in% input$AllScod & sex==input$sex4R &
           (year>=input$yr97[[1]] & year<=input$yr97[[2]]) ) )
@@ -351,7 +388,7 @@ server <- function(input, output, session) {
         Title <- paste0(input$jur,", Sex: ",input$sex4R)
       }
       else {
-        sub <- subset(ABS_COD2018_All, subset=(
+        sub <- subset(ABS_COD2019_All, subset=(
           age_group %in% input$ageAll & jurisdiction==input$jur &
           intent %in% input$AllScod & sex != "All" &
           (year>=input$yr97[[1]] & year<=input$yr97[[2]]) ) )
@@ -504,14 +541,14 @@ server <- function(input, output, session) {
           DTIcod=input$DTIcod2
         }
         if (input$DTIsex!="MF") {
-          sub <- subset(ABS_COD2018_DT, intent==DTIcod & drug %in% input$DTdrug
+          sub <- subset(ABS_COD2019_DT, intent==DTIcod & drug %in% input$DTdrug
             & age_group==input$DTage & sex==input$DTIsex & jurisdiction==input$DTjur
             & (year>=input$yr97[[1]] & year<=input$yr97[[2]] ))
           gp <- ggplot(sub)
           Title <- paste0(input$DTjur,", Age: ",input$DTage,", Sex: ",input$DTIsex,", Intent: ",DTIcod)
         }
         else {
-          sub <- subset(ABS_COD2018_DT, intent==DTIcod & drug %in% input$DTdrug
+          sub <- subset(ABS_COD2019_DT, intent==DTIcod & drug %in% input$DTdrug
             & age_group==input$DTage & sex != "All" & jurisdiction==input$DTjur
             & (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
           if (input$dimension<992) {
@@ -529,7 +566,7 @@ server <- function(input, output, session) {
         }
       }
       if (input$DTjur != "Australia") {
-        sub <- subset(ABS_COD2018_DT, intent==input$DTIcod2 & drug %in% input$DTdrug
+        sub <- subset(ABS_COD2019_DT, intent==input$DTIcod2 & drug %in% input$DTdrug
           & age_group=="All ages" & sex=="All" & jurisdiction==input$DTjur
           & (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
         gp <- ggplot(sub)
@@ -551,7 +588,7 @@ server <- function(input, output, session) {
     
     if (input$DTJdrop=="Drug") {
       if (input$DTjur=="Australia") {
-        sub <- subset(ABS_COD2018_DT, intent %in% input$cod4C & drug==input$DTdrugD & 
+        sub <- subset(ABS_COD2019_DT, intent %in% input$cod4C & drug==input$DTdrugD & 
           age_group==input$DTage & sex %in% input$sexC & jurisdiction==input$DTjur &
           (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
         gp <- ggplot(sub) +
@@ -589,7 +626,7 @@ server <- function(input, output, session) {
         }
       }
       if (input$DTjur != "Australia") {
-        sub <- subset(ABS_COD2018_DT, intent %in% input$cod2C & drug==input$DTdrugD & 
+        sub <- subset(ABS_COD2019_DT, intent %in% input$cod2C & drug==input$DTdrugD & 
           age_group=="All ages" & sex=="All" & jurisdiction==input$DTjur &
           (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
         gp <- ggplot(sub) + aes(linetype=intent) +
@@ -631,7 +668,7 @@ server <- function(input, output, session) {
   # All drugs by type, age & intent (Tables 12 & 12a) ----------------------------------------------------------
   output$DTAPlot <- renderPlotly({
     if (input$DTAdrop=="Age_Intent") {
-      sub <- subset(ABS_COD2018_DT, sex=="All" & age_group==input$DTAIage &
+      sub <- subset(ABS_COD2019_DT, sex=="All" & age_group==input$DTAIage &
           drug %in% input$DTdrug & intent==input$DTAIcod & nature=="Underlying" &
           jurisdiction=="Australia" & (year>=input$yr97[[1]] & year<=input$yr97[[2]]) )
       gp <- ggplot(sub) + aes(colour=drug, linetype=drug) +
@@ -645,7 +682,7 @@ server <- function(input, output, session) {
       labc <- "<br>Drug involved: "
     }
     if (input$DTAdrop=="Drug") {
-      sub <- subset(ABS_COD2018_DT, age_group %in% input$ageAll & sex=="All" &
+      sub <- subset(ABS_COD2019_DT, age_group %in% input$ageAll & sex=="All" &
           intent %in% input$cod2C & nature=="Underlying" & drug==input$DTdrugD &
           jurisdiction=="Australia" & (year>=input$yr97[[1]] & year<=input$yr97[[2]]) )
       gp <- ggplot(sub) + aes(colour=age_intent, linetype=age_intent) +
@@ -681,7 +718,7 @@ server <- function(input, output, session) {
   # O4 - by opioid, age & intent (Table 4) -----------------------------------------------------------------
   output$O4Plot <- renderPlotly({
     if (input$dropOA=="Drug") {
-      sub <- subset(ABS_COD2018_Op, subset=(sex=="All" & location=="Aus" & drug==input$OdrugO &
+      sub <- subset(ABS_COD2019_Op, subset=(sex=="All" & location=="Aus" & drug==input$OdrugO &
                  intent %in% input$cod4C & age_group %in% input$ageAll &
                  (year>=input$yr97[[1]] & year<=input$yr97[[2]])))
       gp <- ggplot(sub) + scale_colour_manual(values=agecodcols)
@@ -703,7 +740,7 @@ server <- function(input, output, session) {
     }
 
     else if (input$dropOA=="Age") {
-      sub <- subset(ABS_COD2018_Op, subset=(sex=="All" & location=="Aus" & drug %in% input$OdrugC &
+      sub <- subset(ABS_COD2019_Op, subset=(sex=="All" & location=="Aus" & drug %in% input$OdrugC &
         intent %in% input$cod4C & age_group==input$ageOAA &
         (year>=input$yr97[[1]] & year<=input$yr97[[2]])))
       gp <- ggplot(sub) + scale_colour_manual(values=opcodcols)
@@ -756,7 +793,7 @@ server <- function(input, output, session) {
   # O5 - by opioid, intent & sex (Table 5)-----------------------------------------------------------------
   output$O5Plot <- renderPlotly({
     if (input$O5drop=="Opioid") {
-      sub <- subset(ABS_COD2018_Op, age_group==input$ageR & 
+      sub <- subset(ABS_COD2019_Op, age_group==input$ageR & 
           drug==input$OdrugO & intent %in% input$cod4C & sex %in% input$sexC &
           location=="Aus" & (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
 
@@ -777,7 +814,7 @@ server <- function(input, output, session) {
       labc <- "<br>Sex: "
     }
     else if (input$O5drop=="Intent") {
-      sub <- subset(ABS_COD2018_Op, subset=(age_group==input$ageR &
+      sub <- subset(ABS_COD2019_Op, subset=(age_group==input$ageR &
         drug %in% input$OdrugC & sex %in% input$sexC & intent ==input$cod4R & 
         location=="Aus" & (year>=input$yr97[[1]] & year<=input$yr97[[2]])))
 
@@ -794,7 +831,7 @@ server <- function(input, output, session) {
     else if (input$O5drop=="Sex") {
       Legend <- "Drug by intent"
       if (input$sex4R != "MF") {
-        sub <- subset(ABS_COD2018_Op, age_group==input$ageR & location=="Aus" &
+        sub <- subset(ABS_COD2019_Op, age_group==input$ageR & location=="Aus" &
             drug %in% input$OdrugC & intent %in% input$cod4C & sex==input$sex4R &
             (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
         
@@ -810,7 +847,7 @@ server <- function(input, output, session) {
         }
       }
       else {
-        sub <- subset(ABS_COD2018_Op, age_group==input$ageR & location=="Aus" &
+        sub <- subset(ABS_COD2019_Op, age_group==input$ageR & location=="Aus" &
             drug %in% input$OdrugC & intent %in% input$cod4C & sex != "All" &
             (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
         
@@ -871,7 +908,7 @@ server <- function(input, output, session) {
   
   # O6 - by jurisdiction, sex & intent (Table 6) -------------------------------------------
   output$O6Plot <- renderPlotly({
-    sub <- subset(ABS_COD2018_Op, age_group==input$ageR & drug=="All opioids" &
+    sub <- subset(ABS_COD2019_Op, age_group==input$ageR & drug=="All opioids" &
         jurisdiction==input$jur & intent %in% input$cod2C & sex %in% input$sexC &
         (year>=input$yr97[[1]] & year<=input$yr97[[2]]))
 
@@ -896,9 +933,9 @@ server <- function(input, output, session) {
   
   # Opioids with other drugs by age & intent (Table 7) ----------------------------------------------------------
   output$W7Plot <- renderPlotly({
-    sub <- subset(ABS_COD2018_OpW, intent %in% input$cod4C &
+    sub <- subset(ABS_COD2019_OpW, intent %in% input$cod4C &
         (year>=input$yr97[[1]] & year<=input$yr97[[2]]) & sex=="All")
-    if ( is.null(input$Wshow) ) {
+    if ( input$Ashow==F ) {
       sub <- subset(sub, set=="OpioidW")
     }
 
@@ -943,7 +980,7 @@ server <- function(input, output, session) {
       labc <- "<br>Drug involved: "
     }
     
-    if ( is.character(input$Wshow) ) {
+    if ( input$Ashow==T ) {
       gp <- gp + aes(alpha=primary) +
         scale_alpha_manual(values=c(0.3, 1) )
       Legend <- paste0(Legend,"<br> by death data type")
@@ -990,9 +1027,9 @@ server <- function(input, output, session) {
   
   # Opioids and other drugs by sex (Table 8) ------------------------------------------
   output$W8Plot <- renderPlotly({
-    sub <- subset(ABS_COD2018_OpW, drug %in% input$Wdrug & age_group==input$ageR & 
+    sub <- subset(ABS_COD2019_OpW, drug %in% input$Wdrug & age_group==input$ageR & 
           (year>=input$yr97[[1]] & year<=input$yr97[[2]]) )
-    if ( is.null(input$Wshow) ) {
+    if ( input$Ashow==F ) {
       sub <- subset(sub, set=="OpioidW")
     }
 
@@ -1064,7 +1101,7 @@ server <- function(input, output, session) {
       labc <- "<br>Sex: "
     }
 
-    if ( is.character(input$Wshow) ) {
+    if ( input$Ashow==T ) {
       gp <- gp + aes(alpha=primary) +
         scale_alpha_manual(values=c(0.3, 1) )
       Legend <- paste0(Legend,"<br> by death data type")

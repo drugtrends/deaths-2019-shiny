@@ -1,4 +1,4 @@
-#For ABS COD 2018 data received in Sept 2019
+#For CODURF 2019 data received in Dec 2020
 #N. Man
 library(shiny)
 library(shinydashboard)
@@ -30,7 +30,7 @@ mainPanel(width=9,
         "Drug-induced deaths by jurisdiction, age and sex",
         h2("Drug-induced deaths by jurisdiction, intent, age and sex"),
 
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("AllPlot", width="100%", height="600px"),
                   type="image", loader="DT_NIDIP_tween.gif"),
@@ -45,7 +45,7 @@ mainPanel(width=9,
         "Drug-induced deaths by jurisdiction and remoteness area",
         h2("Drug-induced deaths by jurisdiction, remoteness area and intent"),
 
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("RAPlot", width="100%", height="600px"),
                          type="image", loader="DT_NIDIP_tween.gif"),
@@ -60,7 +60,7 @@ mainPanel(width=9,
         "Percentages of drug-induced deaths by remoteness area",
         h2("Percentages of drug-induced deaths by remoteness area"),
 
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("RPPlot", width="100%", height="600px"),
                          type="image", loader="DT_NIDIP_tween.gif"),
@@ -75,7 +75,7 @@ mainPanel(width=9,
         "Drug-induced deaths by drug, jurisdiction and/or sex",
         h2("Drug-induced deaths by drug, jurisdiction, intent and/or sex"),
       
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("DTJPlot", width="100%", height="600px"),
                   type="image", loader="DT_NIDIP_tween.gif"),
@@ -91,7 +91,7 @@ mainPanel(width=9,
         "Drug-induced deaths by drug and age",
         h2("Drug-induced deaths by drug, age and intent"),
 
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("DTAPlot", width="100%", height="600px"),
                   type="image", loader="DT_NIDIP_tween.gif"),
@@ -111,7 +111,7 @@ mainPanel(width=9,
         "By opioid and age",
         h2("Opioid-induced deaths by opioid, age and intent"),
 
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("O4Plot", width="100%", height="600px"), 
                   type="image", loader="DT_NIDIP_tween.gif"),
@@ -126,7 +126,7 @@ mainPanel(width=9,
         "By opioid and sex",
         h2("Opioid-induced deaths by opioid, intent and sex"),
 
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("O5Plot", width="100%", height="600px"),
                 type="image", loader="DT_NIDIP_tween.gif"),
@@ -141,7 +141,7 @@ mainPanel(width=9,
         "By sex and jurisdiction",
         h2("Opioid-induced deaths by intent, jurisdiction and sex"),
 
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("O6Plot", width="100%", height="600px"),
                 type="image", loader="DT_NIDIP_tween.gif"),
@@ -156,7 +156,7 @@ mainPanel(width=9,
         "By exclusive opioid type and age",
         h2("Opioid-induced deaths by exclusive opioid type, age and intent"),
         
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("E0Plot", width="100%", height="600px"), 
                   type="image", loader="DT_NIDIP_tween.gif"),
@@ -171,7 +171,7 @@ mainPanel(width=9,
         "By exclusive opioid type, jurisdiction and sex",
         h2("Opioid-induced deaths by exclusive opioid type, jurisdiction, intent and sex"),
         
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("E9Plot", width="100%", height="600px"),
                   type="image", loader="DT_NIDIP_tween.gif"),
@@ -186,7 +186,7 @@ mainPanel(width=9,
         "Exclusive opioid types as percentages",
         h2("Opioid-induced deaths by exclusive opioid type as percentages of all opioid-induced deaths"),
         
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("EPPlot", width="100%", height="600px"),
                 type="image", loader="DT_NIDIP_tween.gif")
@@ -200,7 +200,7 @@ mainPanel(width=9,
       "Opioids with other drugs, by age",
       h2("Opioid-induced deaths by other drugs with opioids, age and intent"),
   
-      tabsetPanel(type="tabs",
+      tabsetPanel(type="tabs",id="Tab",
         tabPanel("Plot",
             withLoader(plotlyOutput("W7Plot", width="100%", height="600px"),
                 type="image", loader="DT_NIDIP_tween.gif"),
@@ -215,7 +215,7 @@ mainPanel(width=9,
       "Opioids with other drugs, by sex",
       h2("Opioid-induced deaths by other drugs with opioids, sex and intent"),
   
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
             # mainPanel(width=9,
               withLoader(plotlyOutput("W8Plot", width="100%", height="600px"),
@@ -236,7 +236,7 @@ mainPanel(width=9,
         "Amphetamine-induced deaths",
         h2("Amphetamine-induced deaths"),
 
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
               withLoader(plotlyOutput("AmPlot", width="100%", height="600px"),
                 type="image", loader="DT_NIDIP_tween.gif"),
@@ -251,7 +251,7 @@ mainPanel(width=9,
         "Cocaine-induced deaths",
         h2("Cocaine-induced deaths"),
   
-        tabsetPanel(type="tabs",
+        tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
             withLoader(plotlyOutput("CPlot", width="100%", height="600px"),
               type="image", loader="DT_NIDIP_tween.gif"),
@@ -263,7 +263,7 @@ mainPanel(width=9,
     ),
 
   # Explanatory Notes tab ---------------------------------------------------------------
-    tabPanel(value="Notes",
+    tabPanel(value="Method",
       "Explanatory notes", includeHTML("notesExplanatory.html")
     ),
   # Citation tab ------------------------------------------------------------
@@ -309,29 +309,29 @@ mainPanel(width=9,
       background-clip: content-box, padding-box'>"),
     HTML("</div>"),
   ),
-  conditionalPanel(condition="input.Plot!='Notes' & input.Plot!='Cites'",
+  conditionalPanel(condition="input.Plot!='Method' & input.Plot!='Cites' & input.Tab=='Plot'",
     sidebarPanel(id="Sidebar",width=3,
     # year slider###############
       conditionalPanel(
         condition="input.Plot != 'RAPage' & input.Plot != 'RPPage' &
         input.Plot != 'E9Page' & input.Plot != 'E0Page' & input.Plot != 'EPPage'",
         sliderInput("yr97", "Period",
-          min=1997, max=2018,
-          value=c(1997, 2018), sep=""
+          min=1997, max=2019,
+          value=c(1997, 2019), sep=""
         )
       ),
       conditionalPanel(
         condition="input.Plot == 'E9Page' | input.Plot == 'E0Page' | input.Plot == 'EPPage'",
         sliderInput("yr07", "Period",
-          min=2007, max=2018,
-          value=c(2007, 2018), sep=""
+          min=2007, max=2019,
+          value=c(2007, 2019), sep=""
         )
       ),
       conditionalPanel(
         condition="input.Plot == 'RAPage' | input.Plot == 'RPPage'",
         sliderInput("yr11", "Period",
-          min=2011, max=2018,
-          value=c(2011, 2018), sep=""
+          min=2011, max=2019,
+          value=c(2011, 2019), sep=""
         )
       ),
   ####For user-defined year intervals
@@ -346,12 +346,12 @@ mainPanel(width=9,
         selectInput("yax", "Plot:",
            c(
              "Number of deaths"="num",
-             "Deaths per 100,000 people"="r5",
-             "Deaths per 100,000 people (95% CI)"="r5ci",
-             "Deaths per 1,000,000 people"="r6",
-             "Deaths per 1,000,000 people (95% CI)"="r6ci"
+             "Crude mortality rate"="cr",
+             "Crude mortality rate (95% CI)"="crci",
+             "Age standardised mortality rate"="sr",
+             "Age standardised mortality rate (95% CI)"="srci"
            ),
-           selected="r5"
+           selected="cr"
         )
       ),
 
@@ -807,11 +807,11 @@ mainPanel(width=9,
           selected=c("Alcohol")
         )
       ),
+    # Also show all drug-induced checkbox (Am, C, W7 & W8 Pages)###############
       conditionalPanel(condition=
-        "input.Plot == 'W8Page' | input.Plot == 'W7Page'",
-        checkboxGroupInput("Wshow", "Also show:",
-          choices=c("all drug-induced deaths")
-        )
+        "input.Plot == 'AmPage' | input.Plot == 'CPage' | input.Plot == 'W8Page' | input.Plot == 'W7Page'",
+        HTML("<b>Also show:</b>"),
+        checkboxInput("Ashow", "All drug-induced deaths",value=F)
       ),
     # Intent panels(4C) (DTJ, O4, O5, W7 & W8 Pages)###############
       conditionalPanel(condition="input.Plot == 'O4Page' | input.Plot == 'W7Page' |
@@ -823,10 +823,11 @@ mainPanel(width=9,
           c("All", "Accidental", "Intentional", "Undetermined"),
           selected=c("All", "Accidental")
         ),
-        conditionalPanel(condition="input.cod4C.length == 2 &
+        conditionalPanel(condition="(input.cod4C.length == 2 &
           (input.Plot == 'O4Page' | input.Plot == 'W7Page' | input.Plot == 'DTJPage' |
           (input.Plot == 'O5Page' & (input.O5drop != 'Sex' | input.sex4R != 'MF') ) |
-          (input.Plot == 'W8Page') )",
+          (input.Plot == 'W8Page') )) | (input.cod2C.length == 2 &
+          (input.Plot == 'AmPage' | input.Plot == 'CPage') )",
           radioButtons("cod4C2",label="Show intent as:",
             choices=c("Single plot"=1,"Split plot"=2),
             inline=T, selected=1
@@ -871,7 +872,7 @@ mainPanel(width=9,
       conditionalPanel(condition="input.Plot == 'AllPage' | input.Plot == 'AmPage'
         | ((input.Plot == 'O4Page' | input.Plot == 'E0Page' | input.Plot == 'W7Page')
         & input.dropOA == 'Drug') | (input.Plot == 'DTAPage' & input.DTAdrop == 'Drug')",
-        checkboxInput("ageAllA", label=HTML("<b>Age:</b>"),value=TRUE
+        checkboxInput("ageAllA", label=HTML("<b>Age:</b>"),value=F
         ),
         HTML("<div style='margin-left: 6%;'>"),
         checkboxGroupInput("ageAll", NULL, #"Age:",
@@ -890,7 +891,8 @@ mainPanel(width=9,
       )
     )
   ),
-  conditionalPanel(condition="input.dimension>767 & (input.Plot=='Notes' | input.Plot=='Cites')",
+  conditionalPanel(condition="input.dimension>767 & 
+    (input.Plot=='Method' | input.Plot=='Cites' | input.Tab=='Notes')",
     fluidRow(column(includeHTML("DT-logos.html"),width=3,offset=9))
   ),
 #####indeterminate checkbox update not working yet - addEventListener not working???
