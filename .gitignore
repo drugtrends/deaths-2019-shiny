@@ -1,8 +1,9 @@
 .Rproj.user
 .Rhistory
-.RData
 .Ruserdata
-death_2018.Rproj
-rsconnect/shinyapps.io/drugtrends/
+*.Rproj
+rsconnect/shinyapps.io/*
 packrat/
 *.rds
+*.RData
+*.png
