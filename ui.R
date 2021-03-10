@@ -489,7 +489,7 @@ mainPanel(width=9,
                 "Male & Female - select All ages as Age range"="MF"),
               selected=c("People")
             ),
-            conditionalPanel(condition="input.DTIsex=='All'",
+            conditionalPanel(condition="input.DTIsex=='People'",
               selectInput("DTIcod", "Intent:",
                 choices=c("All", "Accidental", "Intentional", "Undetermined"),
                 selected=c("All")
@@ -497,7 +497,7 @@ mainPanel(width=9,
             )
           ),
           conditionalPanel(condition="input.DTjur!='Australia' |
-            (input.DTjur=='Australia' & input.DTIsex!='All')",
+            (input.DTjur=='Australia' & input.DTIsex!='People')",
             selectInput("DTIcod2", "Intent:",
               choices=c("All", "Accidental"),
               selected=c("All")
@@ -532,6 +532,7 @@ mainPanel(width=9,
               "55 to 64"="55-64",
               "65 to 74"="65-74",
               "75 to 84"="75-84",
+              "85+",
               "All ages",
               "15 to 64"="15-64"
             ),
@@ -755,7 +756,7 @@ mainPanel(width=9,
         ((input.Plot=='AllPage' | input.Plot=='W8Page' | input.Plot=='E9Page')
         & input.dropSI!='Sex') | (input.Plot=='O5Page' & input.O5drop!='Sex')
         | (input.Plot=='DTJPage' & input.DTJdrop=='Drug' & input.DTjur=='Australia')",
-        conditionalPanel(condition="input.Plot=='DTJPage' & input.DTJdrop=='Drug' & input.DTjur=='Australia' & input.DTage=='15-64' & input.sexC!='All'",
+        conditionalPanel(condition="input.Plot=='DTJPage' & input.DTJdrop=='Drug' & input.DTjur=='Australia' & input.DTage=='15-64' & input.sexC!='People'",
           HTML("<i>Please select All ages for data by male and/or female.</i>")
         ),
         checkboxGroupInput("sexC", label="Sex:",
@@ -769,9 +770,9 @@ mainPanel(width=9,
         condition="input.Plot=='CPage' & input.yax!='sr' & input.yax!='srci'",
         checkboxGroupInput("Cage", "Age range:",
           choices=c(
-            "All ages","15 to 64"="15-64"
+            " All ages"," 15 to 64"=" 15-64"
           ),
-          selected=c("All ages")
+          selected=c(" All ages")
         )
       ),
     # Intent(2C) checkbox (RA, O6, C & Am Pages)###############
@@ -904,6 +905,7 @@ mainPanel(width=9,
              "55 to 64"="55-64",
              "65 to 74"="65-74",
              "75 to 84"="75-84",
+             "85+"="85+",
              "All ages",
              "15 to 64"="15-64"),
           selected=c("All ages")
