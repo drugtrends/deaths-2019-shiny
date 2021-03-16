@@ -25,7 +25,7 @@ ColtypFn <- function(Pd,Gp,Yax,Varc="Age",Vart="Intent",Split="",EstForm="",RVDa
     Gp <- Gp + scale_colour_manual( values=get(paste0(Varc,"cols")) )
     if (Varc!="") Gp <- Gp + aes(colour=get(Varc))
   }
-  else if ( (Vart!="" ) & Split!=Vart ) {
+  else if ( Vart!="" & Split!=Vart ) {
     Gp <- Gp + aes(linetype=get(Vart)) +
       scale_linetype_manual( values=get(paste0(Vart,"type")) )
   }
@@ -44,7 +44,7 @@ ColtypFn <- function(Pd,Gp,Yax,Varc="Age",Vart="Intent",Split="",EstForm="",RVDa
   return(Gp)
 }
 
-PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
+PlotFn <- function(Pd,Gp,Yax,Yr,Labc,Labt,EstForm="") {
   if (Yax=="num") {
     Gp <- Gp + geom_line() + aes(y=n, text=paste0(
         "Year: ",year,
@@ -61,7 +61,7 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
       Gp <- Gp + geom_line() + aes(y=cr, text=paste0(
           "Year: ",year,
           "<br>Deaths: ",n, " (last: ",n_2018,")",
-          "<br>Crude rate: ",round(cr, 2)," (", round(cr_lci, 2),",", round(cr_uci, 2),")",
+          "<br>Crude rate: ",cr," (",cr_lci,",", cr_uci,")", # rounded off in dataset instead to avoid potential confidentiality issue with small numbers being discoverable
           "<br>",Labt,": ",get(Labt),
           "<br>",Labc,": ",get(Labc)
         ))
@@ -71,13 +71,13 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
       Gp <- Gp + geom_line(aes(y=cr, text=paste0(
           "Year: ",year,
           "<br>Deaths: ",n, " (last: ",n_2018,")",
-          "<br>Crude rate: ",round(cr, 2)," (", round(cr_lci, 2),",",round(cr_uci, 2),")",
+          "<br>Crude rate: ",cr," (",cr_lci,",", cr_uci,")",
           "<br>",Labt,": ",get(Labt),
           "<br>",Labc,": ",get(Labc)
         ))) +
         geom_ribbon(aes(ymin=cr_lci,ymax=cr_uci), alpha=0.1,size=0)
     }
-    Gp <- Gp + scale_y_continuous(limits=c(0, max(Pd$cr_uci, 2.5))) +
+    Gp <- Gp + scale_y_continuous(limits=c(0, max(Pd$cr_uci, 2.5,na.rm=T))) +
       labs(y="Crude mortality rate per 100,000")
   }
 
@@ -88,14 +88,14 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
         Gp <- Gp + geom_line( aes(y=sr, text=paste0(
             "Year: ",year,
             "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Age standardised rate: ",round(sr,2)," (",round(sr_lci,2),",",round(sr_uci,2),")",
+            "<br>Age standardised rate: ",sr," (",sr_lci,",", sr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ),alpha="Age standardised") ) +
           geom_line(aes(y=cr, text=paste0(
             "Year: ",year,
-            "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Crude rate: ",round(cr,2)," (", round(cr_lci,2),",",round(cr_uci,2),")",
+            "<br>Deaths: ",n,
+            "<br>Crude rate: ",cr," (",cr_lci,",", cr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ),alpha="Crude")) +
@@ -106,14 +106,14 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
         Gp <- Gp + geom_line( aes(y=sr, text=paste0(
             "Year: ",year,
             "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Age standardised rate: ",round(sr,2)," (",round(sr_lci,2),",",round(sr_uci,2),")",
+            "<br>Age standardised rate: ",sr," (",sr_lci,",", sr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ),color="Age standardised") ) +
           geom_line( aes(y=cr, text=paste0(
             "Year: ",year,
-            "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Crude rate: ",round(cr,2)," (", round(cr_lci,2),",",round(cr_uci,2),")",
+            "<br>Deaths: ",n,
+            "<br>Crude rate: ",cr," (",cr_lci,",", cr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ),color="Crude") )
@@ -122,14 +122,14 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
         Gp <- Gp + geom_line( aes(y=sr, text=paste0(
             "Year: ",year,
             "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Age standardised rate: ",round(sr,2)," (",round(sr_lci,2),",",round(sr_uci,2),")",
+            "<br>Age standardised rate: ",sr," (",sr_lci,",", sr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ),color=paste("Age standardised",get(Labt),sep=","),linetype=paste("Age standardised",get(Labt),sep=",")) ) +
           geom_line( aes(y=cr, text=paste0(
             "Year: ",year,
-            "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Crude rate: ",round(cr,2)," (", round(cr_lci,2),",",round(cr_uci,2),")",
+            "<br>Deaths: ",n,
+            "<br>Crude rate: ",cr," (",cr_lci,",", cr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ),color=paste("Crude",get(Labt),sep=","),linetype=paste("Crude",get(Labt),sep=",")) )
@@ -138,14 +138,14 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
         Gp <- Gp + geom_line( aes(y=sr, text=paste0(
             "Year: ",year,
             "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Age standardised rate: ",round(sr,2)," (",round(sr_lci,2),",",round(sr_uci,2),")",
+            "<br>Age standardised rate: ",sr," (",sr_lci,",", sr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ),color=paste("Age standardised",get(Labc),sep=","),linetype=paste("Age standardised",get(Labc),sep=",")) ) +
           geom_line( aes(y=cr, text=paste0(
             "Year: ",year,
-            "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Crude rate: ",round(cr,2)," (", round(cr_lci,2),",",round(cr_uci,2),")",
+            "<br>Deaths: ",n,
+            "<br>Crude rate: ",cr," (",cr_lci,",", cr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ),color=paste("Crude",get(Labc),sep=","),linetype=paste("Crude",get(Labc),sep=",")) )
@@ -154,7 +154,7 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
         Gp <- Gp + geom_line() + aes(y=sr, text=paste0(
             "Year: ",year,
             "<br>Deaths: ",n, " (last: ",n_2018,")",
-            "<br>Age standardised rate: ",round(sr,2)," (",round(sr_lci,2),",",round(sr_uci,2),")",
+            "<br>Age standardised rate: ",sr," (",sr_lci,",", sr_uci,")",
             "<br>",Labt,": ",get(Labt),
             "<br>",Labc,": ",get(Labc)
           ))
@@ -164,7 +164,7 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
       Gp <- Gp + geom_line( aes(y=sr, text=paste0(
           "Year: ",year,
           "<br>Deaths: ",n, " (last: ",n_2018,")",
-          "<br>Age standardised rate: ",round(sr, 2)," (", round(sr_lci, 2),",", round(sr_uci, 2),")",
+          "<br>Age standardised rate: ",sr," (",sr_lci,",", sr_uci,")",
           "<br>",Labt,": ",get(Labt),
           "<br>",Labc,": ",get(Labc)
         )) ) + geom_ribbon(aes(ymin=sr_lci, ymax=sr_uci), alpha=0.1, size=0)
@@ -175,11 +175,11 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Varc="",Vart="",Labc,Labt,EstForm="") {
     else {
       Gp <- Gp + labs(y="Mortality rate per 100,000")
     }
-    Gp <- Gp + scale_y_continuous(limits=c(0, max(Pd$sr_uci,Pd$cr_uci,2.5)))
+    Gp <- Gp + scale_y_continuous(limits=c(0, max(Pd$sr_uci,Pd$cr_uci,2.5,na.rm=T)))
   }
 
   Gp <- Gp + labs(x="Year") + aes(x=year, group=1) +
-    scale_x_continuous(breaks=seq(Yr[[1]],Yr[[2]],2)) +
+    scale_x_continuous(breaks=seq(Yr[1],Yr[2],2)) +
     theme_light() + theme(
       legend.title=element_blank(),
       panel.grid.minor.x=element_blank(),
@@ -198,8 +198,8 @@ SplitFn <- function(Pd,Gp,Vars,PageDim) {
         axis.text.x=element_text(angle=90)
         # axis.title.x=element_text() # vjust & lineheight not working
       )
-    #   LX(0)
     #   LO("h")
+    #   LX(0)
     #   LY(-.2)
     }
   }
@@ -279,8 +279,8 @@ server <- function(input, output, session) {
       LY(0.99)
       LX(1.02)
       # if (Split!="" & input$dimension<1200) {
-      #   LX(0)
       #   LO("h")
+      #   LX(0)
       #   LY(-.2)
       # }
     }
@@ -498,11 +498,11 @@ server <- function(input, output, session) {
       # }
       # else {
       #   gp <- gp + facet_grid(cols=vars(Intent))
-      #   if (input$dimension<1200) {
-      #     LX(0)
-      #     LO("h")
-      #     LY(-.2)
-      #   }
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
       # }
     }
     # # Set theme, remove default legend title and vertical gridlines (NB: need to have grid codes last)
@@ -586,6 +586,11 @@ server <- function(input, output, session) {
     if (length(INTENT)==2 & input$codS==2) {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars="Intent",PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -702,6 +707,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO()) #Pd=pd,Yax=yax,
@@ -709,7 +719,7 @@ server <- function(input, output, session) {
 
   # Remoteness by jurisdiction, Intent and Sex (Table R) ------------------------------------------
   output$RAPlot <- renderPlotly({
-    yr <- input$yr11
+    yr <- input$yr09
     yax <- input$yax
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
@@ -727,7 +737,7 @@ server <- function(input, output, session) {
 
     pd <- subset(COD2019_Rem, jurisdiction==input$jurR & Age=="All ages" &
       Sex=="People" & Intent %in% INTENT & Region %in% REGION &
-      (year>=input$yr11[[1]] & year<=input$yr11[[2]]) )
+      (year>=yr[1] & year<=yr[2]) )
 
     # gp <- ggplot(pd) + aes(colour=RegionIntent, linetype=RegionIntent) +
     #     labs(title=paste0(input$jurR,", All ages") ) +
@@ -743,14 +753,17 @@ server <- function(input, output, session) {
       vart <- ""
       varc <- ""
       Legend <- ""
+      Title <- paste0(Title,", Region: ",REGION,", Intent:", INTENT) 
     }
     else if (length(INTENT)==1) {
       vart <- ""
       Legend <- "Region"
+      Title <- paste0(Title,", Intent:", INTENT) 
     }
     else if (length(REGION)==1) {
       varc <- ""
       Legend <- "Intent"
+      Title <- paste0(Title,", Region: ",REGION) 
     }
     else {
     Legend <- "Region by Intent"
@@ -782,16 +795,17 @@ server <- function(input, output, session) {
   # Remoteness area as percentage (Tables R) ------------------------------------------
   output$RPPlot <- renderPlotly({
     #needs to be sorted [order(...)] & made distinct
+    pd <- subset(COD2019_Rem,Release=="Dec 2020")
     if (input$jurR=="Australia") {
-      pd <- subset(COD2019_Rem, Intent==input$codR & 
+      pd <- subset(pd, Intent==input$codR & 
             Age==input$ageR &
-            (year>=input$yr11[[1]] & year<=input$yr11[[2]]) & 
+            (year>=input$yr09[[1]] & year<=input$yr09[[2]]) & 
             Sex==input$sexR & jurisdiction==input$jurR)
     }
     else {
-      pd <- subset(COD2019_Rem, Intent==input$codR & 
+      pd <- subset(pd, Intent==input$codR & 
             Age==input$ageR & 
-            (year>=input$yr11[[1]] & year<=input$yr11[[2]]) & 
+            (year>=input$yr09[[1]] & year<=input$yr09[[2]]) & 
             Sex=="People" & jurisdiction==input$jurR)
     }
 
@@ -827,7 +841,7 @@ server <- function(input, output, session) {
       ))) + geom_area() +
       labs(x="Year",y="Percent of drug-induced deaths") +
       scale_fill_manual(values=Regioncols) +
-      scale_x_continuous(breaks=seq(input$yr11[[1]],input$yr11[[2]],2) )
+      scale_x_continuous(breaks=seq(input$yr09[[1]],input$yr09[[2]],2) )
 
     gp <- gp + theme_light() + theme(legend.title=element_blank(),
             panel.grid.minor.x=element_blank(),
@@ -980,6 +994,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1090,6 +1109,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
   })
@@ -1240,6 +1264,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
     
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1417,6 +1446,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1572,6 +1606,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1694,6 +1733,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1726,7 +1770,7 @@ server <- function(input, output, session) {
 
     pd <- filter(COD2019_OpE, Sex=="People" & jurisdiction=="Australia" &
         Opioid %in% OPIOID & Intent %in% input$cod3C & Age %in% AGE &
-        (year>=yr[[1]] & year<=yr[[2]]))
+        (year>=yr[1] & year<=yr[2]))
       
     vart <- "Intent"
     labt <- "Intent"
@@ -1817,6 +1861,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1852,7 +1901,7 @@ server <- function(input, output, session) {
     
     pd <- filter(COD2019_OpE, jurisdiction==input$jur & Age==AGE &
         Sex %in% SEX & Intent %in% INTENT & Opioid %in% input$Edrug & 
-          (year>=yr[[1]] & year<=yr[[2]]) )
+          (year>=yr[1] & year<=yr[2]) )
 
     varc <- "Opioid"
     labc <- "Opioid"
@@ -1954,6 +2003,11 @@ server <- function(input, output, session) {
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())

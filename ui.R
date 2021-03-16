@@ -329,9 +329,9 @@ mainPanel(width=9,
       ),
       conditionalPanel(
         condition="input.Plot=='RAPage' | input.Plot=='RPPage'",
-        sliderInput("yr11", "Period",
-          min=2011, max=2019,
-          value=c(2011, 2019), sep=""
+        sliderInput("yr09", "Period",
+          min=2009, max=2019,
+          value=c(2009, 2019), sep=""
         )
       ),
   ####For user-defined year intervals

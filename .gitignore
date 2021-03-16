@@ -6,4 +6,4 @@ rsconnect/shinyapps.io/*
 packrat/
 *.rds
 *.RData
-*.png
+www/
