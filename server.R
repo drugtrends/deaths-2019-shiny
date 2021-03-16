@@ -10,9 +10,9 @@ library(shinycustomloader)
 load("death_2019.Rdata")
 
 ColtypFn <- function(Pd,Gp,Yax,Varc="Age",Vart="Intent",Split="",EstForm="",RVData=0) {
-  print(paste(EstForm,EstForm>"Colo",Varc,Vart,EstForm,RVData))
+  # print(paste(EstForm,( (Varc!="" & Vart!="") | EstForm>"Colo" ) & Split!=Varc & (Split!=Vart | EstForm=="Type2") ,Varc,Vart,RVData,Split))
   # Gp <- ggplot(data=Pd)
-  if (( (Varc!="" & Vart!="") | EstForm>"Colo" ) & Split!=Varc & Split!=Vart) {
+  if (( (Varc!="" & Vart!="") | EstForm>"Colo" ) & Split!=Varc & (Split!=Vart | EstForm=="Type2") ) {
     Var <- paste0(Varc,Vart)
     if (Varc==Vart) Var <- Varc
     Gp <- Gp + scale_colour_manual( values=get(paste0(Var,"cols")) ) +
@@ -35,8 +35,12 @@ ColtypFn <- function(Pd,Gp,Yax,Varc="Age",Vart="Intent",Split="",EstForm="",RVDa
         scale_color_manual(values=Notecolo)
     }
     Gp <- Gp + scale_shape_manual(values=Noteshap) +
-      geom_point(data=subset(Pd,Note!=""),aes(shape=Note),size=2)
+      geom_point(data=subset(Pd,Note!=""),aes(shape=Note,text=NULL),size=2) #,show.legend=F) - does nothing
   }
+  # Gp <- Gp + scale_shape_manual(values=Noteshap) +
+  #   # geom_point(data=subset(Pd,Note=="revised"),aes(text=NULL),shape=1,size=2) + #,show.legend=F) +
+  #   # geom_point(data=subset(Pd,Note=="prelim."),aes(text=NULL),shape=4,size=2) #,show.legend=F)
+  #   geom_point(data=subset(Pd,Note!=""),aes(shape=Note,text=NULL),size=2,show.legend=F)
   return(Gp)
 }
 
@@ -205,8 +209,19 @@ SplitFn <- function(Pd,Gp,Vars,PageDim) {
   return(Gp)
 }
 
-PlyFn <- function(Gp=gp,Lt=Legend,O=LO(),X=LX(),Y=LY()) {
+PlyFn <- function(Gp,Lt,O=LO(),X=LX(),Y=LY()) {  #Pd,Yax,
+  # pr <- as.data.frame(select(subset(Pd,Note=="prelim."),c("year",Yax)))
+  # print(pr)
     ggplotly(Gp, tooltip="text") %>%
+      # add_markers(data=pr,
+      #   # type="scatter",
+      #   # mode="markers",
+      #   y=get(Yax),
+      #   x=year,
+      #   marker=list(
+      #     color='grey',
+      #     symbol="cross"
+      # )) %>%
       add_annotations(
         text='Source: <a href="https://ndarc.med.unsw.edu.au/resource/trends-drug-induced-deaths-australia-1997-2019">DrugTrends</a>, NDARC',
         xref="paper", yref="paper",
@@ -401,9 +416,10 @@ server <- function(input, output, session) {
   output$AmPlot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
+    Split <- ""
+
     AGE <- input$ageAll
     if (yax=="sr" | yax=="srci") AGE <- "All ages"
     INTENT <- input$cod2C
@@ -411,28 +427,20 @@ server <- function(input, output, session) {
     pd <- subset(COD2019_Stim, jurisdiction=="Australia" & Sex=="People" & 
            Drug=="Amphetamines" & Intent %in% INTENT & #nature=="Underlying" & 
            Age %in% AGE & (year>=yr[1] & year<=yr[2]))
-    if (input$Ashow==F | yax=="crci" | yax=="srci") {
-      pd <- subset(pd, primary=="amphetamine-induced")
-    }
 
     Title <- "Australia"
     if (length(AGE)==1) Title <- paste0(Title,", Age: ",AGE)
     if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
-    gp <- ggplot(pd) + labs(title=Title)
 
     varc <- "Age"
     labc <- "Age"
     vart <- "Intent"
     labt <- "Intent"
-    Split <- ""
     if (length(AGE)==1 & estimateForm=="") varc <- ""
     # gp <- ggplot(pd) + scale_colour_manual(values=get("AgeIntentcols"))
     if (length(INTENT)==1 | (length(INTENT)==2 & input$codS==2)) {
-      if (length(INTENT)==1) {
-        vart <- ""
-      } else {
-        Split <- vart
-      }
+      if (length(INTENT)==2) Split <- "Intent"
+      vart <- ""
       if (estimateForm!="") {
         # gp <- gp + scale_linetype_manual(values=AgeIntenttype)
         Legend <- "Estimate type"
@@ -455,16 +463,20 @@ server <- function(input, output, session) {
       }
     }
 
+    if (input$Ashow==F | yax=="crci" | yax=="srci") {
+      pd <- subset(pd, primary=="Amphetamine-induced")
+    }
+    gp <- ggplot(pd) + labs(title=Title)
     rvData <- 1
     if ( input$Ashow==T & (yax=="num" | yax=="cr" | yax=="sr") ) {
       gp <- gp + aes(alpha=primary) +
         scale_alpha_manual(values=c(1,.3))
-      Legend <- paste0(Legend,"<br> by death data type")
+      Legend <- paste0("Death data type by<br>",Legend)
       LY(.9)
       rvData <- 0
     }
     if (varc=="" & vart=="" & estimateForm=="" & rvData==1) {
-      Legend <- "Revision\nversion"
+      Legend <- "Release\nversion"
     }
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
@@ -506,9 +518,10 @@ server <- function(input, output, session) {
   output$CPlot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
+    Split <- ""
+
     AGE <- input$Cage
     if (yax=="sr" | yax=="srci") AGE <- " All ages"
     INTENT <- input$cod2C
@@ -516,45 +529,32 @@ server <- function(input, output, session) {
     pd <- subset(COD2019_Stim, Drug=="Cocaine" & Intent %in% INTENT &
         Age %in% AGE & Sex=="People" & #nature=="Underlying" &
         jurisdiction=="Australia" & (year>=yr[1] & year<=yr[2]))
-    if ( input$Ashow==F | yax=="crci" | yax=="srci" ) {
-      pd <- subset(pd, primary=="cocaine-induced")
-    }
 
     Title <- "Australia"
-    if (length(AGE)==1) Title <- paste0(Title,", Age:",AGE)
+    if (length(AGE)==1) Title <- paste0(Title,", Age: ",AGE)
     if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
-    gp <- ggplot(pd) + labs(title=Title)
 
     varc <- "Age"
     labc <- "Age"
     vart <- "Intent"
     labt <- "Intent"
     if (length(AGE)==1 & estimateForm=="") varc <- ""
-    Split <- ""
     Legend <- ""
     if (length(INTENT)==1 | (length(INTENT)==2 & input$codS==2)) {
-      if (length(INTENT)>1) {
-        Split <- vart
-      }
-      # else {
-      # }
       vart <- ""
+      if (length(INTENT)==2) Split <- "Intent"
       if (estimateForm!="") {
-        # gp <- gp + scale_color_manual(values=AgeIntentcols)
         Legend <- "Estimate type"
         estimateForm <- "Colo"
       }
       else if (length(AGE)>1) {
-        # gp <- gp + aes(colour=Age) + 
-        #   scale_colour_manual(values=AgeIntentcols)
         Legend <- "Age"
       }
     }
     else {
       Legend <- "Intent"
       if (estimateForm!="") {
-        # varc <- ""
-        # gp <- gp + scale_color_manual(values=AgeIntentcols)
+        # varc <- "" #need AgeIntent cols & typ
         Legend <- "Estimate type by Intent"
         estimateForm <- "Colo2"
       }
@@ -563,11 +563,15 @@ server <- function(input, output, session) {
       }
     }
 
+    if ( input$Ashow==F | yax=="crci" | yax=="srci" ) {
+      pd <- subset(pd, primary=="Cocaine-induced")
+    }
+    gp <- ggplot(pd) + labs(title=Title)
     rvData <- 1
     if ( input$Ashow==T & (yax=="num" | yax=="cr" | yax=="sr") ) {
       gp <- gp + aes(alpha=primary) +
         scale_alpha_manual(values=c(1,.3))
-      Legend <- paste0(Legend,"<br> by death data type")
+      Legend <- paste0("Death data type by<br>",Legend)
       LY(.9)
       rvData <- 0
     }
@@ -576,11 +580,7 @@ server <- function(input, output, session) {
     }
 
     validate(need(nrow(pd) > 0, "No data selected"))
-    # vart <- "Intent"
-    # labt <- "Intent"
-    # varc <- "Age"
-    # labc <- "Age"
-    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,EstForm=estimateForm,RVData=rvData)
     gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
     if (length(INTENT)==2 & input$codS==2) {
@@ -595,16 +595,16 @@ server <- function(input, output, session) {
   output$AllPlot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
-    AGE <- input$ageAll
-    if (yax=="sr" | yax=="srci") AGE <- "All ages"
     Split <- ""
 
+    AGE <- input$ageAll
+    if (yax=="sr" | yax=="srci") AGE <- "All ages"
     if (input$dropSI=="Intent") {
       INTENT <- input$AllIcod
       SEX <- input$sexC
+      labt <- "Sex"
     }
     else if (input$dropSI=="Sex") {
       INTENT <- input$AllScod
@@ -613,6 +613,7 @@ server <- function(input, output, session) {
         SEX <- c("Female","Male")
         Split <- "Sex"
       }
+      labt <- "Intent"
     }
 
     Title <- input$jur
@@ -622,79 +623,53 @@ server <- function(input, output, session) {
 
     varc <- "Age"
     labc <- "Age"
-    if (length(AGE)==1 & estimateForm=="") varc <- ""
+    if (length(AGE)==1 & estimateForm=="") {
+      varc <- ""
+      Legend <- labt
+    }
     if (input$dropSI=="Intent") {
       vart <- "Sex"
-      labt <- "Sex"
-      # gp <- ggplot(pd) + scale_colour_manual(values=AgeSexcols)
       if (length(SEX)==1) {
         vart <- ""
         if (estimateForm!="") {
           Legend <- "Estimate type"
           estimateForm <- "Colo"
         }
-        else if (length(AGE)==1) {
-          Legend <- ""
-        }
         else {
-          # gp <- gp + aes(colour=Age)
-          Legend <- "Age"
+          Legend <- varc
         }
       }
       else {
-        # gp <- gp + scale_linetype_manual(values=AgeSextype)
         if (estimateForm!="") {
-          Legend <- "Estimate type & Sex"
+          Legend <- "Estimate type by Sex"
           estimateForm <- "Colo2"
         }
-        else if (length(AGE)==1) {
-          Legend <- "Sex"
-        }
-        else {
-          # gp <- gp + aes(colour=AgeSex, linetype=AgeSex)
-          Legend <- "Age & Sex"
+        else if (length(AGE)>1) {
+          Legend <- "Age by Sex"
         }
       }
     }
     else if (input$dropSI=="Sex") {
       vart <- "Intent"
-      labt <- "Intent"
-      # if (input$sex4R!="MF") {
-      # }
-      # else {
-      # }
-      if (length(input$AllScod)==1 | (length(input$AllScod)==2 & input$codS==2 & input$sex4R!="MF")) {
+      if (length(input$AllScod)==1 | (length(input$AllScod)==2 & input$codS==2 & Split=="")) {
         vart <- ""
-        # gp <- gp + scale_colour_manual(values=AgeIntentcols)
         if (estimateForm!="") {
           Legend <- "Estimate type"
           estimateForm <- "Colo"
         }
-        else if (length(AGE)==1) {
-          Legend <- ""
-        }
         else {
-          # gp <- gp + aes(colour=Age) 
-          Legend <- "Age"
+          Legend <- varc
         }
-        if (length(input$AllScod)>1 & Split=="") {
-          Split <- "Intent"
+        if (length(input$AllScod)==2) {
+          Split <- labt
         }
       }
       else {
-        # gp <- gp + scale_linetype_manual(values=AgeIntenttype)
         if (estimateForm!="") {
-          # gp <- gp + scale_colour_manual(values=AgeIntentcols)
           Legend <- "Estimate type by Intent"
           estimateForm <- "Colo2"
         }
-        else if (length(AGE)==1) {
-          # gp <- gp + aes(linetype=Intent)
-          Legend <- "Intent"
-        }
-        else {
-          # gp <- gp + aes(colour=AgeIntent, linetype=AgeIntent) + 
-          #   scale_colour_manual(values=AgeIntentcols)
+        else if (length(AGE)>1) {
           Legend <- "Age by Intent"
         }
       }
@@ -724,63 +699,88 @@ server <- function(input, output, session) {
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
     gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
-    # if (input$dropSI=="Sex") {
-    #   if (input$sex4R=="MF") {
-    #     pageDim <- input$dimension
-    #     gp <- SplitFn(Pd=pd,Gp=gp,Vars="Sex",PageDim=pageDim)
-    #   }
-    #   else if ( length(input$AllScod)==2 & input$codS==2 ) {
-    #     pageDim <- input$dimension
-    #     gp <- SplitFn(Pd=pd,Gp=gp,Vars="Intent",PageDim=pageDim)
-    #   }
-    # }
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
     }
-    
-    PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
+
+    PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO()) #Pd=pd,Yax=yax,
   })
 
   # Remoteness by jurisdiction, Intent and Sex (Table R) ------------------------------------------
   output$RAPlot <- renderPlotly({
     yr <- input$yr11
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
-    INTENT <- input$cod2C
 
+    INTENT <- input$cod2C
     if (input$jurR=="Australia") {
-      regR <- input$RAra
+      REGION <- input$RAra
     }
     else {
-      regR <- input$Rra
+      REGION <- input$Rra
     }
+
+    Title <- paste0(input$jurR,", All ages") 
+
     pd <- subset(COD2019_Rem, jurisdiction==input$jurR & Age=="All ages" &
-      Sex=="People" & Intent %in% INTENT & Region %in% regR &
+      Sex=="People" & Intent %in% INTENT & Region %in% REGION &
       (year>=input$yr11[[1]] & year<=input$yr11[[2]]) )
 
-    gp <- ggplot(pd) + aes(colour=RegionIntent, linetype=RegionIntent) +
-        labs(title=paste0(input$jurR,", All ages") ) +
-        scale_colour_manual(values=RegionIntentcols) +
-        scale_linetype_manual(values=RegionIntenttype)
-    Legend <- "Region by Intent"
+    # gp <- ggplot(pd) + aes(colour=RegionIntent, linetype=RegionIntent) +
+    #     labs(title=paste0(input$jurR,", All ages") ) +
+    #     scale_colour_manual(values=RegionIntentcols) +
+    #     scale_linetype_manual(values=RegionIntenttype)
 
     vart <- "Intent"
     labt <- "Intent"
     varc <- "Region"
     labc <- "Region"
+
+    if (length(INTENT)==1 & length(REGION)==1) {
+      vart <- ""
+      varc <- ""
+      Legend <- ""
+    }
+    else if (length(INTENT)==1) {
+      vart <- ""
+      Legend <- "Region"
+    }
+    else if (length(REGION)==1) {
+      varc <- ""
+      Legend <- "Intent"
+    }
+    else {
+    Legend <- "Region by Intent"
+    }
+
+    rvData <- 1
+    if (varc!="" | vart!="" | estimateForm!="" | yax=="srci" | yax=="sr") {
+      pd <- subset( pd, Release=="Dec 2020")
+      if (varc!="" | vart!="" | estimateForm!="") {
+        rvData <- 0
+      }
+      else {
+        Legend <- "Release\nversion"
+      }
+    }
+    else if (yax!="srci" & yax!="sr") {
+      rvData <- 2
+      Legend <- "Release date\nby version"
+    }
+
     validate(need(nrow(pd) > 0, "No data selected"))
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
+    gp <- ggplot(pd) + labs(title=Title)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
   })
 
   # Remoteness area as percentage (Tables R) ------------------------------------------
   output$RPPlot <- renderPlotly({
-    Split <- ""
     #needs to be sorted [order(...)] & made distinct
     if (input$jurR=="Australia") {
       pd <- subset(COD2019_Rem, Intent==input$codR & 
@@ -840,7 +840,6 @@ server <- function(input, output, session) {
   output$DTJPlot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
@@ -888,26 +887,19 @@ server <- function(input, output, session) {
       & (year>=yr[1] & year<=yr[2] ))
 
     if (input$DTJdrop=="IntSx") {
-      vart <- "Drug"
       labt <- "Intent"
-      varc <- "Drug"
       labc <- "Drug"
-      if (input$DTjur=="Australia") {
-        if (input$DTIsex!="MF") {
-          # gp <- ggplot(pd)
-        }
-        else {
-          # gp <- ggplot(pd)
-        }
+      if (length(DRUG)==1) {
+        vart <- ""
+        varc <- ""
+        Legend <- ""
       }
-      if (input$DTjur!="Australia") {
-        # gp <- ggplot(pd)
+      else {
+        vart <- "Drug"
+        varc <- "Drug"
+        Legend <- "Drug involved"
       }
-      # gp <- gp + aes(colour=Drug, linetype=Drug) +
-      #   scale_colour_manual(values=Drugcols) +
-      #   scale_linetype_manual(values=Drugtype)
-      Legend <- "Drug involved"
-      
+
       if (input$DTIsex!="People") {
         validate(need(nrow(pd) > 0, "Please select All ages for age range for data by male and/or female."))
       }
@@ -928,10 +920,7 @@ server <- function(input, output, session) {
         }
       }
       if (input$DTjur=="Australia") {
-        # gp <- ggplot(pd) +
-        #   scale_colour_manual(values=SexIntentcols)
         if (length(INTENT)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-          # gp <- gp + aes(colour=Sex)
           vart <- ""
           if (length(INTENT)==2 & input$codS==2) Split <- "Intent"
           if (length(SEX)>1) {
@@ -939,8 +928,6 @@ server <- function(input, output, session) {
           }
         }
         else if (length(SEX)>1) {
-          # gp <- gp + aes(colour=SexIntent, linetype=SexIntent) +
-          #   scale_linetype_manual(values=SexIntenttype)
           Legend <- "Sex by Intent"
         }
         else if (estimateForm!="") {
@@ -956,8 +943,6 @@ server <- function(input, output, session) {
         }
       }
       if (input$DTjur!="Australia") {
-        # gp <- ggplot(pd) + aes(linetype=Intent) +
-        #   scale_linetype_manual(values=AgeIntenttype)
         if (length(INTENT)==1) {
           vart <- ""
           Legend <- ""
@@ -992,14 +977,6 @@ server <- function(input, output, session) {
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
     gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
-    # if (input$DTJdrop=="IntSx" & input$DTjur=="Australia" & input$DTIsex=="MF") {
-    #   pageDim <- input$dimension
-    #   gp <- SplitFn(Pd=pd,Gp=gp,Vars="Sex",PageDim=pageDim)
-    # }
-    # if (input$DTJdrop=="Drug" & length(input$cod4C)==2 & input$codS==2) {
-    #   pageDim <- input$dimension
-    #   gp <- SplitFn(Pd=pd,Gp=gp,Vars="Intent",PageDim=pageDim)
-    # }
     if (Split!="") {
       pageDim <- input$dimension
       gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
@@ -1012,7 +989,6 @@ server <- function(input, output, session) {
   output$DTAPlot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
@@ -1023,7 +999,7 @@ server <- function(input, output, session) {
       DRUG <- input$DTdrugD
       if (length(input$cod2C)==2 & input$codS==2) Split <- "Intent"
     }
-    else {
+    else if (input$DTAdrop=="Age_Intent") {
       AGE <- input$DTAIage
       INTENT <- input$DTAIcod
       DRUG <- input$DTdrug
@@ -1031,21 +1007,29 @@ server <- function(input, output, session) {
     if (yax=="sr" | yax=="srci") AGE <- "All ages"
 
     Title <- "Australia"
-    if (length(AGE)==1) Title <- paste0(input$DTjur,", Age: ",AGE)
     # if (length(SEX)==1) Title <- paste0(Title,", Sex: ",SEX)
+    if (length(AGE)==1) Title <- paste0(Title,", Age: ",AGE)
     if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
     if (length(DRUG)==1) Title <- paste0(Title,", Drug involved: ",DRUG)
 
     if (input$DTAdrop=="Age_Intent") {
-      # gp <- ggplot(pd) + aes(colour=Drug, linetype=Drug) +
-        # scale_colour_manual(values=Drugcols) +
-        # scale_linetype_manual(values=Drugtype) +
-        # labs(title=paste0("Age: ",AGE,", Intent: ",input$DTAIcod))
-      Legend <- "Drug involved"
-      vart <- "Drug"
       labt <- "Intent"
-      varc <- "Drug"
       labc <- "Drug"
+      if (length(DRUG)==1) {
+        vart <- ""
+        varc <- ""
+        Legend <- ""
+        if (estimateForm!="") {
+          varc <- "Age" # dummy for colors with Drug as default varc
+          Legend <- "Estimate type"
+          estimateForm <- "Colo"
+        }
+      }
+      else {
+        vart <- "Drug"
+        varc <- "Drug"
+        Legend <- "Drug involved"
+      }
     }
     if (input$DTAdrop=="Drug") {
       vart <- "Intent"
@@ -1056,7 +1040,6 @@ server <- function(input, output, session) {
       if ( length(input$cod2C)==1 | (length(input$cod2C)==2 & input$codS==2)) {
         vart <- ""
         # if (length(input$cod2C)==2) Split <- "Intent"
-        # gp <- ggplot(pd) + scale_colour_manual(values=AgeIntentcols)
         if (estimateForm!="") {
           Legend <- "Estimate type"
           estimateForm <- "Colo"
@@ -1065,24 +1048,17 @@ server <- function(input, output, session) {
           Legend <- ""
         }
         else {
-          # gp <- gp + aes(colour=AgeIntent)
           Legend <- "Age"
         }
       }
       else if (estimateForm!="") {
-          # gp <- gp + scale_colour_manual(values=AgeIntentcols)
           Legend <- "Estimate type by Intent"
           estimateForm <- "Colo2"
       }
       else if (length(AGE)==1) {
-        # gp <- ggplot(pd) + scale_linetype_manual(values=AgeIntenttype)
-          # gp <- gp + aes(linetype=Intent)
           Legend <- "Intent"
       }
       else {
-        # gp <- ggplot(pd) + aes(colour=AgeIntent, linetype=AgeIntent) +
-        #   scale_colour_manual(values=AgeIntentcols) +
-        #   scale_linetype_manual(values=AgeIntenttype)
         Legend <- "Age by Intent"
       }
     }
@@ -1109,7 +1085,7 @@ server <- function(input, output, session) {
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Drug:'/'Age:' to show all drugs involved/age.)"))
     gp <- ggplot(pd) + labs(title=Title)
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
     if (Split!="") {
       pageDim <- input$dimension
@@ -1122,213 +1098,325 @@ server <- function(input, output, session) {
   output$O4Plot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
 
+    INTENT <- input$cod4C
     if (input$dropOA=="Drug") {
       AGE <- input$ageAll
-      if (yax=="sr" | yax=="srci") AGE <- "All ages"
-      pd <- subset(COD2019_Op, subset=(Sex=="People" & jurisdiction=="Australia" & Opioid==input$OdrugO &
-         Intent %in% input$cod4C & Age %in% AGE &
-         (year>=yr[1] & year<=yr[2])))
-      gp <- ggplot(pd) + scale_colour_manual(values=AgeIntentcols)
-      Title <- input$OdrugO
+      OPIOID <- input$OdrugO
+      labc <- "Age"
+    }
+    else if (input$dropOA=="Age") {
+      AGE <- input$ageOAA
+      OPIOID <- input$OdrugC
+      labc <- "Opioid"
+    }
+    if (yax=="sr" | yax=="srci") AGE <- "All ages"
 
-      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-        if (estimateForm!="") {
-          # gp <- gp + scale_linetype_manual(values=AgeIntenttype)
+    Title <- "Australia"
+    # if (length(SEX)==1) Title <- paste0(Title,", Sex: ",SEX)
+    if (length(AGE)==1) Title <- paste0(Title,", Age: ",AGE)
+    if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
+    if (length(OPIOID)==1) Title <- paste0(Title,", Opioid involved: ",OPIOID)
+
+    pd <- subset(COD2019_Op, subset=(jurisdiction=="Australia" &
+      Sex=="People" & Intent %in% INTENT & Age %in% AGE &
+      Opioid %in% OPIOID & (year>=yr[1] & year<=yr[2])))
+
+    vart <- "Intent"
+    labt <- "Intent"
+    varc <- labc
+    if (length( get(toupper(labc)) )==1) varc <- ""
+    if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
+      vart <- ""
+      if (length(input$cod4C)==2) Split <- labt
+      if (estimateForm!="") {
+        if (varc!="Opioid") {
+          varc <- "Age" # dummy for colors
           Legend <- "Estimate type"
           estimateForm <- "Colo"
         }
         else {
-          gp <- gp + aes(colour=Age)
-          Legend <- "Age"
+          vart <- labt
+          Legend <- "Estimate type by Opioid"
+          estimateForm <- "Type2"
         }
       }
       else {
-        gp <- gp + scale_linetype_manual(values=AgeIntenttype)
-        if (estimateForm!="") {
-          Legend <- "Estimate type by Intent"
-          estimateForm <- "Colo2"
-        }
-        else {
-          gp <- gp + aes(colour=AgeIntent, linetype=AgeIntent)
-          Legend <- "Age by Intent"
-        }
+        Legend <- varc
       }
-      vart <- "Intent"
-      labt <- "Intent"
-      varc <- "Age"
-      labc <- "Age"
     }
-
-    else if (input$dropOA=="Age") {
-      AGE <- input$ageOAA
-      if (yax=="sr" | yax=="srci") AGE <- "All ages"
-      pd <- subset(COD2019_Op, subset=(Sex=="People" & jurisdiction=="Australia" & Opioid %in% input$OdrugC &
-        Intent %in% input$cod4C & Age==AGE &
-        (year>=yr[1] & year<=yr[2])))
-      gp <- ggplot(pd) + scale_colour_manual(values=OpioidIntentcols)
-      Title <- paste0("Age: ",AGE)
-
-      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-        gp <- gp + aes(colour=Opioid)
-        Legend <- "Opioid"
-      }
-      else {
-        gp <- gp + aes(colour=OpioidIntent, linetype=OpioidIntent) +
-          scale_linetype_manual(values=OpioidIntenttype)
-        Legend <- "Opioid by Intent"
-      }
-      vart <- "Intent"
-      labt <- "Intent"
-      varc <- "Opioid"
-      labc <- "Opioid"
+    else if (estimateForm!="" & varc!="Opioid") {
+      varc <- "Age" # dummy for colors
+      Legend <- "Estimate type by Intent"
+      estimateForm <- "Colo2"
     }
+    else {
+      Legend <- paste(labc,"by Intent")
+    }
+    if (length( get(toupper(labc)) )==1) Legend <- vart
 
-    if (length(input$cod4C)==1) {
-      Title <- paste0(Title,", Intent: ",input$cod4C)
+    # if (input$dropOA=="Drug") {
+    #   varc <- "Age"
+    # 
+    #   if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
+    #     vart <- ""
+    #     if (length(input$cod4C)==2) Split <- "Intent"
+    #     if (estimateForm!="") {
+    #       estimateForm <- "Colo"
+    #       Legend <- "Estimate type"
+    #     }
+    #     else if (length(AGE)==1) {
+    #       varc <- ""
+    #       Legend <- ""
+    #     }
+    #     else {
+    #       Legend <- "Age"
+    #     }
+    #   }
+    #   else {
+    #     if (estimateForm!="") {
+    #       Legend <- "Estimate type by Intent"
+    #       estimateForm <- "Colo2"
+    #     }
+    #     else if (length(AGE)==1) {
+    #         varc <- ""
+    #         Legend <- "Intent"
+    #     }
+    #     else {
+    #       Legend <- "Age by Intent"
+    #     }
+    #   }
+    # }
+    # 
+    # else if (input$dropOA=="Age") {
+    #   vart <- "Intent"
+    #   labt <- "Intent"
+    #   varc <- "Opioid"
+    # 
+    #   if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
+    #     vart <- ""
+    #     if (length(input$cod4C)==2) Split <- "Intent"
+    #     if (estimateForm!="") {
+    #       varc <- "Age" # dummy for colors
+    #       estimateForm <- "Colo"
+    #       Legend <- "Estimate type"
+    #     }
+    #     else if (length(OPIOID)==1) {
+    #       varc <- ""
+    #       Legend <- ""
+    #     }
+    #     else {
+    #       Legend <- "Opioid"
+    #     }
+    #   }
+    #   else if (estimateForm!="") {
+    #     varc <- "Age" # dummy for colors
+    #     estimateForm <- "Colo2"
+    #     Legend <- "Estimate type by Intent"
+    #   }
+    #   else if (length(OPIOID)==1) {
+    #       varc <- ""
+    #       Legend <- "Intent"
+    #   }
+    #   else {
+    #     Legend <- "Opioid by Intent"
+    #   }
+    # }
+
+    rvData <- 0
+    if (varc=="" & vart=="" & estimateForm=="") {
+      rvData <- 1
+      Legend <- "Release\nversion"
     }
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
+    gp <- ggplot(pd) + labs(title=Title)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
-    if (length(input$cod4C)==2 & input$codS==2) {
+    if (Split!="") {
       pageDim <- input$dimension
-      gp <- SplitFn(Pd=pd,Gp=gp,Vars="Intent",PageDim=pageDim)
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
     }
     
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
   })
 
-  # O5 - by opioid, Intent & Sex (Table 5)-----------------------------------------------------------------
+  # O5 - by opioid, Intent & Sex (Table 5) -----------------------------------------------------------------
   output$O5Plot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     AGE <- input$ageR
     if (yax=="sr" | yax=="srci") AGE <- "All ages"
     Split <- ""
+    Legend <- ""
 
+    SEX <- input$sexC
+    INTENT <- input$cod4C
+    OPIOID <- input$OdrugC
     if (input$O5drop=="Opioid") {
-      pd <- subset(COD2019_Op, Age==AGE & 
-          Opioid==input$OdrugO & Intent %in% input$cod4C & Sex %in% input$sexC &
-          jurisdiction=="Australia" & (year>=yr[1] & year<=yr[2]))
-
-      gp <- ggplot(pd) + scale_colour_manual(values=sexcols)
-      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-        gp <- gp + aes(colour=Sex)
-        Legend <- "Sex"
-      }
-      else {
-        gp <- gp + aes(colour=SexIntent, linetype=SexIntent) +
-          scale_linetype_manual(values=sexIntenttype)
-        Legend <- "Sex by Intent"
-      }
-      Title <- input$OdrugO
-      vart <- "Intent"
+      OPIOID <- input$OdrugO
       labt <- "Intent"
-      varc <- "Sex"
       labc <- "Sex"
     }
     else if (input$O5drop=="Intent") {
-      pd <- subset(COD2019_Op, subset=(Age==AGE &
-        Opioid %in% input$OdrugC & Sex %in% input$sexC & Intent==input$cod4R &
-        jurisdiction=="Australia" & (year>=yr[1] & year<=yr[2])))
-
-      gp <- ggplot(pd) + aes(colour=OpioidSex, linetype=OpioidSex) +
-        scale_colour_manual(values=OpioidSexcols) +
-        scale_linetype_manual(values=OpioidSextype)
-      Legend <- "Opioid by Sex"
-      Title <- paste0("Intent: ",input$cod4R)
-      vart <- "Sex"
+      INTENT <- input$cod4R
       labt <- "Sex"
-      varc <- "Opioid"
       labc <- "Opioid"
     }
     else if (input$O5drop=="Sex") {
-      Legend <- "Opioid by Intent"
-      if (input$sex4R!="MF") {
-        pd <- subset(COD2019_Op, Age==AGE & jurisdiction=="Australia" &
-            Opioid %in% input$OdrugC & Intent %in% input$cod4C & Sex==input$sex4R &
-            (year>=yr[1] & year<=yr[2]))
-        
-        gp <- ggplot(pd)
-        Title <- paste0("Sex: ",input$sex4R)
-        if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-          gp <- gp + aes(colour=Opioid)
-          Legend <- "Opioid"
-        }
-        else {
-          gp <- gp + aes(colour=OpioidIntent, linetype=OpioidIntent) +
-            scale_linetype_manual(values=OpioidIntenttype)
-        }
+      SEX <- input$sex4R
+      if (input$sex4R=="MF") {
+        SEX <- c("Female","Male")
+        Split <- "Sex"
       }
-      else {
-        pd <- subset(COD2019_Op, Age==AGE & jurisdiction=="Australia" &
-            Opioid %in% input$OdrugC & Intent %in% input$cod4C & Sex!="People" &
-            (year>=yr[1] & year<=yr[2]))
-        
-        gp <- ggplot(pd) + aes(colour=OpioidIntent, linetype=OpioidIntent) +
-          scale_linetype_manual(values=OpioidIntenttype)
-        Title <- "Females & Males"
-        # if (input$dimension<992) {
-        #   gp <- gp + facet_grid(rows=vars(Sex))
-        # }
-        # else {
-        #   gp <- gp + facet_grid(cols=vars(Sex))
-        #   if (input$dimension<1200) {
-        #     LX(0)
-        #     LO("h")
-        #     LY(-.2)
-        #   }
-        # }
-      }
-      gp <- gp + scale_colour_manual(values=OpioidIntentcols)
-      vart <- "Intent"
       labt <- "Intent"
-      varc <- "Opioid"
       labc <- "Opioid"
     }
 
-    if (input$O5drop!="Intent") {
-      if (length(input$cod4C)==1) {
-        Title <- paste0(Title,", Intent: ",input$cod4C)
+    Title <- "Australia"
+    if (length(SEX)==1) Title <- paste0(Title,", Sex: ",SEX)
+    if (length(AGE)==1) Title <- paste0(Title,", Age: ",AGE)
+    if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
+    if (length(OPIOID)==1) Title <- paste0(Title,", Opioid involved: ",OPIOID)
+
+    pd <- subset(COD2019_Op, Age==AGE & 
+      Opioid %in% OPIOID & Intent %in% INTENT & Sex %in% SEX &
+      jurisdiction=="Australia" & (year>=yr[1] & year<=yr[2]))
+
+    vart <- labt
+    varc <- labc
+    if (input$O5drop=="Opioid") {
+      # vart <- "Intent"
+      # varc <- "Sex"
+
+      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
+        vart <- ""
+        if (length(input$cod4C)==2) Split <- "Intent"
+        if (length(SEX)==1) {
+          if (estimateForm!="") {
+            # varc <- "Age" # dummy for colors
+            estimateForm <- "Colo"
+            Legend <- "Estimate type"
+          }
+          else {
+            varc <- ""
+            Legend <- ""
+          }
+        }
+        else {
+          Legend <- "Sex"
+        }
       }
-      # else if ( length(input$cod4C)==2 & input$codS==2 &
-      #   ((input$O5drop=="Sex" & input$sex4R!="MF") | input$O5drop=="Opioid") ) {
-      #   if (input$dimension<992) {
-      #     gp <- gp + facet_grid(rows=vars(Intent))
-      #   }
-      #   else {
-      #     gp <- gp + facet_grid(cols=vars(Intent))
-      #     if (input$dimension<1200) {
-      #       LX(0)
-      #       LO("h")
-      #       LY(-.2)
-      #     }
-      #   }
-      # }
+      else if (length(SEX)==1) {
+        if (estimateForm!="") {
+          # varc <- "Age" # dummy for colors
+          estimateForm <- "Colo2"
+          Legend <- "Estimate type by Intent"
+        }
+        else {
+          varc <- ""
+          Legend <- "Intent"
+        }
+      }
+      else {
+        Legend <- "Sex by Intent"
+      }
+    }
+    else if (input$O5drop=="Intent") {
+      # vart <- "Sex"
+      # varc <- "Opioid"
+
+      if (length(OPIOID)==1) {
+        varc <- ""
+        if (length(SEX)==1) {
+          vart <- ""
+          Legend <- ""
+        }
+        else {
+          Legend <- "Opioid"
+        }
+      }
+      else if (length(SEX)==1) {
+        vart <- ""
+        Legend <- "Opioid" 
+      }
+      else {
+        Legend <- "Opioid by Sex"
+      }
+    }
+    else if (input$O5drop=="Sex") {
+      # vart <- "Intent"
+      # varc <- "Opioid"
+      Legend <- "Opioid by Intent"
+      if (length(OPIOID)==1) {
+        if (estimateForm!="") {
+          varc <- "Age" # dummy for colors
+          estimateForm <- "Colo2"
+          Legend <- "Estimate type by Intent"
+        }
+        else {
+          varc <- ""
+          Legend <- "Intent"
+        }
+      }
+      else if (length(input$cod4C)==1) {
+        vart <- ""
+        Legend <- "Opioid"
+      }
+      if (input$sex4R!="MF") {
+        if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
+          vart <- ""
+          if (length(input$cod4C)==2) Split <- "Intent"
+          if (length(OPIOID)==1) {
+            if (estimateForm!="") {
+              varc <- "Age" # dummy for colors
+              estimateForm <- "Colo"
+              Legend <- "Estimate type"
+            }
+            else {
+              # varc <- "" # already initialised
+              Legend <- ""
+            }
+          }
+        }
+      }
+      else {
+        Split <- "Sex"
+        if (length(INTENT)==1 & length(OPIOID)==1) {
+          vart <- ""
+          if (estimateForm!="") {
+            varc <- "Age" # dummy for colors
+            estimateForm <- "Colo"
+            Legend <- "Estimate type"
+          }
+          else {
+            # varc <- "" # already initialised
+            Legend <- ""
+          }
+        }
+      }
     }
 
+    rvData <- 0
+    if (varc=="" & vart=="" & estimateForm=="") {
+      rvData <- 1
+      Legend <- "Release\nversion"
+    }
     validate(need(nrow(pd) > 0, "No data selected"))
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
 
-    Title <- paste0(Title,", Age: ",AGE)
-    gp <- gp + labs(title=Title) #+
-      # theme(strip.background=element_rect(fill="#dbefd4"),
-      #   strip.text=element_text(color="#000000", face="bold") )
-    if (input$O5drop=="Sex" & input$sex4R=="MF") {
+    gp <- ggplot(pd) + labs(title=Title)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
+
+    if (Split!="") {
       pageDim <- input$dimension
-      gp <- SplitFn(Pd=pd,Gp=gp,Vars="Sex",PageDim=pageDim)
-    }
-    else if ( input$O5drop!="Intent" & length(input$cod4C)==2 & input$codS==2 ) {
-      pageDim <- input$dimension
-      gp <- SplitFn(Pd=pd,Gp=gp,Vars="Intent",PageDim=pageDim)
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1338,7 +1426,6 @@ server <- function(input, output, session) {
   output$O6Plot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     AGE <- input$ageR
@@ -1349,134 +1436,142 @@ server <- function(input, output, session) {
         jurisdiction==input$jur & Intent %in% input$cod2C & Sex %in% input$sexC &
         (year>=yr[1] & year<=yr[2]))
 
-    gp <- ggplot(pd) +
-      aes(colour=SexIntent, linetype=SexIntent) +
-      labs(title=paste0(input$jur,", Age: ",AGE) ) +
-      scale_colour_manual(values=sexcols) +
-      scale_linetype_manual(values=sexIntenttype)
+    # gp <- ggplot(pd) +
+    #   aes(colour=SexIntent, linetype=SexIntent) +
+    #   labs(title=paste0(input$jur,", Age: ",AGE) ) +
+    #   scale_colour_manual(values=SexIntentcols) +
+    #   scale_linetype_manual(values=SexIntenttype)
 
+    Title <- paste0(input$jur,", Age: ",AGE)
     vart <- "Intent"
     labt <- "Intent"
     varc <- "Sex"
     labc <- "Sex"
+    Legend <- "Sex by Intent"
+    if (length(input$sexC)==1) {
+      Title <- paste0(Title,", Sex: ",input$sexC)
+      if (estimateForm!="") {
+        estimateForm <- "Colo2"
+        Legend <- "Estimate type by Intent"
+      }
+      else {
+        varc <- ""
+        Legend <- "Intent"
+      }
+    }
+    if (length(input$cod2C)==1) {
+      Title <- paste0(Title,", Intent: ",input$cod2C)
+      vart <- ""
+      Legend <- "Sex"
+      if (estimateForm!="") {
+        estimateForm <- "Colo"
+        Legend <- "Estimate type"
+      }
+      else if (varc=="") {
+        Legend <- ""
+      }
+    }
 
+    rvData <- 0
+    if (varc=="" & vart=="" & estimateForm=="") {
+      rvData <- 1
+      Legend <- "Release\nversion"
+    }
     validate(need(nrow(pd) > 0, "No data selected"))
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
+    gp <- ggplot(pd) + labs(title=Title)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
-    PlyFn(Gp=gp,Lt="Sex by Intent",X=LX(),Y=LY(),O=LO())
+    PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
   })
   
   # Opioids with other drugs by Age & Intent (Table 7) ----------------------------------------------------------
   output$W7Plot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
 
-    pd <- subset(COD2019_OpW, Intent %in% input$cod4C &
-      (year>=yr[1] & year<=yr[2]) & Sex=="People")
-    if ( input$Ashow==F | yax=="crci" | yax=="srci" | ( yax=="sr" &
-      input$dropOA=="Age" & (length(input$cod4C)>2 | (input$codS==1 & length(input$cod4C)==2)) ) ) {
-      pd <- subset(pd, primary=="opioid-induced")
-    }
-
+    INTENT <- input$cod4C
     if (input$dropOA=="Drug") {
       AGE <- input$ageAll
-      if (yax=="sr" | yax=="srci") AGE <- "All ages"
-      pd <- subset(pd, Drug==input$W7Ddrug & Age %in% AGE)
-  
-      gp <- ggplot(pd) + scale_colour_manual(values=AgeIntentcols)
-      Title <- paste0("All opioids with ",input$W7Ddrug)
+      DRUG <- input$W7Ddrug
+      labc <- "Age"
+    }
+    else if (input$dropOA=="Age") {
+      AGE <- input$ageOAA
+      DRUG <- input$Wdrug
+      labc <- "Drug"
+    }
+    if (yax=="sr" | yax=="srci") AGE <- "All ages"
 
-      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-        if (estimateForm!="") {
-          # gp <- gp + scale_linetype_manual(values=AgeIntenttype)
+    Title <- "Australia"
+    # if (length(SEX)==1) Title <- paste0(Title,", Sex: ",SEX)
+    if (length(AGE)==1) Title <- paste0(Title,", Age: ",AGE)
+    if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
+    if (length(DRUG)==1) Title <- paste0(Title,", Drug involved: ",DRUG)
+
+    pd <- subset(COD2019_OpW, subset=(#jurisdiction=="Australia" &
+      Sex=="People" & Intent %in% INTENT & Age %in% AGE &
+      Drug %in% DRUG & (year>=yr[1] & year<=yr[2])))
+
+    vart <- "Intent"
+    labt <- "Intent"
+    varc <- labc
+    if (length( get(toupper(labc)) )==1) varc <- ""
+    if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
+      vart <- ""
+      if (length(input$cod4C)==2) Split <- "Intent"
+      if (estimateForm!="") {
+        if (varc!="Drug") {
+          varc <- "Age" # dummy for colors
           Legend <- "Estimate type"
           estimateForm <- "Colo"
         }
         else {
-          gp <- gp + aes(colour=Age)
-          Legend <- "Age"
-        }
-      }
-      else {
-        gp <- gp + scale_linetype_manual(values=AgeIntenttype)
-        if (estimateForm!="") {
-          Legend <- "Estimate type by Intent"
-          estimateForm <- "Colo2"
-        }
-        else {
-          gp <- gp + aes(colour=AgeIntent, linetype=AgeIntent)
-          Legend <- "Age by Intent"
-        }
-      }
-      vart <- "Intent"
-      labt <- "Intent"
-      varc <- "Age"
-      labc <- "Age"
-    }
-    if (input$dropOA=="Age") {
-      AGE <- input$ageOAA
-      if (yax=="sr" | yax=="srci") AGE <- "All ages"
-      pd <- subset(pd, Drug %in% input$Wdrug & Age==AGE)
-      
-      gp <- ggplot(pd) + scale_colour_manual(values=opWIntentcols)
-      Title <- paste0("Age: ",AGE)
-
-      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-        if (estimateForm!="") {
-          gp <- gp + scale_linetype_manual(values=opWIntenttype)
-          Legend <- "Estimate type by Drug involved"
+          vart <- labt
+          Legend <- "Estimate type by Drug"
           estimateForm <- "Type2"
         }
-        else {
-          gp <- gp + aes(colour=Drug)
-          Legend <- "Drug involved"
-        }
       }
       else {
-        gp <- gp + aes(colour=DrugIntent, linetype=DrugIntent) +
-          scale_linetype_manual(values=opWIntenttype)
-        Legend <- "Drug involved by Intent"
+        Legend <- varc
       }
-      vart <- "Intent"
-      labt <- "Intent"
-      varc <- "Drug"
-      labc <- "Drug"
     }
-    
-    if ( input$Ashow==T & (yax=="num" | yax=="cr" | ( yax=="sr" &
-      (input$dropOA=="Drug" | length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2)) )) ) {
+    else if (estimateForm!="" & varc!="Drug") {
+      varc <- "Age" # dummy for colors
+      Legend <- "Estimate type by Intent"
+      estimateForm <- "Colo2"
+    }
+    else {
+      Legend <- paste(labc,"by Intent")
+    }
+    if (length(get(toupper(labc)))==1) Legend <- vart
+
+    if ( input$Ashow==F | yax=="crci" | yax=="srci" | (yax=="sr" & estimateForm=="Alph") ) {
+      pd <- subset(pd, primary=="Opioid-induced")
+    }
+    gp <- ggplot(pd) + labs(title=Title)
+
+    rvData <- 0
+    if ( input$Ashow==T & (yax=="num" | yax=="cr" | (yax=="sr" & estimateForm!="Alph")) ) {
       gp <- gp + aes(alpha=primary) +
         scale_alpha_manual(values=c(.3,1))
-      Legend <- paste0(Legend,"<br> by death data type")
+      Legend <- paste0("Death data type by<br>",Legend)
     }
-    if (length(input$cod4C)==1) {
-      Title <- paste0(Title,", Intent: ",input$cod4C)
+    else if (varc=="" & vart=="" & estimateForm=="") {
+      rvData <- 1
+      Legend <- "Release\nversion"
     }
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
-    gp <- gp + labs(title=Title) #+
-      # theme(strip.background=element_rect(fill="#dbefd4"),
-      #   strip.text=element_text(color="#000000", face="bold") )
-    if (length(input$cod4C)==2 & input$codS==2) {
+    if (Split!="") {
       pageDim <- input$dimension
-      gp <- SplitFn(Pd=pd,Gp=gp,Vars="Intent",PageDim=pageDim)
-      # if (input$dimension<992) {
-      #   gp <- gp + facet_grid(rows=vars(Intent))
-      # }
-      # else {
-      #   gp <- gp + facet_grid(cols=vars(Intent))
-      #   if (input$dimension<1200) {
-      #     LX(0)
-      #     LO("h")
-      #     LY(-.2)
-      #   }
-      # }
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1486,142 +1581,106 @@ server <- function(input, output, session) {
   output$W8Plot <- renderPlotly({
     yr <- input$yr97
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
     AGE <- input$ageR
     if (yax=="sr" | yax=="srci") AGE <- "All ages"
+
     if (input$dropSI=="Sex") {
       INTENT <- input$cod4C
       SEX <- input$sex4R
-      if (input$sex4R=="MF") SEX <- c("Female","Male")
-    }
-    else {
-      INTENT <- input$cod4R
-      SEX <- input$sexC
-    }
-    pd <- subset(COD2019_OpW, Drug %in% input$Wdrug &
-      Age==AGE & Intent %in% INTENT & Sex %in% SEX &
-      (year>=yr[1] & year<=yr[2]) )
-    if ( input$Ashow==F | yax=="crci" | yax=="srci" | (yax=="sr" &
-      ( input$dropSI=="Intent" | (length(input$cod4C)>2 |
-      (length(input$cod4C)==2 & (input$codS==1 | input$sex4R=="MF"))) ) ) ) {
-      pd <- subset(pd, primary=="opioid-induced")
-    }
-
-    if (input$dropSI=="Sex") {
-      Legend <- "Drug by Intent"
-      gp <- ggplot(pd) + scale_colour_manual(values=opWIntentcols)
-      if (input$sex4R!="MF") {
-        # pd <- subset(pd, Intent %in% input$cod4C & Sex==input$sex4R )
-        # gp <- ggplot(pd) + scale_colour_manual(values=opWIntentcols)
-        Title <- paste0("Age: ",AGE,",  Sex: ",input$sex4R)
-        
-        if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-          if (estimateForm!="") {
-            gp <- gp + scale_linetype_manual(values=opWIntenttype)
-            Legend <- "Estimate type by Drug involved"
-            estimateForm <- "Type2"
-          }
-          else {
-            gp <- gp + aes(colour=Drug)
-            Legend <- "Drug involved"
-          }
-          if (length(input$cod4C)==1) {
-            Title <- paste0(Title,", Intent: ",input$cod4C)
-          }
-          # if (length(input$cod4C)==2 & input$codS==2) {
-          #   if (input$dimension<992) {
-          #     gp <- gp + facet_grid(rows=vars(Intent))
-          #   }
-          #   else {
-          #     gp <- gp + facet_grid(cols=vars(Intent))
-          #     if (input$dimension<1200) {
-          #       LX(0)
-          #       LO("h")
-          #       LY(-.2)
-          #     }
-          #   }
-          # }
-        }
-        else {
-          gp <- gp + aes(colour=DrugIntent, linetype=DrugIntent) +
-            scale_linetype_manual(values=opWIntenttype)
-        }
+      if (input$sex4R=="MF") {
+        SEX <- c("Female","Male")
+        Split <- "Sex"
       }
-      else {
-        # pd <- subset(pd, Intent %in% input$cod4C & Sex!="People" )
-        # gp <- ggplot(pd) +
-        #     scale_colour_manual(values=opWIntentcols)
-        if (length(input$cod4C)==1) {
-          if (estimateForm!="") {
-            gp <- gp + scale_linetype_manual(values=opWIntenttype)
-            Legend <- "Estimate type by Drug involved"
-            estimateForm <- "Type2"
-          }
-          else {
-            gp <- gp + aes(colour=Drug)
-            Legend <- "Drug involved"
-          }
-        }
-        else {
-          gp <- gp + aes(colour=DrugIntent, linetype=DrugIntent) +
-            scale_linetype_manual(values=opWIntenttype)
-        }
-        # if (input$dimension<992) {
-        #   gp <- gp + facet_grid(rows=vars(Sex))
-        # }
-        # else {
-        #   gp <- gp + facet_grid(cols=vars(Sex))
-        #   if (input$dimension<1200) {
-        #     LX(0)
-        #     LO("h")
-        #     LY(-.2)
-        #   }
-        # }
-        Title=paste0("Age: ",AGE)
-      }
-      varc <- "Drug"
-      labc <- "Drug"
-      vart <- "Intent"
       labt <- "Intent"
     }
-    if (input$dropSI=="Intent") {
-      # pd <- subset(pd, Intent==input$cod4R & Sex %in% input$sexC)
-      gp <- ggplot(pd) + aes(colour=DrugSex, linetype=DrugSex) + 
-        scale_colour_manual(values=opWIntentcols) +
-        scale_linetype_manual(values=opWIntenttype)
-      Legend <- "Drug by Sex"
-      Title <- paste0("Age: ",AGE,",  Intent: ",input$cod4R)
-      varc <- "Drug"
-      labc <- "Drug"
-      vart <- "Sex"
+    else if (input$dropSI=="Intent") {
+      INTENT <- input$cod4R
+      SEX <- input$sexC
       labt <- "Sex"
     }
 
-    if ( input$Ashow==T & (yax=="num" | yax=="cr" | ( yax=="sr" &
-      input$dropSI=="Sex" & length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2 & input$sex4R!="MF") )) ) {
+    Title <- paste0("Australia, Age: ",AGE)
+    if (length(SEX)==1) Title <- paste0(Title,", Sex: ",SEX)
+    if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
+    if (length(input$Wdrug)==1) Title <- paste0(Title,", Drug involved: ",input$Wdrug)
+
+    pd <- subset(COD2019_OpW, Drug %in% input$Wdrug &
+      Age==AGE & Intent %in% INTENT & Sex %in% SEX &
+      (year>=yr[1] & year<=yr[2]) )
+
+    varc <- "Drug"
+    labc <- "Drug"
+    if (input$dropSI=="Sex") {
+      vart <- "Intent"
+      Legend <- "Drug by Intent"
+      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2 & Split=="") ) {
+        if (estimateForm!="") {
+          Legend <- paste("Estimate type by",labt)
+          estimateForm <- "Type2"
+        }
+        else {
+          vart <- ""
+          Legend <- varc
+        }
+        if (length(input$cod4C)==2) Split <- labt
+      }
+    }
+    else if (input$dropSI=="Intent") {
+      vart <- "Sex"
+      Legend <- "Drug by Sex"
+      if (length(SEX)==1) {
+        if (estimateForm!="") {
+          Legend <- paste("Estimate type by",labt)
+          estimateForm <- "Type2"
+        }
+        else {
+          vart <- ""
+          Legend <- varc
+        }
+      }
+    }
+    if (length(input$Wdrug)==1) {
+      varc <- ""
+      Legend <- vart
+      if (estimateForm!="") {
+        varc <- "Age" # dummy for colors with Drug as default varc
+        if (vart=="") {
+          Legend <- paste("Estimate type")
+          estimateForm <- "Colo"
+        }
+        else {
+          Legend <- paste("Estimate type by",labt)
+          estimateForm <- "Colo2"
+        }
+      }
+    }
+
+    if ( input$Ashow==F | yax=="crci" | yax=="srci" | (yax=="sr" & estimateForm=="Alph") ) {
+      pd <- subset(pd, primary=="Opioid-induced")
+    }
+    gp <- ggplot(pd) + labs(title=Title)
+
+    rvData <- 0
+    if ( input$Ashow==T & (yax=="num" | yax=="cr" | (yax=="sr" & estimateForm!="Alph")) ) {
       gp <- gp + aes(alpha=primary) +
         scale_alpha_manual(values=c(.3,1))
-      Legend <- paste0(Legend,"<br> by death data type")
+      Legend <- paste0("Death data type by<br>",Legend)
+    }
+    else if (varc=="" & vart=="" & estimateForm=="") {
+      rvData <- 1
+      Legend <- "Release\nversion"
     }
 
     validate(need(nrow(pd) > 0, "No data selected"))
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
-    gp <- gp + labs(title=Title) #+
-      # theme(strip.background=element_rect(fill="#dbefd4"),
-      #   strip.text=element_text(color="#000000", face="bold") )
-    if (input$dropSI=="Sex") {
-      if (input$sex4R=="MF") {
-        pageDim <- input$dimension
-        gp <- SplitFn(Pd=pd,Gp=gp,Vars="Sex",PageDim=pageDim)
-      }
-      else if ( length(input$cod4C)==2 & input$codS==2 ) {
-        pageDim <- input$dimension
-        gp <- SplitFn(Pd=pd,Gp=gp,Vars="Intent",PageDim=pageDim)
-      }
+    if (Split!="") {
+      pageDim <- input$dimension
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
     }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
@@ -1631,51 +1690,121 @@ server <- function(input, output, session) {
   output$E0Plot <- renderPlotly({
     yr <- input$yr07
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
 
     if (input$dropOA=="Drug") {
       AGE <- input$ageAll
-      if (yax=="sr" | yax=="srci") AGE <- "All ages"
-      pd <- filter(COD2019_OpE, Sex=="People" & jurisdiction=="Australia" &
-          Opioid==input$E0Odrug & Intent %in% input$cod3C & Age %in% AGE &
-          (year>=input$yr07[[1]] & year<=input$yr07[[2]])) %>%
-        distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
-
-      gp <- ggplot(pd) + aes(colour=AgeIntent, linetype=AgeIntent) +
-        labs(title=input$E0Odrug) +
-        scale_colour_manual(values=AgeIntentcols) +
-        scale_linetype_manual(values=AgeIntenttype)
-      Legend <- "Age by Intent"
-      vart <- "Intent"
-      labt <- "Intent"
-      varc <- "Age"
+      OPIOID <- input$E0Odrug
       labc <- "Age"
     }
-
     else if (input$dropOA=="Age") {
       AGE <- input$ageOAA
-      if (yax=="sr" | yax=="srci") AGE <- "All ages"
-      pd <- subset(COD2019_OpE, subset=(Sex=="People" & jurisdiction=="Australia" &
-          Opioid %in% input$Edrug & Intent %in% input$cod3C & Age==AGE &
-          (year>=input$yr07[[1]] & year<=input$yr07[[2]]))) %>%
-        distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
-      
-      gp <- ggplot(pd) + aes(colour=OpioidIntent, linetype=OpioidIntent) +
-        labs(title=paste0("Age: ",AGE)) +
-        scale_colour_manual(values=OpioidIntentcols) +
-        scale_linetype_manual(values=OpioidIntenttype)
-      Legend <- "Opioid by Intent"
-      vart <- "Intent"
-      labt <- "Intent"
-      varc <- "Opioid"
+      OPIOID <- input$Edrug
       labc <- "Opioid"
     }
+    if (yax=="sr" | yax=="srci") AGE <- "All ages"
 
+    Title <- paste0("Australia, People")
+    if (length(OPIOID)==1) Title <- paste0(Title,", Opioid involved: ",OPIOID)
+    if (length(AGE)==1) Title <- paste0(Title,", Age: ",AGE)
+    if (length(input$cod3C)==1) Title <- paste0(Title,", Intent: ",input$cod3C)
+
+    pd <- filter(COD2019_OpE, Sex=="People" & jurisdiction=="Australia" &
+        Opioid %in% OPIOID & Intent %in% input$cod3C & Age %in% AGE &
+        (year>=yr[[1]] & year<=yr[[2]]))
+      
+    vart <- "Intent"
+    labt <- "Intent"
+    if (length(input$cod3C)==1 | (length(input$cod3C)==2 & input$codS==2) ) {
+      vart <- ""
+      if (length(input$cod3C)==2) Split <- labt
+      Legend <- labc
+    }
+    # if (length(input$cod3C)==1) vart <- ""
+    if (input$dropOA=="Drug") {
+      varc <- "Age"
+      # labc <- "Age"
+      # AGE <- input$ageAll
+      # if (yax=="sr" | yax=="srci") AGE <- "All ages"
+      # pd <- filter(COD2019_OpE, Sex=="People" & jurisdiction=="Australia" &
+      #     Opioid==input$E0Odrug & Intent %in% input$cod3C & Age %in% AGE &
+      #     (year>=input$yr07[[1]] & year<=input$yr07[[2]])) %>%
+      #   distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
+
+      # gp <- ggplot(pd) + aes(colour=AgeIntent, linetype=AgeIntent) +
+      #   labs(title=input$E0Odrug) +
+      #   scale_colour_manual(values=AgeIntentcols) +
+      #   scale_linetype_manual(values=AgeIntenttype)
+      if (estimateForm!="") {
+        if (vart=="") {
+          Legend <- paste("Estimate type")
+          estimateForm <- "Colo"
+        }
+        else {
+          Legend <- paste("Estimate type by",labt)
+          estimateForm <- "Colo2"
+        }
+      }
+      else if (length(AGE)==1) {
+        varc <- ""
+        Legend <- vart
+      }
+      else {
+        Legend <- "Age by Intent"
+      }
+    }
+    else if (input$dropOA=="Age") {
+      varc <- "Opioid"
+      # labc <- "Opioid"
+      # AGE <- input$ageOAA
+      # if (yax=="sr" | yax=="srci") AGE <- "All ages"
+      # pd <- subset(COD2019_OpE, subset=(Sex=="People" & jurisdiction=="Australia" &
+      #     Opioid %in% input$Edrug & Intent %in% input$cod3C & Age==AGE &
+      #     (year>=input$yr07[[1]] & year<=input$yr07[[2]]))) %>%
+      #   distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
+      
+      # gp <- ggplot(pd) + aes(colour=OpioidIntent, linetype=OpioidIntent) +
+      #   labs(title=paste0("Age: ",AGE)) +
+      #   scale_colour_manual(values=OpioidIntentcols) +
+      #   scale_linetype_manual(values=OpioidIntenttype)
+      if (length(OPIOID)==1) {
+        if (estimateForm!="") {
+          varc <- "Age" # dummy for colors with Opioid as default varc
+          if (vart=="") {
+            Legend <- paste("Estimate type")
+            estimateForm <- "Colo"
+          }
+          else {
+            Legend <- paste("Estimate type by",labt)
+            estimateForm <- "Colo2"
+          }
+        }
+        else {
+          varc <- ""
+          Legend <- vart
+        }
+      }
+      else {
+        Legend <- "Opioid by Intent"
+      }
+    }
+
+    rvData <- 0
+    if (varc=="" & vart=="" & estimateForm=="") {
+      rvData <- 1
+      Legend <- "Release\nversion"
+    }
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
+    gp <- ggplot(pd) + labs(title=Title)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
+
+    if (Split!="") {
+      pageDim <- input$dimension
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+    }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
   })
@@ -1684,79 +1813,141 @@ server <- function(input, output, session) {
   output$E9Plot <- renderPlotly({
     yr <- input$yr07
     yax <- input$yax
-    # crude <- input$crude
     estimateForm <- "Alph"
     if (input$crude==F | yax!="sr") estimateForm <- ""
     AGE <- input$ageR
     if (yax=="sr" | yax=="srci") AGE <- "All ages"
     Split <- ""
 
+    # OPIOID <- input$Edrug
     if (input$dropSI=="Intent") {
-      pd <- filter(COD2019_OpE, jurisdiction==input$jur & Age==AGE &
-          Sex %in% input$sexC & Intent==input$E9Icod & Opioid %in% input$Edrug & 
-          (year>=input$yr07[[1]] & year<=input$yr07[[2]]) ) %>%
-        distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
-
-      gp <- ggplot(pd) + aes(colour=OpioidSex, linetype=OpioidSex) +
-        labs(title=paste0(input$jur,", Age: ",AGE,", Intent: ",input$E9Icod) ) +
-        scale_colour_manual(values=OpioidSexcols) +
-        scale_linetype_manual(values=OpioidSextype)
-      Legend <- "Opioid by Sex"
-      vart <- "Opioid"
-      labt <- "Opioid"
-      varc <- "Sex"
-      labc <- "Sex"
+      INTENT <- input$E9Icod
+      SEX <- input$sexC
     }
+    else if (input$dropSI=="Sex") {
+      INTENT <- input$cod3C
+      SEX <- input$sex4R
+      if (input$sex4R=="MF") {
+        SEX <- c("Female","Male")
+        Split <- "Sex"
+      }
+    }
+
+    Title <- paste0(input$jur,", Age: ",AGE)
+    if (length(SEX)==1) Title <- paste0(Title,", Sex: ",SEX)
+    if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
+    
+    pd <- filter(COD2019_OpE, jurisdiction==input$jur & Age==AGE &
+        Sex %in% SEX & Intent %in% INTENT & Opioid %in% input$Edrug & 
+          (year>=yr[[1]] & year<=yr[[2]]) )
+
+    varc <- "Opioid"
+    labc <- "Opioid"
     if (input$dropSI=="Sex") {
-      if (input$sex4R!="MF") {
-        pd <- filter(COD2019_OpE, jurisdiction==input$jur & Age==AGE &
-            Sex==input$sex4R & Intent %in% input$cod3C & Opioid %in% input$Edrug & 
-            (year>=input$yr07[[1]] & year<=input$yr07[[2]]) ) %>%
-          distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
-        gp <- ggplot(pd) + labs(title=paste0(
-          input$jur,", Age: ",AGE,", Sex: ",input$sex4R) )
-      }
-      else {
-        pd <- filter(COD2019_OpE, jurisdiction==input$jur & Age==AGE &
-            Sex!="People" & Intent %in% input$cod3C & Opioid %in% input$Edrug & 
-            (year>=input$yr07[[1]] & year<=input$yr07[[2]]) ) %>%
-          distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
-        gp <- ggplot(pd) +
-          labs(title=paste0(input$jur,", Age: ",AGE) )
-        if (input$dimension<992) {
-          gp <- gp + facet_grid(rows=vars(Sex))
-        }
-        else {
-          gp <- gp + facet_grid(cols=vars(Sex))
-          if (input$dimension<1200) {
-            LX(0)
-            LO("h")
-            LY(-.2)
-          }
-        }
-      }
-      gp <- gp + aes(colour=OpioidIntent, linetype=OpioidIntent) +
-        scale_colour_manual(values=OpioidIntentcols) +
-        scale_linetype_manual(values=OpioidIntenttype)
-      Legend <- "Opioid by Intent"
       vart <- "Intent"
       labt <- "Intent"
-      varc <- "Opioid"
-      labc <- "Opioid"
+      Legend <- "Opioid by Intent"
+      if (length(INTENT)==1 | (length(input$cod3C)==2 & input$codS==2 & Split=="") ) {
+        vart <- ""
+        if (length(input$cod3C)==2) Split <- labt
+        Legend <- labc
+      }
+    }
+    else if (input$dropSI=="Intent") {
+      vart <- "Sex"
+      labt <- "Sex"
+      Legend <- "Opioid by Sex"
+      if (length(SEX)==1) {
+        vart <- ""
+        Legend <- labc
+      }
+    }
+    if (length(input$Edrug)==1) {
+      varc <- ""
+      Legend <- vart
+      if (estimateForm!="") {
+        varc <- "Age" # dummy for colors with Opioid as default varc
+        if (vart=="") {
+          Legend <- paste("Estimate type")
+          estimateForm <- "Colo"
+        }
+        else {
+          Legend <- paste("Estimate type by",labt)
+          estimateForm <- "Colo2"
+        }
+      }
     }
 
-    validate(need(nrow(pd) > 0, "No data selected"))
-    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Vart=vart,Varc=varc,Labt=labt,Labc=labc,EstForm=estimateForm)
+    # if (input$dropSI=="Intent") {
+    #   vart <- "Sex"
+    #   labt <- "Sex"
+    #   # pd <- filter(COD2019_OpE, jurisdiction==input$jur & Age==AGE &
+    #   #     Sex %in% input$sexC & Intent==input$E9Icod & Opioid %in% input$Edrug & 
+    #   #     (year>=input$yr07[[1]] & year<=input$yr07[[2]]) ) %>%
+    #   #   distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
+    # 
+    #   gp <- ggplot(pd) + aes(colour=OpioidSex, linetype=OpioidSex) +
+    #     labs(title=paste0(input$jur,", Age: ",AGE,", Intent: ",input$E9Icod) ) +
+    #     scale_colour_manual(values=OpioidSexcols) +
+    #     scale_linetype_manual(values=OpioidSextype)
+    #   Legend <- "Opioid by Sex"
+    # }
+    # if (input$dropSI=="Sex") {
+    #   vart <- "Intent"
+    #   labt <- "Intent"
+    #   if (input$sex4R!="MF") {
+    #     # pd <- filter(COD2019_OpE, jurisdiction==input$jur & Age==AGE &
+    #     #     Sex==input$sex4R & Intent %in% input$cod3C & Opioid %in% input$Edrug & 
+    #     #     (year>=input$yr07[[1]] & year<=input$yr07[[2]]) ) %>%
+    #     #   distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
+    #     gp <- ggplot(pd) + labs(title=paste0(
+    #       input$jur,", Age: ",AGE,", Sex: ",input$sex4R) )
+    #   }
+    #   else {
+    #     # pd <- filter(COD2019_OpE, jurisdiction==input$jur & Age==AGE &
+    #     #     Sex!="People" & Intent %in% input$cod3C & Opioid %in% input$Edrug & 
+    #     #     (year>=input$yr07[[1]] & year<=input$yr07[[2]]) ) %>%
+    #     #   distinct(Opioid, year, Intent, Sex, jurisdiction, Age, .keep_all=T)
+    #     gp <- ggplot(pd) +
+    #       labs(title=paste0(input$jur,", Age: ",AGE) )
+    #     if (input$dimension<992) {
+    #       gp <- gp + facet_grid(rows=vars(Sex))
+    #     }
+    #     else {
+    #       gp <- gp + facet_grid(cols=vars(Sex))
+    #       if (input$dimension<1200) {
+    #         LX(0)
+    #         LO("h")
+    #         LY(-.2)
+    #       }
+    #     }
+    #   }
+    #   gp <- gp + aes(colour=OpioidIntent, linetype=OpioidIntent) +
+    #     scale_colour_manual(values=OpioidIntentcols) +
+    #     scale_linetype_manual(values=OpioidIntenttype)
+    #   Legend <- "Opioid by Intent"
+    # }
 
-    gp <- gp + theme(strip.background=element_rect(fill="#dbefd4"),
-            strip.text=element_text(color="#000000", face="bold") )
-    
+    rvData <- 0
+    if (varc=="" & vart=="" & estimateForm=="") {
+      rvData <- 1
+      Legend <- "Release\nversion"
+    }
+    validate(need(nrow(pd) > 0, "No data selected"))
+    gp <- ggplot(pd) + labs(title=Title)
+    gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
+    gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
+
+    if (Split!="") {
+      pageDim <- input$dimension
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+    }
+
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
   })
   
   # Exclusive opioids as percents ------------------------------------------
   output$EPPlot <- renderPlotly({
-    Split <- ""
     #needs to be sorted [order(...)]
     #weird proportions plot from 2015 onwards because of duplicates by AUS
     #- need to make distinct
@@ -1787,7 +1978,7 @@ server <- function(input, output, session) {
       geom_area() +
       labs(x="Year", y="Percent of opioid induced deaths") +
       scale_x_continuous(breaks=seq(input$yr07[[1]],input$yr07[[2]],2) ) +
-      scale_fill_manual(values=opEcols)
+      scale_fill_manual(values=Opioidcols)
     
     validate(need(nrow(pd) > 0, "No data selected"))
     
