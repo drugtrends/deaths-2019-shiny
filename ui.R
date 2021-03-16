@@ -845,7 +845,12 @@ mainPanel(width=9,
       conditionalPanel(condition="((input.yax=='num' | input.yax=='cr') &
         (input.Plot=='AmPage' | input.Plot=='CPage' |
         input.Plot=='O4Page' | input.Plot=='O5Page' | input.Plot=='O6Page' | 
-        input.Plot=='W7Page' | input.Plot=='W8Page')) | input.yax=='sr'", # | input.yax=='srci'
+        input.Plot=='W7Page' | input.Plot=='W8Page' |
+          ( input.Plot=='AllPage' & input.ageAll.length==1 ) |
+          ( input.Plot=='RAPage' & ((input.jurR=='Australia' & input.RAra.length==1) |
+          (input.jurR!='Australia' & input.Rra.length==1)) ) |
+          ( input.Plot=='DTJPage' & ((input.DTJdrop=='IntSx' & input.DTdrug.length==1) | (input.DTJdrop=='Drug' & input.sexC.length==1)) ) |
+          ( input.Plot=='DTAPage' & ((input.DTAdrop=='Age_Intent' & input.DTdrug.length==1) | (input.DTAdrop=='Drug' & input.ageAll.length==1)) ))) | input.yax=='sr'", # | input.yax=='srci'
         HTML("<b>Also show:</b>"),
         conditionalPanel(condition="( (input.yax=='num' | input.yax=='cr') &
           (input.Plot=='AmPage' | input.Plot=='CPage' |
@@ -862,6 +867,14 @@ mainPanel(width=9,
             ( input.dropSI=='Sex' & (input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2 & input.sex4R!='MF')) )
         )) ) )",
           checkboxInput("Ashow", "All drug-induced deaths",value=F)
+        ),
+        conditionalPanel(condition="(input.yax=='num' | input.yax=='cr') &
+        (( input.Plot=='AllPage' & input.ageAll.length==1 ) |
+        ( input.Plot=='RAPage' & ((input.jurR=='Australia' & input.RAra.length==1) |
+          (input.jurR!='Australia' & input.Rra.length==1)) ) |
+        ( input.Plot=='DTJPage' & ((input.DTJdrop=='IntSx' & input.DTdrug.length==1) | (input.DTJdrop=='Drug' & input.sexC.length==1)) ) |
+        ( input.Plot=='DTAPage' & ((input.DTAdrop=='Age_Intent' & input.DTdrug.length==1) | (input.DTAdrop=='Drug' & input.ageAll.length==1)) ))",
+          checkboxInput("Rshow", "Show previous year's data release",value=T)
         ),
         conditionalPanel(condition="input.yax=='sr'", # | input.yax=='srci'
           checkboxInput("crude","Crude rate",value=F)
