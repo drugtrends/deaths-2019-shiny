@@ -814,6 +814,8 @@ mainPanel(width=9,
         (input.Plot=='DTJPage' & input.DTJdrop=='Drug' & input.DTjur=='Australia') |
         (input.Plot=='O5Page' & input.O5drop!='Intent' & (input.O5drop!='Sex' | input.sex4R!='MF') ) |
         (input.Plot=='W8Page' & input.dropSI!='Intent' & input.sex4R!='MF') )) |
+        (input.cod3C.length==2 & ( input.Plot=='E0Page' |
+        (input.Plot=='E9Page' & input.dropSI!='Intent' & input.sex4R!='MF') )) |
         (input.cod2C.length==2 & ( input.Plot=='AmPage' | input.Plot=='CPage' |
         (input.Plot=='DTAPage' & input.DTAdrop=='Drug') ))",
         radioButtons("codS",label="Show intent as:",
@@ -847,8 +849,11 @@ mainPanel(width=9,
         conditionalPanel(condition="( (input.yax=='num' | input.yax=='cr') &
         (input.Plot=='AmPage' | input.Plot=='CPage' | input.Plot=='W7Page' | input.Plot=='W8Page') )
         | ( input.yax=='sr' & ( input.Plot=='AmPage' | input.Plot=='CPage' |
-        (input.Plot=='W7Page' & (input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2))) |
-        (input.Plot=='W8Page' & input.dropSI=='Sex' & ( input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2 & input.sex4R!='MF') )) ) )",
+        (input.Plot=='W7Page' & (input.dropOA=='Drug' | input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2))) |
+        (input.Plot=='W8Page' & (input.Wdrug.length==1 |
+          (input.dropSI=='Intent' & input.sexC.length==1) |
+          ( input.dropSI=='Sex' & (input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2 & input.sex4R!='MF')) )
+        )) ) )",
           checkboxInput("Ashow", "All drug-induced deaths",value=F)
         ),
         conditionalPanel(condition="input.yax=='sr'", # | input.yax=='srci'
