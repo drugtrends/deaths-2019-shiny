@@ -478,6 +478,7 @@ server <- function(input, output, session) {
     if (varc=="" & vart=="" & estimateForm=="" & rvData==1) {
       Legend <- "Release\nversion"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
@@ -578,6 +579,7 @@ server <- function(input, output, session) {
     if (varc=="" & vart=="" & estimateForm=="" & rvData==1) {
       Legend <- "Release\nversion"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected"))
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,EstForm=estimateForm,RVData=rvData)
@@ -698,6 +700,7 @@ server <- function(input, output, session) {
       rvData <- 2
       Legend <- "Release date\nby version"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
     gp <- ggplot(pd) + labs(title=Title)
@@ -783,6 +786,7 @@ server <- function(input, output, session) {
       rvData <- 2
       Legend <- "Release date\nby version"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected"))
     gp <- ggplot(pd) + labs(title=Title)
@@ -985,6 +989,7 @@ server <- function(input, output, session) {
       rvData <- 2
       Legend <- "Release date\nby version"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Drug:' to show all drugs involved.)"))
     gp <- ggplot(pd) + labs(title=Title)
@@ -1100,6 +1105,7 @@ server <- function(input, output, session) {
       rvData <- 2
       Legend <- "Release date\nby version"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Drug:'/'Age:' to show all drugs involved/age.)"))
     gp <- ggplot(pd) + labs(title=Title)
@@ -1180,7 +1186,7 @@ server <- function(input, output, session) {
     else {
       Legend <- paste(labc,"by Intent")
     }
-    if (length( get(toupper(labc)) )==1) Legend <- vart
+    if (length( get(toupper(labc)) )==1 & estimateForm<"Colo") Legend <- vart
 
     # if (input$dropOA=="Drug") {
     #   varc <- "Age"
@@ -1250,14 +1256,31 @@ server <- function(input, output, session) {
     #   }
     # }
 
+    if ( input$Ashow==F | yax=="crci" | yax=="srci" | (yax=="sr" & ( input$dropOA=="Age" &
+      (length(input$cod4C)>2 | (length(input$cod4C)==2 & input$codS==1) ) )) ) {
+      pd <- subset(pd, primary=="Opioid-induced")
+    }
+    gp <- ggplot(pd) + labs(title=Title)
+
     rvData <- 0
-    if (varc=="" & vart=="" & estimateForm=="") {
+    if ( input$Ashow==T & (yax=="num" | yax=="cr" | (yax=="sr" & ( input$dropOA=="Drug" |
+      length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) )) ) ) {
+      gp <- gp + aes(alpha=primary) +
+        scale_alpha_manual(values=c(.3,1))
+      Legend <- paste0("Death data type by<br>",Legend)
+    }
+    else if (varc=="" & vart=="" & estimateForm=="") {
       rvData <- 1
       Legend <- "Release\nversion"
     }
+    # rvData <- 0
+    # if (varc=="" & vart=="" & estimateForm=="") {
+    #   rvData <- 1
+    #   Legend <- "Release\nversion"
+    # }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
-    gp <- ggplot(pd) + labs(title=Title)
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
     gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
@@ -1320,126 +1343,201 @@ server <- function(input, output, session) {
 
     vart <- labt
     varc <- labc
-    if (input$O5drop=="Opioid") {
-      # vart <- "Intent"
-      # varc <- "Sex"
-
-      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
-        vart <- ""
-        if (length(input$cod4C)==2) Split <- "Intent"
-        if (length(SEX)==1) {
-          if (estimateForm!="") {
-            # varc <- "Age" # dummy for colors
+    if (length(get(toupper(varc)))==1) {
+      if (estimateForm!="") {
+        varc <- "Age" # dummy for colors
+        estimateForm <- "Colo2"
+        Legend <- paste("Estimate type by",vart)
+      }
+      else {
+        varc <- ""
+        Legend <- vart
+      }
+    }
+    if (input$O5drop!="Intent") {
+      if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2 & Split=="") ) {
+        if (length(input$cod4C)==2) Split <- labt
+        if (varc==labc & estimateForm!="") {
+            estimateForm <- "Type2"
+            Legend <- paste("Estimate type by",varc)
+        }
+        else {
+          vart <- ""
+          if (estimateForm!="" & varc=="Age") {
             estimateForm <- "Colo"
             Legend <- "Estimate type"
           }
           else {
-            varc <- ""
-            Legend <- ""
+            Legend <- varc
           }
         }
-        else {
-          Legend <- "Sex"
-        }
       }
-      else if (length(SEX)==1) {
-        if (estimateForm!="") {
-          # varc <- "Age" # dummy for colors
-          estimateForm <- "Colo2"
-          Legend <- "Estimate type by Intent"
-        }
-        else {
-          varc <- ""
-          Legend <- "Intent"
-        }
-      }
-      else {
-        Legend <- "Sex by Intent"
+      else if (varc==labc) {
+        Legend <- paste(varc,"by",vart)
       }
     }
     else if (input$O5drop=="Intent") {
       # vart <- "Sex"
       # varc <- "Opioid"
-
-      if (length(OPIOID)==1) {
-        varc <- ""
-        if (length(SEX)==1) {
-          vart <- ""
-          Legend <- ""
+      if (length(SEX)==1) {
+        if (varc==labc & estimateForm!="") {
+            vart <- "Intent" # dummy for linetype
+            estimateForm <- "Type2"
+            Legend <- paste("Estimate type by",varc)
         }
         else {
-          Legend <- "Opioid"
-        }
-      }
-      else if (length(SEX)==1) {
-        vart <- ""
-        Legend <- "Opioid" 
-      }
-      else {
-        Legend <- "Opioid by Sex"
-      }
-    }
-    else if (input$O5drop=="Sex") {
-      # vart <- "Intent"
-      # varc <- "Opioid"
-      Legend <- "Opioid by Intent"
-      if (length(OPIOID)==1) {
-        if (estimateForm!="") {
-          varc <- "Age" # dummy for colors
-          estimateForm <- "Colo2"
-          Legend <- "Estimate type by Intent"
-        }
-        else {
-          varc <- ""
-          Legend <- "Intent"
-        }
-      }
-      else if (length(input$cod4C)==1) {
-        vart <- ""
-        Legend <- "Opioid"
-      }
-      if (input$sex4R!="MF") {
-        if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
           vart <- ""
-          if (length(input$cod4C)==2) Split <- "Intent"
-          if (length(OPIOID)==1) {
-            if (estimateForm!="") {
-              varc <- "Age" # dummy for colors
-              estimateForm <- "Colo"
-              Legend <- "Estimate type"
-            }
-            else {
-              # varc <- "" # already initialised
-              Legend <- ""
-            }
-          }
-        }
-      }
-      else {
-        Split <- "Sex"
-        if (length(INTENT)==1 & length(OPIOID)==1) {
-          vart <- ""
-          if (estimateForm!="") {
-            varc <- "Age" # dummy for colors
+          if (estimateForm!="" & varc=="Age") {
             estimateForm <- "Colo"
             Legend <- "Estimate type"
           }
           else {
-            # varc <- "" # already initialised
-            Legend <- ""
+            Legend <- varc
           }
         }
       }
+      else if (varc==labc) {
+        Legend <- paste(varc,"by",vart)
+      }
     }
+    # if (input$O5drop=="Intent") {
+    #   # vart <- "Sex"
+    #   # varc <- "Opioid"
+    # 
+    #   if (length(OPIOID)==1) {
+    #     varc <- ""
+    #     if (length(SEX)==1) {
+    #       vart <- ""
+    #       Legend <- ""
+    #     }
+    #     else {
+    #       Legend <- "Opioid"
+    #     }
+    #   }
+    #   else if (length(SEX)==1) {
+    #     vart <- ""
+    #     Legend <- "Opioid" 
+    #   }
+    #   else {
+    #     Legend <- "Opioid by Sex"
+    #   }
+    # }
+    # else if (input$O5drop=="Opioid") {
+    #   # vart <- "Intent"
+    #   # varc <- "Sex"
+    # 
+    #   if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
+    #     vart <- ""
+    #     if (length(input$cod4C)==2) Split <- "Intent"
+    #     if (length(SEX)==1) {
+    #       if (estimateForm!="") {
+    #         # varc <- "Age" # dummy for colors
+    #         estimateForm <- "Colo"
+    #         Legend <- "Estimate type"
+    #       }
+    #       else {
+    #         varc <- ""
+    #         Legend <- ""
+    #       }
+    #     }
+    #     else {
+    #       Legend <- "Sex"
+    #     }
+    #   }
+    #   else if (length(SEX)==1) {
+    #     if (estimateForm!="") {
+    #       # varc <- "Age" # dummy for colors
+    #       estimateForm <- "Colo2"
+    #       Legend <- "Estimate type by Intent"
+    #     }
+    #     else {
+    #       varc <- ""
+    #       Legend <- "Intent"
+    #     }
+    #   }
+    #   else {
+    #     Legend <- "Sex by Intent"
+    #   }
+    # }
+    # else if (input$O5drop=="Sex") {
+    #   # vart <- "Intent"
+    #   # varc <- "Opioid"
+    #   Legend <- "Opioid by Intent"
+    #   if (length(OPIOID)==1) {
+    #     if (estimateForm!="") {
+    #       varc <- "Age" # dummy for colors
+    #       estimateForm <- "Colo2"
+    #       Legend <- "Estimate type by Intent"
+    #     }
+    #     else {
+    #       varc <- ""
+    #       Legend <- "Intent"
+    #     }
+    #   }
+    #   else if (length(input$cod4C)==1) {
+    #     vart <- ""
+    #     Legend <- "Opioid"
+    #   }
+    #   if (input$sex4R!="MF") {
+    #     if (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2) ) {
+    #       vart <- ""
+    #       if (length(input$cod4C)==2) Split <- "Intent"
+    #       if (length(OPIOID)==1) {
+    #         if (estimateForm!="") {
+    #           varc <- "Age" # dummy for colors
+    #           estimateForm <- "Colo"
+    #           Legend <- "Estimate type"
+    #         }
+    #         else {
+    #           # varc <- "" # already initialised
+    #           Legend <- ""
+    #         }
+    #       }
+    #     }
+    #   }
+    #   else {
+    #     Split <- "Sex"
+    #     if (length(INTENT)==1 & length(OPIOID)==1) {
+    #       vart <- ""
+    #       if (estimateForm!="") {
+    #         varc <- "Age" # dummy for colors
+    #         estimateForm <- "Colo"
+    #         Legend <- "Estimate type"
+    #       }
+    #       else {
+    #         # varc <- "" # already initialised
+    #         Legend <- ""
+    #       }
+    #     }
+    #   }
+    # }
+
+    # rvData <- 0
+    # if (varc=="" & vart=="" & estimateForm=="") {
+    #   rvData <- 1
+    #   Legend <- "Release\nversion"
+    # }
+    if ( input$Ashow==F | yax=="crci" | yax=="srci" | (yax=="sr" & ( (input$O5drop!='Intent' & (length(input$cod4C)>2 | (length(input$cod4C)==2 & input$codS==1))) + 
+            (input$O5drop!='Sex' & length(input$sexC)>1) + (input$O5drop!='Opioid' & length(input$OdrugC)>1) )>1)) {
+      pd <- subset(pd, primary=="Opioid-induced")
+    }
+    gp <- ggplot(pd) + labs(title=Title)
 
     rvData <- 0
-    if (varc=="" & vart=="" & estimateForm=="") {
+    if ( input$Ashow==T & (yax=="num" | yax=="cr" | (yax=="sr" & ( (input$O5drop!='Intent' & (length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2))) | 
+            (input$O5drop!='Sex' & length(input$sexC)==1) | (input$O5drop!='Opioid' & length(input$OdrugC)==1) ))) ) {
+      gp <- gp + aes(alpha=primary) +
+        scale_alpha_manual(values=c(.3,1))
+      Legend <- paste0("Death data type by<br>",Legend)
+    }
+    else if (varc=="" & vart=="" & estimateForm=="") {
       rvData <- 1
       Legend <- "Release\nversion"
     }
-    validate(need(nrow(pd) > 0, "No data selected"))
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
-    gp <- ggplot(pd) + labs(title=Title)
+    validate(need(nrow(pd) > 0, "No data selected"))
+    # gp <- ggplot(pd) + labs(title=Title)
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
     gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
@@ -1490,29 +1588,50 @@ server <- function(input, output, session) {
       }
       else {
         varc <- ""
-        Legend <- "Intent"
+        Legend <- vart
       }
     }
     if (length(input$cod2C)==1) {
       Title <- paste0(Title,", Intent: ",input$cod2C)
-      vart <- ""
-      Legend <- "Sex"
       if (estimateForm!="") {
-        estimateForm <- "Colo"
-        Legend <- "Estimate type"
+        estimateForm <- "Type2"
+        Legend <- "Estimate type by Sex"
       }
-      else if (varc=="") {
-        Legend <- ""
+      else {
+        vart <- ""
+        Legend <- varc
       }
     }
+    if (vart=="" & varc=="" & estimateForm!="") {
+      varc <- "Age" #dummy for color
+      estimateForm <- "Colo"
+      Legend <- "Estimate type"
+    }
+
+    # rvData <- 0
+    # if (varc=="" & vart=="" & estimateForm=="") {
+    #   rvData <- 1
+    #   Legend <- "Release\nversion"
+    # }
+    if ( input$Ashow==F | yax=="crci" | yax=="srci" | (yax=="sr" &  length(input$sexC)>1 & length(input$cod2C)>1) ) {
+      pd <- subset(pd, primary=="Opioid-induced")
+    }
+    gp <- ggplot(pd) + labs(title=Title)
 
     rvData <- 0
-    if (varc=="" & vart=="" & estimateForm=="") {
+    if ( input$Ashow==T & (yax=="num" | yax=="cr" | (yax=="sr" & (length(input$sexC)==1 | length(input$cod2C)==1))) ) {
+      gp <- gp + aes(alpha=primary) +
+        scale_alpha_manual(values=c(.3,1))
+      Legend <- paste0("Death data type by<br>",Legend)
+    }
+    else if (varc=="" & vart=="" & estimateForm=="") {
       rvData <- 1
       Legend <- "Release\nversion"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
+
     validate(need(nrow(pd) > 0, "No data selected"))
-    gp <- ggplot(pd) + labs(title=Title)
+    # gp <- ggplot(pd) + labs(title=Title)
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
     gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm)
 
@@ -1581,15 +1700,17 @@ server <- function(input, output, session) {
     else {
       Legend <- paste(labc,"by Intent")
     }
-    if (length(get(toupper(labc)))==1) Legend <- vart
+    if (length(get(toupper(labc)))==1 & estimateForm<"Colo") Legend <- vart
 
-    if ( input$Ashow==F | yax=="crci" | yax=="srci" | (yax=="sr" & estimateForm=="Alph") ) {
+    if ( input$Ashow==F | yax=="crci" | yax=="srci" | (yax=="sr" & ( input$dropOA=="Age" &
+      (length(input$cod4C)>2 | (length(input$cod4C)==2 & input$codS==1)) )) ) {
       pd <- subset(pd, primary=="Opioid-induced")
     }
     gp <- ggplot(pd) + labs(title=Title)
 
     rvData <- 0
-    if ( input$Ashow==T & (yax=="num" | yax=="cr" | (yax=="sr" & estimateForm!="Alph")) ) {
+    if ( input$Ashow==T & (yax=="num" | yax=="cr" | ( yax=="sr" & (input$dropOA=="Drug" |
+      length(input$cod4C)==1 | (length(input$cod4C)==2 & input$codS==2)) )) ) {
       gp <- gp + aes(alpha=primary) +
         scale_alpha_manual(values=c(.3,1))
       Legend <- paste0("Death data type by<br>",Legend)
@@ -1598,6 +1719,7 @@ server <- function(input, output, session) {
       rvData <- 1
       Legend <- "Release\nversion"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
@@ -1725,6 +1847,7 @@ server <- function(input, output, session) {
       rvData <- 1
       Legend <- "Release\nversion"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
 
     validate(need(nrow(pd) > 0, "No data selected"))
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
@@ -1853,6 +1976,8 @@ server <- function(input, output, session) {
       rvData <- 1
       Legend <- "Release\nversion"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
+
     validate(need(nrow(pd) > 0, "No data selected. (Please interact again with the control panel for plot to show if you have ticked 'Age:' to show all age groups.)"))
     gp <- ggplot(pd) + labs(title=Title)
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)
@@ -1995,6 +2120,8 @@ server <- function(input, output, session) {
       rvData <- 1
       Legend <- "Release\nversion"
     }
+    if (estimateForm=="Alph") Legend <- paste0(Legend,"<br>by Estimate type")
+
     validate(need(nrow(pd) > 0, "No data selected"))
     gp <- ggplot(pd) + labs(title=Title)
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm,RVData=rvData)

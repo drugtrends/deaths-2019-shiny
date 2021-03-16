@@ -843,16 +843,23 @@ mainPanel(width=9,
       ),
     # Also show all drug-induced & crude rate checkbox (Am, C, W7 & W8 Pages | sr y-axis)###############
       conditionalPanel(condition="((input.yax=='num' | input.yax=='cr') &
-        (input.Plot=='AmPage' | input.Plot=='CPage' | input.Plot=='W7Page'
-        | input.Plot=='W8Page')) | input.yax=='sr'", # | input.yax=='srci'
+        (input.Plot=='AmPage' | input.Plot=='CPage' |
+        input.Plot=='O4Page' | input.Plot=='O5Page' | input.Plot=='O6Page' | 
+        input.Plot=='W7Page' | input.Plot=='W8Page')) | input.yax=='sr'", # | input.yax=='srci'
         HTML("<b>Also show:</b>"),
         conditionalPanel(condition="( (input.yax=='num' | input.yax=='cr') &
-        (input.Plot=='AmPage' | input.Plot=='CPage' | input.Plot=='W7Page' | input.Plot=='W8Page') )
-        | ( input.yax=='sr' & ( input.Plot=='AmPage' | input.Plot=='CPage' |
-        (input.Plot=='W7Page' & (input.dropOA=='Drug' | input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2))) |
-        (input.Plot=='W8Page' & (input.Wdrug.length==1 |
-          (input.dropSI=='Intent' & input.sexC.length==1) |
-          ( input.dropSI=='Sex' & (input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2 & input.sex4R!='MF')) )
+          (input.Plot=='AmPage' | input.Plot=='CPage' |
+          input.Plot=='O4Page' | input.Plot=='O5Page' | input.Plot=='O6Page' | 
+          input.Plot=='W7Page' | input.Plot=='W8Page') ) |
+        ( input.yax=='sr' & ( input.Plot=='AmPage' | input.Plot=='CPage' |
+          (input.Plot=='O6Page' & (input.sexC.length==1 | input.cod2C.length==1)) |
+          ((input.Plot=='O4Page' | input.Plot=='W7Page') &
+            (input.dropOA=='Drug' | input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2))) |
+          ( input.Plot=='O5Page' & ( (input.O5drop!='Intent' & (input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2))) | 
+            (input.O5drop!='Sex' & input.sexC.length==1) | (input.O5drop!='Opioid' & input.OdrugC.length==1) ) ) |
+          (input.Plot=='W8Page' & (input.Wdrug.length==1 |
+            (input.dropSI=='Intent' & input.sexC.length==1) |
+            ( input.dropSI=='Sex' & (input.cod4C.length==1 | (input.cod4C.length==2 & input.codS==2 & input.sex4R!='MF')) )
         )) ) )",
           checkboxInput("Ashow", "All drug-induced deaths",value=F)
         ),
