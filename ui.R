@@ -358,7 +358,7 @@ mainPanel(width=9,
         HTML("<i>NB: Age-standardised rates are only calculated for all ages.</i><p></p>")
       ),
 
-    # geographical lists###############
+    # jurisdiction selection###############
       conditionalPanel(
         condition="input.Plot=='AllPage' | input.Plot=='O6Page'
         | input.Plot=='E9Page' | input.Plot=='EPPage'",
@@ -389,49 +389,21 @@ mainPanel(width=9,
         )
       ),
 
-      conditionalPanel(
-        condition="input.Plot=='RAPage' & input.jurR=='Australia'",
-        checkboxGroupInput("RAra", "Remoteness region:",
-           choices=c(
-             "Major Cities",
-             "Regional and Remote",
-             "-Inner Regional"="Inner Regional",
-             "-Outer Regional"="Outer Regional",
-             "-Remote and Very Remote"="Remote and Very Remote"
-           ),
-           selected=c(
-             "Major Cities",
-             "Regional and Remote"
-           )
-        )
-      ),
-      conditionalPanel(
-        condition="input.Plot=='RAPage' & input.jurR!='Australia'",
-        checkboxGroupInput("Rra", "Remoteness region:",
-            choices=c(
-              "Major Cities",
-              "Regional and Remote"
-            ),
-            selected=c(
-              "Major Cities",
-              "Regional and Remote"
-            )
-        )
-      ),
-
     # radio button panelS###############
       conditionalPanel(condition="(input.Plot=='RPPage' | 
+        (input.Plot=='RAPage' & input.jurR!='Australia') |
+        (input.Plot=='DTJPage' & input.DTjur=='Australia') |
         input.Plot=='E9Page' | input.Plot=='EPPage' |
         input.Plot=='O5Page' | input.Plot=='O6Page' | input.Plot=='W8Page')
         & input.yax!='sr' & input.yax!='srci'",
           radioButtons("ageR", "Age range:",inline=TRUE,
-          choices=c(
-            "All ages", "15 to 64"="15-64"
-          ),
-          selected=c("All ages")
+            choices=c(
+              "All ages", "15 to 64"="15-64"
+            ),
+            selected=c("All ages")
         ),
         conditionalPanel(
-          condition="(input.Plot=='RPPage' & input.jurR=='Australia') | input.Plot=='EPPage'",
+          condition="input.Plot=='RPPage' | input.Plot=='EPPage'",
           radioButtons("sexR", "Sex:",
             choices=c(
               "Male",
@@ -440,13 +412,13 @@ mainPanel(width=9,
             ),
             selected=c("People")
           )
-        ),
-        conditionalPanel(
-          condition="input.Plot=='RPPage' | input.Plot=='EPPage'",
-          radioButtons("codR", "Intent:",
-            c("All", "Accidental"),
-            selected="All"
-          )
+        # ),
+        # conditionalPanel(
+        #   condition="input.Plot=='RPPage' | input.Plot=='EPPage'",
+        #   radioButtons("codR", "Intent:",
+        #     c("All", "Accidental"),
+        #     selected="All"
+        #   )
         )
       ),
 
@@ -464,14 +436,14 @@ mainPanel(width=9,
               "Australian Capital Territory - All ages"="Australian Capital Territory"  )
         ),
 
-        conditionalPanel(condition="input.DTjur=='Australia'",
-          selectInput("DTage", "Age range:",
-           choices=c(
-             "All ages","15 to 64"="15-64"
-           ),
-           selected=c("All ages")
-          )
-        ),
+        # conditionalPanel(condition="input.DTjur=='Australia'",
+        #   selectInput("DTage", "Age range:",
+        #    choices=c(
+        #      "All ages","15 to 64"="15-64"
+        #    ),
+        #    selected=c("All ages")
+        #   )
+        # ),
         radioButtons("DTJdrop", "Variable for dropdown list:",
           choices=c(
               "Sex (only Aus) & Intent"="IntSx",
@@ -628,7 +600,35 @@ mainPanel(width=9,
         )
       ),
 
-    # Opioid and age panels (O4, E0 & W7 Pages)###############
+    # Opioid/Remoteness and age panels (RA, O4, E0 & W7 Pages)###############
+      conditionalPanel(
+        condition="input.Plot=='RAPage' & input.jurR=='Australia'",
+        radioButtons("dropRA", "Variable for dropdown list:",
+          choices=c(
+            "Remoteness region"="Region",
+            "Age"
+          ),inline=T,
+          selected=c("Age")
+        ),
+
+        conditionalPanel(condition="input.dropRA=='Region'",
+          conditionalPanel(
+            condition="input.jurR=='Australia'",
+            selectInput("RAraR", NULL,
+               choices=c(
+                 "Major Cities",
+                 "Regional and Remote",
+                 "-Inner Regional"="Inner Regional",
+                 "-Outer Regional"="Outer Regional",
+                 "-Remote and Very Remote"="Remote and Very Remote"
+               ),
+               selected=c(
+                 "Regional and Remote"
+               )
+            )
+          )
+        )
+      ),
       conditionalPanel(condition =
         "input.Plot=='O4Page' | input.Plot=='E0Page' | input.Plot=='W7Page'",
         radioButtons("dropOA", "Variable for dropdown list:",
@@ -636,9 +636,13 @@ mainPanel(width=9,
             "Drug", "Age"
           ),inline=T,
           selected=c("Drug")
-        ),
+        )
+      ),
 
-        conditionalPanel(condition="input.dropOA=='Age' & input.yax!='sr' & input.yax!='srci'",
+        conditionalPanel(condition="input.yax!='sr' & input.yax!='srci' & 
+          ((input.Plot=='RAPage' & input.dropRA=='Age' & input.jurR=='Australia') |
+          ((input.Plot=='O4Page' | input.Plot=='E0Page' | input.Plot=='W7Page') &
+          input.dropOA=='Age'))",
           selectInput("ageOAA", label=NULL,
             choices=c(
                "15 to 24"="15-24",
@@ -653,11 +657,12 @@ mainPanel(width=9,
             ),
             selected=c("All ages")
           )
-        )
+        ),
+        # RA remoteness checkbox later above opioid panels
         # O4 drug panel under Opioid checkbox (O4 & O5 Pages)
         # E0 drug panel under Exclusive opioid checkbox (E0 & E9 Pages)
         # W7 drug panel under Other drugs with opioid checkboxes (W7 & S8 Pages)
-      ),
+      
       conditionalPanel(condition="input.dropOA=='Drug'",
         conditionalPanel(condition="input.Plot=='W7Page'",
           selectInput("W7Ddrug", label="Opioid-induced deaths with:",
@@ -705,9 +710,9 @@ mainPanel(width=9,
         )
       ),
 
-    # intent & sex panels (All, W8 & E9 + O5 Pages)###############
+    # intent & sex panels (All, RA, RP, EP, W8 & E9 + O5 Pages)###############
       conditionalPanel(
-        condition="input.Plot=='AllPage' | input.Plot=='W8Page' | input.Plot=='E9Page'",
+        condition="input.Plot=='AllPage' | input.Plot=='RAPage' | input.Plot=='W8Page' | input.Plot=='E9Page'",
         radioButtons("dropSI", "Variable for dropdown list:",
            choices=c(
              "Intent", "Sex"
@@ -716,7 +721,7 @@ mainPanel(width=9,
         )
       ),
       conditionalPanel(condition="(input.dropSI=='Sex' & 
-        (input.Plot=='AllPage' | input.Plot=='W8Page' | input.Plot=='E9Page')) |
+        (input.Plot=='AllPage' | input.Plot=='RAPage' | input.Plot=='W8Page' | input.Plot=='E9Page')) |
         (input.O5drop=='Sex' & input.Plot=='O5Page')",
         selectInput("sex4R", label=NULL,
           choices=c("People", "Female", "Male","Male & Female"="MF")
@@ -749,11 +754,21 @@ mainPanel(width=9,
           choices=c("All", "Accidental", "Intentional")
         )
       ),
+      conditionalPanel(condition="input.Plot=='RPPage' | input.Plot=='EPPage'",
+        HTML("<b>Intent:</b>")
+      ),
+      conditionalPanel(
+        condition="(input.Plot=='RAPage' & input.dropSI=='Intent') | input.Plot=='RPPage' | input.Plot=='EPPage'",
+        selectInput("codR", NULL,
+          c("All", "Accidental","All & Accidental"="AA"),
+          selected="All"
+        )
+      ),
       # Sex checkboxes for later below with other pages
 
-    # Sex checkbox (All, O5, O6, W8 & E9 Pages)###############
+    # Sex checkbox (All, RA, O5, O6, W8 & E9 Pages)###############
       conditionalPanel(condition="input.Plot=='O6Page' |
-        ((input.Plot=='AllPage' | input.Plot=='W8Page' | input.Plot=='E9Page')
+        ((input.Plot=='AllPage' | input.Plot=='RAPage' | input.Plot=='W8Page' | input.Plot=='E9Page')
         & input.dropSI!='Sex') | (input.Plot=='O5Page' & input.O5drop!='Sex')
         | (input.Plot=='DTJPage' & input.DTJdrop=='Drug' & input.DTjur=='Australia')",
         conditionalPanel(condition="input.Plot=='DTJPage' & input.DTJdrop=='Drug' & input.DTjur=='Australia' & input.DTage=='15-64' & input.sexC!='People'",
@@ -775,10 +790,11 @@ mainPanel(width=9,
           selected=c(" All ages")
         )
       ),
-    # Intent(2C) checkbox (RA, O6, C & Am Pages)###############
+    # Intent(2C) checkbox (O6, RA, C, Am, DTA & DTJ Pages)###############
       conditionalPanel(
-        condition="input.Plot=='RAPage' | input.Plot=='O6Page' |
+        condition="input.Plot=='O6Page' |
         input.Plot=='CPage' | input.Plot=='AmPage' |
+        (input.Plot=='RAPage' & input.dropSI=='Sex') |
         (input.Plot=='DTAPage' & input.DTAdrop=='Drug') |
         (input.Plot=='DTJPage' & input.DTJdrop=='Drug' & input.DTjur!='Australia')",
         checkboxGroupInput("cod2C", "Intent:",
@@ -824,6 +840,40 @@ mainPanel(width=9,
         )
       ),
 
+    # Remoteness region checkboxes (RAPage)###############
+      conditionalPanel(
+        condition="input.Plot=='RAPage' & input.dropRA=='Age'",
+        conditionalPanel(
+          condition="input.jurR=='Australia'",
+          checkboxGroupInput("RAra", "Remoteness region:",
+             choices=c(
+               "Major Cities",
+               "Regional and Remote",
+               "-Inner Regional"="Inner Regional",
+               "-Outer Regional"="Outer Regional",
+               "-Remote and Very Remote"="Remote and Very Remote"
+             ),
+             selected=c(
+               "Major Cities",
+               "Regional and Remote"
+             )
+          )
+        ),
+        conditionalPanel(
+          condition="input.jurR!='Australia'",
+          checkboxGroupInput("Rra", "Remoteness region:",
+              choices=c(
+                "Major Cities",
+                "Regional and Remote"
+              ),
+              selected=c(
+                "Major Cities",
+                "Regional and Remote"
+              )
+          )
+        )
+      ),
+
     # Other drugs with opioid checkboxes (W7 & W8 Pages)###############
       conditionalPanel(condition="input.Plot=='W8Page' |
         (input.Plot=='W7Page' & input.dropOA=='Age')",
@@ -847,8 +897,10 @@ mainPanel(width=9,
         input.Plot=='O4Page' | input.Plot=='O5Page' | input.Plot=='O6Page' | 
         input.Plot=='W7Page' | input.Plot=='W8Page' |
           ( input.Plot=='AllPage' & input.ageAll.length==1 ) |
-          ( input.Plot=='RAPage' & ((input.jurR=='Australia' & input.RAra.length==1) |
-          (input.jurR!='Australia' & input.Rra.length==1)) ) |
+          ( input.Plot=='RAPage' & (( input.jurR=='Australia' & 
+          ((input.dropRA=='Age' & input.RAra.length==1) | (input.dropRA=='Region' & input.ageAll.length==1)) )
+          | (input.jurR!='Australia' & input.Rra.length==1)) &
+          ((input.dropSI=='Sex' & input.sex4R=='People') | (input.dropSI=='Intent' & input.sexC[0]=='People')) ) |
           ( input.Plot=='DTJPage' & ((input.DTJdrop=='IntSx' & input.DTdrug.length==1) | (input.DTJdrop=='Drug' & input.sexC.length==1)) ) |
           ( input.Plot=='DTAPage' & ((input.DTAdrop=='Age_Intent' & input.DTdrug.length==1) | (input.DTAdrop=='Drug' & input.ageAll.length==1)) ))) | input.yax=='sr'", # | input.yax=='srci'
         HTML("<b>Also show:</b>"),
@@ -870,8 +922,10 @@ mainPanel(width=9,
         ),
         conditionalPanel(condition="(input.yax=='num' | input.yax=='cr') &
         (( input.Plot=='AllPage' & input.ageAll.length==1 ) |
-        ( input.Plot=='RAPage' & ((input.jurR=='Australia' & input.RAra.length==1) |
-          (input.jurR!='Australia' & input.Rra.length==1)) ) |
+        ( input.Plot=='RAPage' & (( input.jurR=='Australia' & 
+          ((input.dropRA=='Age' & input.RAra.length==1) | (input.dropRA=='Region' & input.ageAll.length==1)) )
+          | (input.jurR!='Australia' & input.Rra.length==1)) &
+          ((input.dropSI=='Sex' & input.sex4R=='People') | (input.dropSI=='Intent' & input.sexC[0]=='People')) ) |
         ( input.Plot=='DTJPage' & ((input.DTJdrop=='IntSx' & input.DTdrug.length==1) | (input.DTJdrop=='Drug' & input.sexC.length==1)) ) |
         ( input.Plot=='DTAPage' & ((input.DTAdrop=='Age_Intent' & input.DTdrug.length==1) | (input.DTAdrop=='Drug' & input.ageAll.length==1)) ))",
           checkboxInput("Rshow", "Show previous year's data release",value=T)
@@ -916,6 +970,7 @@ mainPanel(width=9,
 
     # Age checkbox (All, Am, O4, E0, W7 & DTA Pages)###############
       conditionalPanel(condition="(input.Plot=='AllPage' | input.Plot=='AmPage'
+        | (input.Plot=='RAPage' & input.jurR=='Australia' & input.dropRA!='Age')
         | ((input.Plot=='O4Page' | input.Plot=='E0Page' | input.Plot=='W7Page')
         & input.dropOA=='Drug') | (input.Plot=='DTAPage' & input.DTAdrop=='Drug'))
         & input.yax!='sr' & input.yax!='srci'",
@@ -923,7 +978,8 @@ mainPanel(width=9,
         ),
         HTML("<div style='margin-left: 6%;'>"),
         checkboxGroupInput("ageAll", NULL, #"Age:",
-          c("15 to 24"="15-24",
+          c("All ages",
+             "15 to 24"="15-24",
              "25 to 34"="25-34",
              "35 to 44"="35-44",
              "45 to 54"="45-54",
@@ -931,7 +987,6 @@ mainPanel(width=9,
              "65 to 74"="65-74",
              "75 to 84"="75-84",
              "85+"="85+",
-             "All ages",
              "15 to 64"="15-64"),
           selected=c("All ages")
         ),

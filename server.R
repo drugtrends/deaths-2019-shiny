@@ -10,7 +10,7 @@ library(shinycustomloader)
 load("death_2019.Rdata")
 
 ColtypFn <- function(Pd,Gp,Yax=yax,Varc="Age",Vart="Intent",Split="",EstForm="") {
-  # print(paste(EstForm,( (Varc!="" & Vart!="") | EstForm>"Colo" ) & Split!=Varc & (Split!=Vart | EstForm=="Type2") ,Varc,Vart,RVData,Split))
+  # print(paste(EstForm,( (Varc!="" & Vart!="") | EstForm>"Colo" ) & Split!=Varc & (Split!=Vart | EstForm=="Type2") ,Varc,Vart,Split))
   # Gp <- ggplot(data=Pd)
   if (( (Varc!="" & Vart!="") | EstForm>"Colo" ) & Split!=Varc & (Split!=Vart | EstForm=="Type2") ) {
     Var <- paste0(Varc,Vart)
@@ -762,7 +762,7 @@ server <- function(input, output, session) {
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO()) #Pd=pd,Yax=yax,
   })
 
-  # Remoteness by jurisdiction, Intent and Sex (Table R) ------------------------------------------
+  # Remoteness by jurisdiction, Intent, Sex and Age (Table R) ------------------------------------------
   output$RAPlot <- renderPlotly({
     yr <- input$yr09
     yax <- input$yax
@@ -770,18 +770,52 @@ server <- function(input, output, session) {
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
 
-    INTENT <- input$cod2C
+    if (input$dropSI=="Intent") {
+      INTENT <- input$codR
+      if (INTENT=="AA") {
+        INTENT <- c("All","Accidental")
+        Split <- "Intent"
+      }
+      SEX <- input$sexC
+      labt <- "Sex"
+    }
+    else if (input$dropSI=="Sex") {
+      SEX <- input$sex4R
+      if (SEX=="MF") {
+        SEX <- c("Female","Male")
+        Split <- "Sex"
+      }
+      INTENT <- input$cod2C
+      labt <- "Intent"
+    }
+
     if (input$jurR=="Australia") {
-      REGION <- input$RAra
+      if (input$dropRA=="Region") {
+        AGE <- input$ageAll
+        REGION <- input$RAraR
+        labc <- "Age"
+      }
+      else {
+        AGE <- input$ageOAA
+        REGION <- input$RAra
+        labc <- "Region"
+      }
     }
     else {
+      AGE <- input$ageR
       REGION <- input$Rra
+      labc <- "Region"
     }
+    if (yax=="sr" | yax=="srci") AGE <- "All ages"
 
-    Title <- paste0(input$jurR,", All ages") 
+    Title <- paste0(input$jurR,", Intent:",INTENT)
+    if (length(REGION)==1) Title <- paste0(Title,", Region: ",REGION)
+    if (length(AGE)==1) Title <- paste0(Title,", Age: ",AGE)
+    if (length(SEX)==1) Title <- paste0(Title,", ",SEX)
+    if (length(INTENT)==1) Title <- paste0(Title,", Intent: ",INTENT)
 
-    pd <- subset(COD2019_Rem, jurisdiction==input$jurR & Age=="All ages" &
-      Sex=="People" & Intent %in% INTENT & Region %in% REGION &
+    pd <- subset(COD2019_Rem, jurisdiction==input$jurR & Age %in% AGE &
+      Sex %in% SEX & Intent %in% INTENT & Region %in% REGION &
       (year>=yr[1] & year<=yr[2]) )
 
     # gp <- ggplot(pd) + aes(colour=RegionIntent, linetype=RegionIntent) +
@@ -789,33 +823,44 @@ server <- function(input, output, session) {
     #     scale_colour_manual(values=RegionIntentcols) +
     #     scale_linetype_manual(values=RegionIntenttype)
 
-    vart <- "Intent"
-    labt <- "Intent"
-    varc <- "Region"
-    labc <- "Region"
+    varc <- labc
+    # labc <- "Age"
+    vart <- labt
+    # labt <- "Region"
 
-    if (length(INTENT)==1 & length(REGION)==1) {
+    if (length(get(toupper(labc)))==1 & length(get(toupper(labt)))==1) {
       vart <- ""
-      varc <- ""
-      Legend <- ""
-      Title <- paste0(Title,", Region: ",REGION,", Intent:", INTENT) 
+      if (estimateForm!="") {
+        varc <- "Age" #dummy for color
+        estimateForm <- "Colo"
+        Legend <- "Estimate type"
+      }
+      else {
+        varc <- ""
+        Legend <- ""
+      }
     }
-    else if (length(INTENT)==1) {
+    else if (length(get(toupper(labc)))==1) {
+      if (estimateForm!="") {
+        varc <- "Age" #dummy for color
+        estimateForm <- "Colo2"
+        Legend <- "Estimate type by Region"
+      }
+      else {
+        varc <- ""
+        Legend <- labt
+      }
+    }
+    else if (length(get(toupper(labt)))==1) {
       vart <- ""
-      Legend <- "Region"
-      Title <- paste0(Title,", Intent:", INTENT) 
-    }
-    else if (length(REGION)==1) {
-      varc <- ""
-      Legend <- "Intent"
-      Title <- paste0(Title,", Region: ",REGION) 
+      Legend <- labc
     }
     else {
-    Legend <- "Region by Intent"
+      Legend <- paste(labc,"by",labt)
     }
 
     rvData <- 1
-    if (varc!="" | yax=="srci" | yax=="sr" | input$Rshow==F) { #| vart!="" | estimateForm!=""
+    if (varc!="" | yax=="srci" | yax=="sr" | input$Rshow==F | SEX[1]!="People" | AGE[1]!="All ages") { #| vart!="" | estimateForm!=""
       pd <- subset( pd, Release=="Dec 2020")
       # if (varc!="" | vart!="" | estimateForm!="") {
       #   rvData <- 0
@@ -839,6 +884,15 @@ server <- function(input, output, session) {
     gp <- ggplot(pd) + labs(title=Title)
     gp <- ColtypFn(Pd=pd,Gp=gp,Yax=yax,Varc=varc,Vart=vart,Split=Split,EstForm=estimateForm)
     gp <- PlotFn(Pd=pd,Gp=gp,Yax=yax,Yr=yr,Labt=labt,Labc=labc,EstForm=estimateForm,RVData=rvData)
+    if (Split!="") {
+      pageDim <- input$dimension
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
+    }
 
     PlyFn(Gp=gp,Lt=Legend,X=LX(),Y=LY(),O=LO())
   })
@@ -846,24 +900,32 @@ server <- function(input, output, session) {
   # Remoteness area as percentage (Tables R) ------------------------------------------
   output$RPPlot <- renderPlotly({
     #needs to be sorted [order(...)] & made distinct
-    pd <- subset(COD2019_Rem,Release=="Dec 2020")
-    if (input$jurR=="Australia") {
-      pd <- subset(pd, Intent==input$codR & 
-            Age==input$ageR &
-            (year>=input$yr09[[1]] & year<=input$yr09[[2]]) & 
-            Sex==input$sexR & jurisdiction==input$jurR)
+    Split <- ""
+    Title <- paste0(input$jurR,", Age: ",input$ageR)
+    INTENT <- input$codR
+    if (INTENT=="AA") {
+      INTENT <- c("All","Accidental")
+      Split <- "Intent"
     }
     else {
-      pd <- subset(pd, Intent==input$codR & 
-            Age==input$ageR & 
-            (year>=input$yr09[[1]] & year<=input$yr09[[2]]) & 
-            Sex=="People" & jurisdiction==input$jurR)
+      Title <- paste0(Title,", Intent: ",INTENT)
+    }
+
+    pd <- subset(COD2019_Rem,Release=="Dec 2020" &
+            jurisdiction==input$jurR & Intent %in% INTENT &
+            (year>=input$yr09[[1]] & year<=input$yr09[[2]]))
+    
+    if (input$jurR=="Australia") {
+      pd <- subset(pd, Age==input$ageR & Sex==input$sexR)
+    }
+    else {
+      pd <- subset(pd, Age==input$ageR & Sex=="People")
     }
 
     if (input$jurR=="Australia" & input$sexR=="People" & input$ageR=="All ages" ) {
       pd <- filter(pd, Region!="Regional and Remote") %>%
         group_by(year, Intent, Sex, jurisdiction, Age) %>% 
-        distinct() %>%
+        # distinct() %>%
         mutate(percent=round(n/sum(n)*100, 2),
           Region=factor(Region, levels=c( "Remote and Very Remote",
             "Outer Regional", "Inner Regional", "Major Cities"
@@ -872,7 +934,7 @@ server <- function(input, output, session) {
     else {
       pd <- filter(pd, Region=="Regional and Remote" | Region=="Major Cities" ) %>%
         group_by(year, Intent, Sex, jurisdiction, Age) %>% 
-        distinct() %>%
+        # distinct() %>%
         mutate(percent=round(n/sum(n)*100, 2),
           Region=factor(Region, levels=c( "Regional and Remote",
             "Major Cities"
@@ -890,14 +952,23 @@ server <- function(input, output, session) {
         "<br>Sex: ",Sex,
         "<br>Intent: ",Intent
       ))) + geom_area() +
-      labs(x="Year",y="Percent of drug-induced deaths") +
+      labs(x="Year",y="Percent of drug-induced deaths",title=Title) +
       scale_fill_manual(values=Regioncols) +
       scale_x_continuous(breaks=seq(input$yr09[[1]],input$yr09[[2]],2) )
 
     gp <- gp + theme_light() + theme(legend.title=element_blank(),
-            panel.grid.minor.x=element_blank(),
-            panel.grid.major.x=element_blank())
-    
+        panel.grid.minor.x=element_blank(),
+        panel.grid.major.x=element_blank())
+    if (Split!="") {
+      pageDim <- input$dimension
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
+    }
+
     PlyFn(Gp=gp,Lt="Remoteness area",X=LX(),Y=LY(),O=LO())
   })
 
@@ -909,7 +980,7 @@ server <- function(input, output, session) {
     if (input$crude==F | yax!="sr") estimateForm <- ""
     Split <- ""
 
-    AGE <- input$DTage
+    AGE <- input$ageR
     if (yax=="sr" | yax=="srci") AGE <- "All ages"
     if (input$DTjur!="Australia") {
       AGE <- "All ages"
@@ -1942,6 +2013,12 @@ server <- function(input, output, session) {
   
   # Exclusive opioids as percents ------------------------------------------
   output$EPPlot <- renderPlotly({
+    Split <- ""
+    INTENT <- input$codR
+    if (INTENT=="AA") {
+      INTENT <- c("All","Accidental")
+      Split <- "Intent"
+    }
     #needs to be sorted [order(...)]
     #weird proportions plot from 2015 onwards because of duplicates by AUS
     #- need to make distinct
@@ -1950,11 +2027,11 @@ server <- function(input, output, session) {
             "Exclusive pharmaceutical opioids",
             "Illicit & pharmaceutical opioids",
             "Other & unspecified opioids") &
-        Intent==input$codR & Age==input$ageR & 
+        Intent %in% INTENT & Age==input$ageR & 
         (year>=input$yr07[[1]] & year<=input$yr07[[2]]) & 
         Sex==input$sexR & jurisdiction==input$jur) %>%
       group_by(year, Intent, Sex, jurisdiction, Age) %>% 
-      distinct() %>%
+      # distinct() %>%
       mutate(
         percent=round(n/sum(n)*100, 2),
         Opioid=factor(Opioid, levels=c("Other & unspecified opioids",
@@ -1979,6 +2056,15 @@ server <- function(input, output, session) {
     gp <- gp + theme_light() + theme(legend.title=element_blank(),
         panel.grid.minor.x=element_blank(),
         panel.grid.major.x=element_blank())
+    if (Split!="") {
+      pageDim <- input$dimension
+      gp <- SplitFn(Pd=pd,Gp=gp,Vars=Split,PageDim=pageDim)
+        if (pageDim<1200) {
+          LO("h")
+          LX(0)
+          LY(-.2)
+        }
+    }
 
     PlyFn(Gp=gp,Lt="Opioid",X=LX(),Y=LY(),O=LO())
   })
