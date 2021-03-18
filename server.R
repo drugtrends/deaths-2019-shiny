@@ -187,14 +187,15 @@ PlotFn <- function(Pd,Gp,Yax,Yr,Labc,Labt,EstForm="",RVData=1) {
   if (RVData>0) {
     if (Yax!="sr" | EstForm=="" | EstForm=="Colo2")
     Gp <- Gp + #scale_shape_manual(values=Noteshap) +
-      geom_point(data=subset(Pd,Note=="revised"),aes(x=year+.1),shape=1,size=1.5,show.legend=F) +
-      geom_point(data=subset(Pd,Note=="prelim."),aes(x=year+.1),shape=4,size=1.5,show.legend=F)
+      # geom_point(data=subset(Pd,Note==""),aes(x=year),shape=16,show.legend=F) +
+      geom_point(data=subset(Pd,Note=="revised"),aes(x=year+.08),shape=1,size=1.5,show.legend=F) +
+      geom_point(data=subset(Pd,Note=="prelim."),aes(x=year+.08),shape=4,size=1.5,show.legend=F)
     # geom_point(data=subset(Pd,Note!=""),aes(text=NULL),show.legend=F)
     if (Yax=="sr") {
       if (EstForm=="Colo2") { # | EstForm=="Colo"
         Gp <- Gp +
-        geom_point(data=subset(Pd,Note=="revised"),aes(x=year+.1,y=cr),shape=1,size=1.5,color="red") +
-        geom_point(data=subset(Pd,Note=="prelim."),aes(x=year+.1,y=cr),shape=4,size=1.5,color="red")
+        geom_point(data=subset(Pd,Note=="revised"),aes(x=year+.08,y=cr),shape=1,size=1.5,color="red") +
+        geom_point(data=subset(Pd,Note=="prelim."),aes(x=year+.08,y=cr),shape=4,size=1.5,color="red")
       }
       # else if (EstForm=="Alph") {
       #   Gp <- Gp +
@@ -409,43 +410,43 @@ server <- function(input, output, session) {
   observeEvent( eventExpr=input$ageAllA, ignoreInit=T, handlerExpr={
     if (input$ageAllA==T) {
       updateCheckboxGroupInput(session,"ageAll",NULL,choices=c(
+          "All ages",
+          "15 to 64"="15-64",
           "15 to 24"="15-24",
           "25 to 34"="25-34",
           "35 to 44"="35-44",
           "45 to 54"="45-54",
           "55 to 64"="55-64",
           "65 to 74"="65-74",
-          "75 to 84"="75-84",
-          "85+"="85+",
-          "All ages",
-          "15 to 64"="15-64"
+          "75 to 84"="75-84"
+          # "85+"
         ),
         selected=c(
+          "All ages",
+          "15-64",
           "15-24",
           "25-34",
           "35-44",
           "45-54",
           "55-64",
           "65-74",
-          "75-84",
-          "85+"="85+",
-          "All ages",
-          "15-64"
+          "75-84"
+          # "85+"
         )
       )
     }
     else if (input$ageAllA==F) {
       updateCheckboxGroupInput(session,"ageAll",NULL,choices=c(
+          "All ages",
+          "15 to 64"="15-64",
           "15 to 24"="15-24",
           "25 to 34"="25-34",
           "35 to 44"="35-44",
           "45 to 54"="45-54",
           "55 to 64"="55-64",
           "65 to 74"="65-74",
-          "75 to 84"="75-84",
-          "85+"="85+",
-          "All ages",
-          "15 to 64"="15-64"
+          "75 to 84"="75-84"
+          # "85+"
         ),
         selected=character(0)
       )
@@ -796,7 +797,7 @@ server <- function(input, output, session) {
         labc <- "Age"
       }
       else {
-        AGE <- input$ageOAA
+        AGE <- input$ageROA
         REGION <- input$RAra
         labc <- "Region"
       }
@@ -1257,7 +1258,7 @@ server <- function(input, output, session) {
       labc <- "Age"
     }
     else if (input$dropOA=="Age") {
-      AGE <- input$ageOAA
+      AGE <- input$ageROA
       OPIOID <- input$OdrugC
       labc <- "Opioid"
     }
@@ -1590,7 +1591,7 @@ server <- function(input, output, session) {
       labc <- "Age"
     }
     else if (input$dropOA=="Age") {
-      AGE <- input$ageOAA
+      AGE <- input$ageROA
       DRUG <- input$Wdrug
       labc <- "Drug"
     }
@@ -1819,7 +1820,7 @@ server <- function(input, output, session) {
       labc <- "Age"
     }
     else if (input$dropOA=="Age") {
-      AGE <- input$ageOAA
+      AGE <- input$ageROA
       OPIOID <- input$Edrug
       labc <- "Opioid"
     }
@@ -1868,7 +1869,7 @@ server <- function(input, output, session) {
     else if (input$dropOA=="Age") {
       varc <- "Opioid"
       # labc <- "Opioid"
-      # AGE <- input$ageOAA
+      # AGE <- input$ageROA
       # if (yax=="sr" | yax=="srci") AGE <- "All ages"
       if (length(OPIOID)==1) {
         if (estimateForm!="") {

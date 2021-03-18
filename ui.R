@@ -10,13 +10,19 @@ ui <- function(request) {
   bootstrapPage('',
     tags$head(
       includeScript("google_analytics.js"),
+# tried includeCSS and tag$style with !important to get slider to show up green but didn't work
+      # includeCSS("DT-theme.css"), # css file in main directory
+      # tags$style(type = 'text/css',
+      #   '.irs-from,.irs-to,.irs-single,.irs-grid-pol{background:#6a7d14 !important }',
+      #   '.irs-bar{border-top:1px solid #6a7d14;border-bottom:1px solid #6a7d14;background:#6a7d14 !important }'
+      # ),
 # https://stackoverflow.com/questions/36995142/get-the-size-of-the-window-in-shiny
       tags$script(src="dimension.js"),
 #https://stackoverflow.com/questions/30096187/favicon-in-shiny
 #https://www.w3.org/2005/10/howto-favicon
       tags$link(rel="icon", type="image/png", href="favicon.png")
     ),
-    theme="DT-theme.css",
+    theme="DT-theme.css", # !important in here worked
 # Navigation bar ---------------------------------------------------------------
 mainPanel(width=9,
   navbarPage(
@@ -72,8 +78,8 @@ mainPanel(width=9,
 
     # All drug-induced deaths by drug, jurisdiction, intent and/or sex (Table 12, 12b & 12c)-------------------------
       tabPanel(value="DTJPage",
-        "Drug-induced deaths by drug, jurisdiction and/or sex",
-        h2("Drug-induced deaths by drug, jurisdiction, intent and/or sex"),
+        "Drug-induced deaths by drug, jurisdiction and sex",
+        h2("Drug-induced deaths by drug, jurisdiction, intent and sex"),
       
         tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
@@ -108,7 +114,7 @@ mainPanel(width=9,
 
     # Opioids by opioid, age and intent (Table 4) -----------------------------------------
       tabPanel(value="O4Page",
-        "By opioid and age",
+        "Opioid-induced deaths by opioid and age",
         h2("Opioid-induced deaths by opioid, age and intent"),
 
         tabsetPanel(type="tabs",id="Tab",
@@ -123,7 +129,7 @@ mainPanel(width=9,
 
     # Opioids by intent, opioid and sex (Table 5) -----------------------------------------
       tabPanel(value="O5Page",
-        "By opioid and sex",
+        "Opioid-induced deaths by opioid and sex",
         h2("Opioid-induced deaths by opioid, intent and sex"),
 
         tabsetPanel(type="tabs",id="Tab",
@@ -138,7 +144,7 @@ mainPanel(width=9,
 
     # Opioids by intent, jurisdiction and sex (Table 6) ---------------------------------
       tabPanel(value="O6Page",
-        "By sex and jurisdiction",
+        "Opioid-induced deaths by sex and jurisdiction",
         h2("Opioid-induced deaths by intent, jurisdiction and sex"),
 
         tabsetPanel(type="tabs",id="Tab",
@@ -153,7 +159,7 @@ mainPanel(width=9,
   
     # Exclusive opioids by age and intent (Table 10)-----------------------------------------
       tabPanel(value="E0Page",
-        "By exclusive opioid type and age",
+        "Opioid-induced deaths by exclusive opioid type and age",
         h2("Opioid-induced deaths by exclusive opioid type, age and intent"),
         
         tabsetPanel(type="tabs",id="Tab",
@@ -168,7 +174,7 @@ mainPanel(width=9,
       
     # Exclusive opioids by jurisdiction, intent and sex (Table 9 & 11)-----------------------
       tabPanel(value="E9Page",
-        "By exclusive opioid type, jurisdiction and sex",
+        "Opioid-induced deaths by exclusive opioid type, jurisdiction and sex",
         h2("Opioid-induced deaths by exclusive opioid type, jurisdiction, intent and sex"),
         
         tabsetPanel(type="tabs",id="Tab",
@@ -183,7 +189,7 @@ mainPanel(width=9,
       
     # Exclusive opioids percents (Tables 10 & 11) -----------------------------------------
       tabPanel(value="EPPage",
-        "Exclusive opioid types as percentages",
+        "Percentages of opioid-induced deaths by exclusive opioid types",
         h2("Opioid-induced deaths by exclusive opioid type as percentages of all opioid-induced deaths"),
         
         tabsetPanel(type="tabs",id="Tab",
@@ -197,8 +203,8 @@ mainPanel(width=9,
   
     # Opioids with other drugs by age and intent (Table 7)-----------------------------------
     tabPanel(value="W7Page",
-      "Opioids with other drugs, by age",
-      h2("Opioid-induced deaths by other drugs with opioids, age and intent"),
+      "Opioid-induced deaths by other drugs involved, and by age",
+      h2("Opioid-induced deaths by other drugs involved, and by age and intent"),
   
       tabsetPanel(type="tabs",id="Tab",
         tabPanel("Plot",
@@ -212,8 +218,8 @@ mainPanel(width=9,
   
     # Opioids with other drugs by sex and intent (Table 8) ----------------------------------
     tabPanel(value="W8Page",
-      "Opioids with other drugs, by sex",
-      h2("Opioid-induced deaths by other drugs with opioids, sex and intent"),
+      "Opioid-induced deaths by other drugs involved, and by sex",
+      h2("Opioid-induced deaths by other drugs involved, and by sex and intent"),
   
         tabsetPanel(type="tabs",id="Tab",
           tabPanel("Plot",
@@ -497,16 +503,16 @@ mainPanel(width=9,
 
           selectInput("DTAIage", "Age:",
             choices=c(
+              "All ages",
+              "15 to 64"="15-64",
               "15 to 24"="15-24",
               "25 to 34"="25-34",
               "35 to 44"="35-44",
               "45 to 54"="45-54",
               "55 to 64"="55-64",
               "65 to 74"="65-74",
-              "75 to 84"="75-84",
-              "85+",
-              "All ages",
-              "15 to 64"="15-64"
+              "75 to 84"="75-84"
+              # "85+"
             ),
             selected=c("All ages")
           )
@@ -643,17 +649,17 @@ mainPanel(width=9,
           ((input.Plot=='RAPage' & input.dropRA=='Age' & input.jurR=='Australia') |
           ((input.Plot=='O4Page' | input.Plot=='E0Page' | input.Plot=='W7Page') &
           input.dropOA=='Age'))",
-          selectInput("ageOAA", label=NULL,
+          selectInput("ageROA", label=NULL,
             choices=c(
+               "All ages",
+               "15 to 64"="15-64",
                "15 to 24"="15-24",
                "25 to 34"="25-34",
                "35 to 44"="35-44",
                "45 to 54"="45-54",
                "55 to 64"="55-64",
                "65 to 74"="65-74",
-               "75 to 84"="75-84",
-               "All ages",
-               "15 to 64"="15-64"
+               "75 to 84"="75-84"
             ),
             selected=c("All ages")
           )
@@ -662,10 +668,11 @@ mainPanel(width=9,
         # O4 drug panel under Opioid checkbox (O4 & O5 Pages)
         # E0 drug panel under Exclusive opioid checkbox (E0 & E9 Pages)
         # W7 drug panel under Other drugs with opioid checkboxes (W7 & S8 Pages)
-      
+        # Age checkbox at the end
+
       conditionalPanel(condition="input.dropOA=='Drug'",
         conditionalPanel(condition="input.Plot=='W7Page'",
-          selectInput("W7Ddrug", label="Opioid-induced deaths with:",
+          selectInput("W7Ddrug", label="Other drugs involved:",
             choices=c(
               "4-aminophenol derivatives (e.g. paracetamol)"="4-aminophenol derivatives",
               "Alcohol",#="All opioids with alcohol",
@@ -680,7 +687,7 @@ mainPanel(width=9,
           )
         ),
         conditionalPanel(condition="input.Plot=='E0Page'",
-          selectInput("E0Odrug", label=NULL,
+          selectInput("E0Odrug", label="Opioid types involved:",
             choices=c(
               "Exclusive illicit opioids",
               "Exclusive pharmaceutical opioids",
@@ -691,12 +698,11 @@ mainPanel(width=9,
               "Exclusive illicit opioids" )
           )
         )
-        # Age checkbox at the end
       ),
       conditionalPanel(condition =
         "input.Plot=='O4Page' & input.dropOA=='Drug' |
         input.Plot=='O5Page' & input.O5drop=='Opioid'",
-        selectInput("OdrugO", label=NULL,
+        selectInput("OdrugO", label="Opioid involved:",
           choices=c(
             "All opioids",
             "Heroin",
@@ -979,15 +985,16 @@ mainPanel(width=9,
         HTML("<div style='margin-left: 6%;'>"),
         checkboxGroupInput("ageAll", NULL, #"Age:",
           c("All ages",
+             "15 to 64"="15-64",
              "15 to 24"="15-24",
              "25 to 34"="25-34",
              "35 to 44"="35-44",
              "45 to 54"="45-54",
              "55 to 64"="55-64",
              "65 to 74"="65-74",
-             "75 to 84"="75-84",
-             "85+"="85+",
-             "15 to 64"="15-64"),
+             "75 to 84"="75-84"
+             # "85+"
+            ),
           selected=c("All ages")
         ),
         HTML("</div>")
