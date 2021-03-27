@@ -7,3 +7,4 @@ packrat/
 *.rds
 *.RData
 www/
+www/*.png
